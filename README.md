@@ -1,5 +1,5 @@
 Project Name: MatchaDB
-Summary: A simple DB implementation that can take in a json doc of any size and
+Summary: A simple DB implementation that can take in a json doc and
          develop a DB/API from said JSON doc.
 
 Status: Incomplete
