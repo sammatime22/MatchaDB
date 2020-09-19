@@ -1,0 +1,5 @@
+include 'com.matchadb.database'
+include 'com.matchadb.enums'
+include 'com.matchadb.loading'
+include 'com.matchadb.models'
+include 'com.matchadb.surface'
