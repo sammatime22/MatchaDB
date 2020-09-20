@@ -15,7 +15,11 @@ public class MatchaDbTableTest {
      * the database.
      */
     @Test
-    public void testLoadData() {
+    public void testLoadDataTestFileClothesWebsiteAPI() {
+        // 1. Provide TestFileClothesWebsiteAPI to matchaDbTable
+
+        // 2. Run through generated table and compare that what was generated 
+        //    by our data generator is exactly what the DB Table looks like
 
     }
 
