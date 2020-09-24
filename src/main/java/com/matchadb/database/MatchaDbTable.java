@@ -5,7 +5,14 @@ import com.matchadb.models.MatchaDbRequestObject;
 import com.matchadb.models.MatchaDbCommandResult;
 import com.matchadb.models.MatchaQuery;
 
+import java.io.FileReader;
+import java.io.IOException;
+
 import java.util.List;
+
+import java.text.ParseException;
+
+import org.json.simple.parser.JSONParser;
 
 import org.springframework.stereotype.Service;
 
@@ -21,11 +28,13 @@ public class MatchaDbTable {
     // An Object object that holds reference to an item in question.
     private Object pointer;
 
+   //private JSONParser jsonParser;
+
     /**
      * Constructor for the DB Table.
      */
     public MatchaDbTable () {
-        
+        //jsonParser = new JSONParser();
     }
 
     /**
@@ -33,8 +42,12 @@ public class MatchaDbTable {
      *
      * @param path The path to retrieve the json file from.
      */
-    public void loadData(String path) {
-
+    public void loadData(FileReader file) {
+        try (JSONParser jsonParser = new JSONParser()) {
+            Object data = jsonParser.parse(file);
+        } //catch (IOException ioe) {
+        //     ioe.printStackTrace();
+        // }
     }    
 
     /**

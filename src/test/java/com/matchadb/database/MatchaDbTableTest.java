@@ -16,11 +16,16 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testLoadDataTestFileClothesWebsiteAPI() {
-        // 1. Provide TestFileClothesWebsiteAPI to matchaDbTable
+        String filename = "TestFileClothesWebsiteAPI.json";
+        try {
 
-        // 2. Run through generated table and compare that what was generated 
-        //    by our data generator is exactly what the DB Table looks like
+            // 1. Provide TestFileClothesWebsiteAPI to matchaDbTable
+            matchaDbTable.loadData(new FileReader(filename));
 
+            // 2. Run through generated table and compare that what was generated 
+            //    by our data generator is exactly what the DB Table looks like
+
+        }
     }
 
     /**
