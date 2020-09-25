@@ -10,8 +10,6 @@ import java.io.IOException;
 
 import java.util.List;
 
-import java.text.ParseException;
-
 import org.json.simple.parser.JSONParser;
 
 import org.springframework.stereotype.Service;
@@ -43,11 +41,14 @@ public class MatchaDbTable {
      * @param path The path to retrieve the json file from.
      */
     public void loadData(FileReader file) {
-        try (JSONParser jsonParser = new JSONParser()) {
+        JSONParser jsonParser = new JSONParser();
+        try {
             Object data = jsonParser.parse(file);
-        } //catch (IOException ioe) {
-        //     ioe.printStackTrace();
-        // }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }    
 
     /**

@@ -1,5 +1,8 @@
 package com.matchadb.database;
 
+import java.io.FileReader;
+import java.io.FileNotFoundException;
+
 import org.junit.jupiter.api.Test;
 import mockit.Tested;
 
@@ -17,15 +20,17 @@ public class MatchaDbTableTest {
     @Test
     public void testLoadDataTestFileClothesWebsiteAPI() {
         String filename = "TestFileClothesWebsiteAPI.json";
+        
         try {
-
             // 1. Provide TestFileClothesWebsiteAPI to matchaDbTable
             matchaDbTable.loadData(new FileReader(filename));
 
             // 2. Run through generated table and compare that what was generated 
             //    by our data generator is exactly what the DB Table looks like
-
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
         }
+        
     }
 
     /**
