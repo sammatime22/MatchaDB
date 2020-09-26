@@ -19,7 +19,7 @@ public class MatchaDbGenerateData {
      * @return The expected generated table from the TestFileClothesWebsiteAPI.json
      *         file.
      */
-    public HashMap<String, Object> generateClothesWebsiteAPITable() {
+    public static HashMap<String, Object> generateClothesWebsiteAPITable() {
         HashMap<String, Object> table = new HashMap<String, Object>();
 
         // Add in the Shirts
@@ -155,7 +155,7 @@ public class MatchaDbGenerateData {
      *
      * @return A clothes object
      */
-    private HashMap<String, Object> buildClothesObject(String name, String brand,
+    private static HashMap<String, Object> buildClothesObject(String name, String brand,
         String description, double price) {
         HashMap<String, Object> clothesObject = new HashMap<String, Object>() {{
             put("Item Name", name);

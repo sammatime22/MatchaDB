@@ -1,8 +1,14 @@
 package com.matchadb.database;
 
+import com.matchadb.generate.MatchaDbGenerateData;
+
 import java.io.FileReader;
 import java.io.FileNotFoundException;
 
+import java.util.HashMap;
+
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import mockit.Tested;
 
@@ -13,22 +19,24 @@ public class MatchaDbTableTest {
 
     @Tested MatchaDbTable matchaDbTable;
 
+    // Load in our mock table for comparison.
+    HashMap<String, Object> mockClothesWebsiteAPITable =
+        MatchaDbGenerateData.generateClothesWebsiteAPITable();
+
     /**
-     * Tests the loading in of data from a JSON file to 
-     * the database.
+     * The following tests run through all of the public facing operations of
+     * the database in the scenario of a Clothes Website API.
      */
-    @Test
+    @Before
     public void testLoadDataTestFileClothesWebsiteAPI() {
         String filename = "TestFileClothesWebsiteAPI.json";
         
         try {
-            // 1. Provide TestFileClothesWebsiteAPI to matchaDbTable
+            // Load in our real table
             matchaDbTable.loadData(new FileReader(filename));
-
-            // 2. Run through generated table and compare that what was generated 
-            //    by our data generator is exactly what the DB Table looks like
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
+            Assert.fail();
         }
         
     }

@@ -8,7 +8,7 @@ import com.matchadb.models.MatchaQuery;
 import java.io.FileReader;
 import java.io.IOException;
 
-import java.util.List;
+import java.util.HashMap;
 
 import org.json.simple.parser.JSONParser;
 
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 public class MatchaDbTable {
 
     // The actual table which is to have operations run upon it.
-    private List<Object> table;
+    private HashMap<String, Object> table;
 
     // An Object object that holds reference to an item in question.
     private Object pointer;
@@ -44,6 +44,10 @@ public class MatchaDbTable {
         JSONParser jsonParser = new JSONParser();
         try {
             Object data = jsonParser.parse(file);
+
+            // attempt to build a table
+            // How will we store this object?
+
         } catch (IOException ioe) {
             ioe.printStackTrace();
         } catch (Exception e) {
