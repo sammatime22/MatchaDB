@@ -67,14 +67,16 @@ public class MatchaDbTable {
      * @param tableData The table data provided to the DB table.
      */
     private void tableBuilder(Object tableData) {
-        // if tableData was a JSONObject
-            // See if it has any children objects
-                // If so, recursively call the method
-        // if the tableData was a JSONArray
-            // Go inside to see if we can determine a common key to organize 
-            // the table
-
-            // Call tableBuilder on the remaining objects
+        if (tableData instanceof JSONObject) {
+            
+            // if tableData was a JSONObject
+                // See if it has any children objects
+                    // If so, recursively call the method
+        } else if (tableData instanceof JSONArray) {
+            // if the tableData was a JSONArray
+                // Go inside to see if we can determine a common key to organize 
+                // the table
+        }
     }
 
     /**
