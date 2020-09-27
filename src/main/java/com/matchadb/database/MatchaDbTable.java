@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import java.util.HashMap;
 
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import org.springframework.stereotype.Service;
@@ -32,21 +33,26 @@ public class MatchaDbTable {
      * Constructor for the DB Table.
      */
     public MatchaDbTable () {
-        //jsonParser = new JSONParser();
+        
     }
 
     /**
      * Loads data into the DB Table.
      *
-     * @param path The path to retrieve the json file from.
+     * @param file A FileReader object that has reference to the filedata.
      */
     public void loadData(FileReader file) {
         JSONParser jsonParser = new JSONParser();
+
+        table = new HashMap<String, Object>();
+
         try {
             Object data = jsonParser.parse(file);
 
             // attempt to build a table
-            // How will we store this object?
+            JSONObject tableData = (JSONObject) data;
+
+            tableBuilder(tableData);
 
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -54,6 +60,22 @@ public class MatchaDbTable {
             e.printStackTrace();
         }
     }    
+
+    /**
+     * This method calls on itself recursively to help build the database table.
+     *
+     * @param tableData The table data provided to the DB table.
+     */
+    private void tableBuilder(Object tableData) {
+        // if tableData was a JSONObject
+            // See if it has any children objects
+                // If so, recursively call the method
+        // if the tableData was a JSONArray
+            // Go inside to see if we can determine a common key to organize 
+            // the table
+
+            // Call tableBuilder on the remaining objects
+    }
 
     /**
      * Converts the object back to a JSON file and saves it on the system. the 

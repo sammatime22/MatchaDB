@@ -30,7 +30,7 @@ public class MatchaDbTableTest {
     @Before
     public void testLoadDataTestFileClothesWebsiteAPI() {
         String filename = "TestFileClothesWebsiteAPI.json";
-        
+        System.out.println("Hey");
         try {
             // Load in our real table
             matchaDbTable.loadData(new FileReader(filename));
