@@ -9,7 +9,9 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -66,17 +68,36 @@ public class MatchaDbTable {
      *
      * @param tableData The table data provided to the DB table.
      */
-    private void tableBuilder(Object tableData) {
+    private HashMap tableBuilder(Object tableData) {
+        HashMap<String, Object> tableComponent = new HashMap<String, Object>();
+
         if (tableData instanceof JSONObject) {
-            
             // if tableData was a JSONObject
+            JSONObject jsonObject = (JSONObject) tableData;
+            for (Iterator keyIterator = jsonObject.keySet().iterator(); 
+                    keyIterator.hasNext();) {
+                String key = (String) keyIterator.next();
                 // See if it has any children objects
+                if (jsonObject.get(key) instanceof JSONObject ||
+                    jsonObject.get(key) instanceof JSONArray) {
                     // If so, recursively call the method
+                    table.put(key, tableBuilder(jsonObject.get(key)));
+                } else {
+                    // Simply add values to the hashmap as expected
+                    table.put(key, jsonObject.get(key));
+                }
+            }
         } else if (tableData instanceof JSONArray) {
             // if the tableData was a JSONArray
-                // Go inside to see if we can determine a common key to organize 
-                // the table
+            JSONArray jsonArray = (JSONArray) tableData;
+            for (Iterator jsonArrayIterator = jsonArray.iterator(); 
+                    jsonArrayIterator.hasNext();) {
+                // Get each object and add it to the table
+                tableBuilder(jsonArrayIterator.next());
+            }
         }
+
+        return tableComponent;
     }
 
     /**

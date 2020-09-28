@@ -19,9 +19,9 @@ public class MatchaDbTableTest {
 
     @Tested MatchaDbTable matchaDbTable;
 
-    // Load in our mock table for comparison.
-    HashMap<String, Object> mockClothesWebsiteAPITable =
-        MatchaDbGenerateData.generateClothesWebsiteAPITable();
+    // Load in our mock table for comparison. We might not end up using this.
+    // HashMap<String, Object> mockClothesWebsiteAPITable =
+    //     MatchaDbGenerateData.generateClothesWebsiteAPITable();
 
     /**
      * The following tests run through all of the public facing operations of
@@ -30,7 +30,7 @@ public class MatchaDbTableTest {
     @Before
     public void testLoadDataTestFileClothesWebsiteAPI() {
         String filename = "TestFileClothesWebsiteAPI.json";
-        System.out.println("Hey");
+        
         try {
             // Load in our real table
             matchaDbTable.loadData(new FileReader(filename));
