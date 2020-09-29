@@ -54,7 +54,7 @@ public class MatchaDbTable {
             // attempt to build a table
             JSONObject tableData = (JSONObject) data;
 
-            tableBuilder(tableData);
+            this.table = tableBuilder(tableData);
 
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -81,19 +81,21 @@ public class MatchaDbTable {
                 if (jsonObject.get(key) instanceof JSONObject ||
                     jsonObject.get(key) instanceof JSONArray) {
                     // If so, recursively call the method
-                    table.put(key, tableBuilder(jsonObject.get(key)));
+                    tableComponent.put(key, tableBuilder(jsonObject.get(key)));
                 } else {
                     // Simply add values to the hashmap as expected
-                    table.put(key, jsonObject.get(key));
+                    tableComponent.put(key, jsonObject.get(key));
                 }
             }
         } else if (tableData instanceof JSONArray) {
             // if the tableData was a JSONArray
+            int position = 0; // For now, maybe we just give numeric indecies
             JSONArray jsonArray = (JSONArray) tableData;
             for (Iterator jsonArrayIterator = jsonArray.iterator(); 
                     jsonArrayIterator.hasNext();) {
                 // Get each object and add it to the table
-                tableBuilder(jsonArrayIterator.next());
+                tableComponent.put(String.valueOf(position++), 
+                    tableBuilder(jsonArrayIterator.next()));
             }
         }
 
