@@ -34,11 +34,14 @@ public class MatchaDbTableTest {
         try {
             // Load in our real table
             matchaDbTable.loadData(new FileReader(filename));
+
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
             Assert.fail();
         }
-        
+
+        // Check to see that the size is equal
+        Assert.assertEquals(0l, matchaDbTable.getTableSizeInBytes());
     }
 
     /**

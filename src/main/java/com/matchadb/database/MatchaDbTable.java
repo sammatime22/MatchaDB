@@ -49,13 +49,12 @@ public class MatchaDbTable {
         table = new HashMap<String, Object>();
 
         try {
+            // Parse the incoming FileReader for Data
             Object data = jsonParser.parse(file);
 
-            // attempt to build a table
+            // 
             JSONObject tableData = (JSONObject) data;
-
             this.table = tableBuilder(tableData);
-
         } catch (IOException ioe) {
             ioe.printStackTrace();
         } catch (Exception e) {
@@ -166,5 +165,14 @@ public class MatchaDbTable {
      */
     public boolean deleteData() {
         return false;
+    }
+
+    /**
+     * Returns the size of the table in Bytes.
+     *
+     * @return The size of the table in Bytes;     
+     */
+    public long getTableSizeInBytes() {
+        return 0l;
     }
 }
