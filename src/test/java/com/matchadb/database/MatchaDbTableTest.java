@@ -24,13 +24,21 @@ public class MatchaDbTableTest {
     //     MatchaDbGenerateData.generateClothesWebsiteAPITable();
 
     /**
+     * Sets up everything we'll need before the test starts.
+     */
+    @Before
+    public void testSetup() {
+       
+    }
+
+    /**
      * The following tests run through all of the public facing operations of
      * the database in the scenario of a Clothes Website API.
      */
-    @Before
+    @Test
     public void testLoadDataTestFileClothesWebsiteAPI() {
-        String filename = "TestFileClothesWebsiteAPI.json";
-        
+        String filename = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
+        matchaDbTable = new MatchaDbTable();
         try {
             // Load in our real table
             matchaDbTable.loadData(new FileReader(filename));
@@ -39,7 +47,7 @@ public class MatchaDbTableTest {
             fnfe.printStackTrace();
             Assert.fail();
         }
-
+        
         // Check to see that the size is equal
         Assert.assertEquals(0l, matchaDbTable.getTableSizeInBytes());
     }

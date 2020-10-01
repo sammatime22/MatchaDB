@@ -8,6 +8,8 @@ import com.matchadb.models.MatchaQuery;
 import java.io.FileReader;
 import java.io.IOException;
 
+import java.lang.instrument.Instrumentation;
+
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -27,9 +29,9 @@ public class MatchaDbTable {
     private HashMap<String, Object> table;
 
     // An Object object that holds reference to an item in question.
-    private Object pointer;
+    // private Object pointer;
 
-   //private JSONParser jsonParser;
+    private static volatile Instrumentation instrumentation;
 
     /**
      * Constructor for the DB Table.
@@ -173,6 +175,6 @@ public class MatchaDbTable {
      * @return The size of the table in Bytes;     
      */
     public long getTableSizeInBytes() {
-        return 0l;
+        return instrumentation.getObjectSize(this.table);
     }
 }
