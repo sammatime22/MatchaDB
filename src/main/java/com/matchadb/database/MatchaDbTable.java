@@ -33,6 +33,10 @@ public class MatchaDbTable {
 
     private static volatile Instrumentation instrumentation;
 
+    public static void premain(String args, final Instrumentation instrum) {
+        this.instrumentation = instrum;
+    }
+
     /**
      * Constructor for the DB Table.
      */
