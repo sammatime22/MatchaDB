@@ -31,12 +31,6 @@ public class MatchaDbTable {
     // An Object object that holds reference to an item in question.
     // private Object pointer;
 
-    private static volatile Instrumentation instrumentation;
-
-    public static void premain(String args, final Instrumentation instrum) {
-        this.instrumentation = instrum;
-    }
-
     /**
      * Constructor for the DB Table.
      */
@@ -179,6 +173,6 @@ public class MatchaDbTable {
      * @return The size of the table in Bytes;     
      */
     public long getTableSizeInBytes() {
-        return instrumentation.getObjectSize(this.table);
+        return MatchaDBInstrumentationTool.getObjectSize(this.table);
     }
 }
