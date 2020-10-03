@@ -1,5 +1,7 @@
 package com.matchadb.database;
 
+import com.matchadb.instrumentation.MatchaDbInstrumentationTool;
+
 import com.matchadb.models.MatchaData;
 import com.matchadb.models.MatchaDbRequestObject;
 import com.matchadb.models.MatchaDbCommandResult;
@@ -173,6 +175,6 @@ public class MatchaDbTable {
      * @return The size of the table in Bytes;     
      */
     public long getTableSizeInBytes() {
-        return MatchaDBInstrumentationTool.getObjectSize(this.table);
+        return MatchaDbInstrumentationTool.getObjectSize(this.table);
     }
 }
