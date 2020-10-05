@@ -28,20 +28,17 @@ dependencies {
 	testImplementation 'org.jmockit:jmockit:1.49'
 }
 
+task buildInstrumentationJar(type: Jar) {
+	manifest {
+		attributes(
+			"Premain-Class": "com.matchadb.instrumentation.MatchaDbInstrumentationTool"
+		)
+	}
+	from sourceSets.main.output
+	include "src/main/java/com/matchadb/instrumentation/*"
+	archiveName "MatchaDbInstrumentationTool.jar"
+}
+
 test {
 	useJUnitPlatform()
 }
-
-// task buildInstrumentationJar(type: Jar) {
-// 	from(sourceSets.main.output) {
-// 		include "src/main/java/com/matchadb/instrumentation/MatchaDbInstrumentationTool.java"
-// 	}
-// }
-
-// jvmArgs = [
-// 	"-javaagent:MatchaDbInstrumentationTool.jar"
-// ]
-
-// Add in stuff for the following
-//   Building the Instrumentation jar
-//   Building the application with the Instrumentation jar as an argument
