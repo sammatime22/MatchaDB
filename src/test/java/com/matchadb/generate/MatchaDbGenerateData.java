@@ -36,9 +36,11 @@ public class MatchaDbGenerateData {
             "Nice Green T-Shirt", "ghjkl", "Get ready for Earth Day",
             15.99
         );
-        ghjklShirtIndex.put("Button Down in Black", buttonDown);
-        ghjklShirtIndex.put("Nice Green T-Shirt", greenT);
-        shirtsIndex.put("ghjkl", ghjklShirtIndex);
+        // ghjklShirtIndex.put("Button Down in Black", buttonDown);
+        // ghjklShirtIndex.put("Nice Green T-Shirt", greenT);
+        // shirtsIndex.put("ghjkl", ghjklShirtIndex);
+        shirtsIndex.put("0", buttonDown);
+        shirtsIndex.put("1", greenT);
 
         HashMap<String, Object> artT = buildClothesObject(
             "T-Shirt w/Artwork", "zxcvb", "Show off your favorite painting",
@@ -48,9 +50,11 @@ public class MatchaDbGenerateData {
             "Sleeveless T", "zxcvb", "Your arms can move so much more!",
             9.95
         );
-        zxcvbShirtIndex.put("T-Shirt w/Artwork", artT);
-        zxcvbShirtIndex.put("Sleeveless T", sleevelessT);
-        shirtsIndex.put("zxcvb", zxcvbShirtIndex);
+        // zxcvbShirtIndex.put("T-Shirt w/Artwork", artT);
+        // zxcvbShirtIndex.put("Sleeveless T", sleevelessT);
+        // shirtsIndex.put("zxcvb", zxcvbShirtIndex);
+        shirtsIndex.put("2", artT);
+        shirtsIndex.put("3", sleevelessT);
 
         // Add in the Pants
         HashMap<String, Object> pantsIndex = new HashMap<String, Object>();
@@ -66,9 +70,11 @@ public class MatchaDbGenerateData {
             "Cool Jeans", "ghjkl", "It's almost time for Summer!",
             29.99
         );
-        ghjklPantsIndex.put("Work Pants", workPants);
-        ghjklPantsIndex.put("Cool Jeans", coolJeans);
-        pantsIndex.put("ghjkl", ghjklPantsIndex);
+        // ghjklPantsIndex.put("Work Pants", workPants);
+        // ghjklPantsIndex.put("Cool Jeans", coolJeans);
+        // pantsIndex.put("ghjkl", ghjklPantsIndex);
+        pantsIndex.put("0", workPants);
+        pantsIndex.put("1", coolJeans);
 
         HashMap<String, Object> tanPants = buildClothesObject(
             "Tan Slim Pants", "zxcvb", "For that look",
@@ -78,9 +84,11 @@ public class MatchaDbGenerateData {
             "More Work Pants", "zxcvb", "Another meeting?",
             59.99
         );
-        zxcvbShirtIndex.put("Tan Slim Pants", tanPants);
-        zxcvbShirtIndex.put("More Work Pants", moreWorkPants);
-        shirtsIndex.put("zxcvb", zxcvbShirtIndex);
+        // zxcvbShirtIndex.put("Tan Slim Pants", tanPants);
+        // zxcvbShirtIndex.put("More Work Pants", moreWorkPants);
+        // shirtsIndex.put("zxcvb", zxcvbShirtIndex);
+        pantsIndex.put("2", tanPants);
+        pantsIndex.put("3", moreWorkPants);
 
         // Add in the Shoes
         HashMap<String, Object> shoesIndex = new HashMap<String, Object>();
@@ -96,9 +104,11 @@ public class MatchaDbGenerateData {
             "High Tops", "ghjkl", "Going back to high school?",
             15.99
         );
-        ghjklShoesIndex.put("Dress Shoes", dressShoes);
-        ghjklShoesIndex.put("High Tops", highTops);
-        shoesIndex.put("ghjkl", ghjklShoesIndex);
+        // ghjklShoesIndex.put("Dress Shoes", dressShoes);
+        // ghjklShoesIndex.put("High Tops", highTops);
+        // shoesIndex.put("ghjkl", ghjklShoesIndex);
+        shoesIndex.put("0", dressShoes);
+        shoesIndex.put("1", highTops);
 
         HashMap<String, Object> skateShoes = buildClothesObject(
             "Skate Shoes", "zxcvb", "Going back to high school?",
@@ -108,9 +118,11 @@ public class MatchaDbGenerateData {
             "Light Up Shoes", "zxcvb", "Show them off when you walk!",
             1000.99
         );
-        zxcvbShoesIndex.put("Skate Shoes", skateShoes);
-        zxcvbShoesIndex.put("Light Up Shoes", lightUp);
-        shoesIndex.put("zxcvb", zxcvbShoesIndex);
+        // zxcvbShoesIndex.put("Skate Shoes", skateShoes);
+        // zxcvbShoesIndex.put("Light Up Shoes", lightUp);
+        // shoesIndex.put("zxcvb", zxcvbShoesIndex);
+        shoesIndex.put("2", skateShoes);
+        shoesIndex.put("3", lightUp);
 
         // Add in the Hats
         HashMap<String, Object> hatsIndex = new HashMap<String, Object>();
@@ -126,9 +138,11 @@ public class MatchaDbGenerateData {
             "Baseball Hat", "ghjkl", "Show off your favorite team!",
             18.99
         );
-        ghjklHatsIndex.put("Top Hat", topHat);
-        ghjklHatsIndex.put("Baseball Hat", baseballHat);
-        hatsIndex.put("ghjkl", ghjklHatsIndex);
+        // ghjklHatsIndex.put("Top Hat", topHat);
+        // ghjklHatsIndex.put("Baseball Hat", baseballHat);
+        // hatsIndex.put("ghjkl", ghjklHatsIndex);
+        hatsIndex.put("0", topHat);
+        hatsIndex.put("1", baseballHat);
 
         HashMap<String, Object> dadHat = buildClothesObject(
             "Dad Hat", "zxcvb", "Really just a Baseball Hat",
@@ -138,9 +152,11 @@ public class MatchaDbGenerateData {
             "Beanie", "zxcvb", "So warm...",
             19.00
         );
-        zxcvbHatsIndex.put("Dad Hat", artT);
-        zxcvbHatsIndex.put("Beanie", sleevelessT);
-        hatsIndex.put("zxcvb", zxcvbHatsIndex);
+        // zxcvbHatsIndex.put("Dad Hat", artT);
+        // zxcvbHatsIndex.put("Beanie", sleevelessT);
+        // hatsIndex.put("zxcvb", zxcvbHatsIndex);
+        hatsIndex.put("2", dadHat);
+        hatsIndex.put("3", beanie);
 
         return table; 
     }
