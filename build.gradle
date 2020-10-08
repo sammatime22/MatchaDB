@@ -28,20 +28,22 @@ dependencies {
 	testImplementation 'org.jmockit:jmockit:1.49'
 }
 
-// /**
-//  * Used to build the Instrumentation jar that checks up on application health.
-//  */
-// task buildInstrumentationJar(type: Jar) {
-// 	manifest {
-// 		attributes(
-// 			"Premain-Class": "com.matchadb.instrumentation.MatchaDbInstrumentationTool"
-// 		)
-// 	}
-// 	from sourceSets.main.output
-// 	includes "src/main/java/com/matchadb/instrumentation/**"
-// 	archiveName "MatchaDbInstrumentationTool.jar"
-// }
+/**
+ * Used to build the Instrumentation jar that checks up on application health.
+ */
+task buildInstrumentationJar(type: Jar) {
+	manifest {
+		attributes(
+			"Premain-Class": "com.matchadb.instrumentation.MatchaDbInstrumentationTool"
+		)
+	}
+	from sourceSets.main.output
+	include "src/main/java/com/matchadb/instrumentation/**"
+	archiveName "MatchaDbInstrumentationTool.jar"
+}
 
 test {
+	// Maybe put the java agent here...?
+	//jvmargs = "-javaagent:build/libs/MatchaDbInstrumentationTool.jar"
 	useJUnitPlatform()
 }
