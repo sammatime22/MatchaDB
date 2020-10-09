@@ -37,9 +37,13 @@ task buildInstrumentationJar(type: Jar) {
 			"Premain-Class": "com.matchadb.instrumentation.MatchaDbInstrumentationTool"
 		)
 	}
-	from sourceSets.main.output
-	include "src/main/java/com/matchadb/instrumentation/**"
-	archiveName "MatchaDbInstrumentationTool.jar"
+	// from(sourceSets.main.output) { include "com.matchadb.instrumentation" }
+	// include "src/main/java/com/matchadb/instrumentation/**"
+	// archiveName "MatchaDbInstrumentationTool.jar"
+	// with jar
+	from("src/main/java/com/matchadb/instrumentation") {
+		includes = ["MatchaDbInstrumentationTool.java"]
+	}
 }
 
 test {
