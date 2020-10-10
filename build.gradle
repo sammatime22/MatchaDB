@@ -28,22 +28,27 @@ dependencies {
 	testImplementation 'org.jmockit:jmockit:1.49'
 }
 
-/**
- * Used to build the Instrumentation jar that checks up on application health.
- */
-task buildInstrumentationJar(type: Jar) {
-	manifest {
-		attributes(
-			"Premain-Class": "com.matchadb.instrumentation.MatchaDbInstrumentationTool"
-		)
-	}
-	// from(sourceSets.main.output) { include "com.matchadb.instrumentation" }
-	// include "src/main/java/com/matchadb/instrumentation/**"
-	// archiveName "MatchaDbInstrumentationTool.jar"
-	// with jar
-	from("src/main/java/com/matchadb/instrumentation") {
-		includes = ["MatchaDbInstrumentationTool.java"]
-	}
+// /**
+//  * Used to build the Instrumentation jar that checks up on application health.
+//  */
+// task buildInstrumentationJar(type: Jar) {
+// 	manifest {
+// 		attributes(
+// 			"Premain-Class": "com.matchadb.instrumentation.MatchaDbInstrumentationTool"
+// 		)
+// 	}
+// 	// from(sourceSets.main.output) { include "com.matchadb.instrumentation" }
+// 	// include "src/main/java/com/matchadb/instrumentation/**"
+// 	// archiveName "MatchaDbInstrumentationTool.jar"
+// 	// with jar
+// 	from("src/main/java/com/matchadb/instrumentation") {
+// 		includes = ["MatchaDbInstrumentationTool.java"]
+// 	}
+// }
+
+task buildInstrumentationJar2(type: Exec) {
+	commandLine "javac src/main/java/com/matchadb/instrumentation/MatchaDbInstrumentationTool.java"
+	commandLine 'jar cf MatchaDbInstrumentationTool.jar resources/MANIFEST.MF src/main/java/com/matchadb/instrumentation/MatchaDbInstrumentationTool.class'
 }
 
 test {
