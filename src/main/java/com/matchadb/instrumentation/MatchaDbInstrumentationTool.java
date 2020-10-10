@@ -7,9 +7,9 @@ import java.lang.instrument.Instrumentation;
  * metrics of the application to required services, such as determining DB size.
  */
 public class MatchaDbInstrumentationTool {
-    private static Instrumentation instrumentation;
+    private static volatile Instrumentation instrumentation;
 
-    public static void premain(String args, final Instrumentation instrum) {
+    public static void premain(final String args, final Instrumentation instrum) {
         instrumentation = instrum;
     }
 

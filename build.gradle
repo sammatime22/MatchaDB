@@ -47,12 +47,11 @@ dependencies {
 // }
 
 task buildInstrumentationJar2(type: Exec) {
-	commandLine "javac src/main/java/com/matchadb/instrumentation/MatchaDbInstrumentationTool.java"
-	commandLine 'jar cf MatchaDbInstrumentationTool.jar resources/MANIFEST.MF src/main/java/com/matchadb/instrumentation/MatchaDbInstrumentationTool.class'
+	commandLine 'javac', 'src/main/java/com/matchadb/instrumentation/MatchaDbInstrumentationTool.java'	
+	commandLine 'jar', 'cmf', 'resources/MANIFEST.MF', 'resources/MatchaDbInstrumentationTool.jar', 'src/main/java/com/matchadb/instrumentation/MatchaDbInstrumentationTool.class'
 }
 
 test {
-	// Maybe put the java agent here...?
-	//jvmargs = "-javaagent:build/libs/MatchaDbInstrumentationTool.jar"
+	jvmArgs "-javaagent:resources/MatchaDbInstrumentationTool.jar"
 	useJUnitPlatform()
 }
