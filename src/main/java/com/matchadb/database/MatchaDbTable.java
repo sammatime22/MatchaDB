@@ -14,6 +14,8 @@ import java.lang.instrument.Instrumentation;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -30,14 +32,36 @@ public class MatchaDbTable {
     // The actual table which is to have operations run upon it.
     private HashMap<String, Object> table;
 
-    // An Object object that holds reference to an item in question.
-    // private Object pointer;
+    // A Unix timestamp of the time the data was uploaded into the db.
+    private long uploadTimeInMillis = 0l;
+
+    // The time of the last update to the database in Unix Timestamp
+    private long lastUpdateTimeInMillis = 0l;
+
+    // A boolean describing if the database was filled (ie if data was uploaded)
+    private boolean databaseFilled = false;
+
+    // A boolean describing if the database is corrupted somehow
+    private boolean databaseCorrupted = false;
+
+    // A List defining the different tables that exist within the db
+    private List<String> tables;    
+
+    // An array of all of the titles of relevant metadata.
+    private String[] metadataTitles;
+
+    // An array of objects associated with the relevant metadata.
+    private Object[] metadataObjects;
 
     /**
      * Constructor for the DB Table.
      */
     public MatchaDbTable () {
-        
+        metadataTitles = new String[]{"Upload Time", "Last Update Time",
+                                      "Filled", "Corrupted", "tables"};
+        metadataObjects = new Object[]{uploadTimeInMillis, 
+                                       lastUpdateTimeInMillis, databaseFilled,
+                                       databaseCorrupted, tables};
     }
 
     /**
@@ -54,13 +78,21 @@ public class MatchaDbTable {
             // Parse the incoming FileReader for Data
             Object data = jsonParser.parse(file);
 
-            // 
+            // Insert the data into the table
             JSONObject tableData = (JSONObject) data;
             this.table = tableBuilder(tableData);
+
+            this.uploadTimeInMillis = System.currentTimeMillis();
+            this.lastUpdateTimeInMillis = System.currentTimeMillis();
+
+            this.tables = table.keySet().stream().collect(Collectors.toList());
+            this.databaseFilled = true;
         } catch (IOException ioe) {
             ioe.printStackTrace();
+            this.databaseCorrupted = true;
         } catch (Exception e) {
             e.printStackTrace();
+            this.databaseCorrupted = true;
         }
     }    
 
@@ -170,11 +202,31 @@ public class MatchaDbTable {
     }
 
     /**
+     * META-COMMAND
+     * 
+     * Returns the metadata associated with the database.
+     *
+     * @return The metadata associated with the database.
+     */
+    public MatchaDbCommandResult retrieveDbMetadata() {
+        MatchaDbCommandResult metadata = new MatchaDbCommandResult();
+
+        for (int i = 0; i < metadataTitles.length; i++) {
+            metadata.put(metadataTitles[i], metadataObjects[i]);
+        }
+
+        return metadata;
+    }
+
+    /**
+     * TODO
+     * META-COMMAND
+     *
      * Returns the size of the table in Bytes.
      *
      * @return The size of the table in Bytes;     
      */
     public long getTableSizeInBytes() {
-        return MatchaDbInstrumentationTool.getObjectSize(this.table);
+        return 0L;//MatchaDbInstrumentationTool.getObjectSize(this.table);
     }
 }
