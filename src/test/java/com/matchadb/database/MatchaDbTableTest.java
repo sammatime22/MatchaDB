@@ -2,6 +2,8 @@ package com.matchadb.database;
 
 import com.matchadb.generate.MatchaDbGenerateData;
 
+import com.matchadb.models.MatchaDbCommandResult;
+
 import java.io.FileReader;
 import java.io.FileNotFoundException;
 
@@ -38,7 +40,9 @@ public class MatchaDbTableTest {
     @Test
     public void testLoadDataTestFileClothesWebsiteAPI() {
         String filename = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
+        long timeBeforeDBLoadAndLastUpdate = System.currentTimeMillis();
         matchaDbTable = new MatchaDbTable();
+        
         try {
             // Load in our real table
             matchaDbTable.loadData(new FileReader(filename));
@@ -48,8 +52,10 @@ public class MatchaDbTableTest {
             Assert.fail();
         }
         
-        // Check to see that the size is equal
-        // Assert.assertEquals(0l, matchaDbTable.getTableSizeInBytes());
+        // Check to see that the metadata is appropriate
+        MatchaDbCommandResult metadata = matchaDbTable.retrieveDbMetadata();
+        HashMap<String, Object> metadataContents = metadata.getContents();
+        Assert.assertTrue(timeBeforeDBLoadAndLastUpdate < (long) metadataContents.get("Upload Time"));
     }
 
     /**
