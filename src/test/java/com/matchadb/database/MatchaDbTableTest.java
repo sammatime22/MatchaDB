@@ -8,11 +8,15 @@ import java.io.FileReader;
 import java.io.FileNotFoundException;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import mockit.Tested;
+import mockit.Expectations;
+//mport mockit.NonStrictExpectations;
+import mockit.Mocked;
 
 /**
  * Tests the DB Table methods.
@@ -47,15 +51,23 @@ public class MatchaDbTableTest {
             // Load in our real table
             matchaDbTable.loadData(new FileReader(filename));
 
+            // new Expectations() {{
+            //     System.currentTimeMillis();
+            //     result = System.currentTimeMillis();
+            // }};
+
+            // Check to see that the metadata is appropriate
+            MatchaDbCommandResult metadata = matchaDbTable.retrieveDbMetadata();
+            HashMap<String, Object> metadataContents = metadata.getContents();
+            //Assert.assertTrue(timeBeforeDBLoadAndLastUpdate < (long) metadataContents.get("Upload Time"));
+            // Check if "Filled"
+            // Check if "Corrupted"
+            Assert.assertTrue(4 == ((List<String>)metadataContents.get("Tables")).size()); 
+            // Check other "Tables" attributes
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
             Assert.fail();
         }
-        
-        // Check to see that the metadata is appropriate
-        MatchaDbCommandResult metadata = matchaDbTable.retrieveDbMetadata();
-        HashMap<String, Object> metadataContents = metadata.getContents();
-        Assert.assertTrue(timeBeforeDBLoadAndLastUpdate < (long) metadataContents.get("Upload Time"));
     }
 
     /**

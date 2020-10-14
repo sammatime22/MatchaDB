@@ -58,7 +58,7 @@ public class MatchaDbTable {
      */
     public MatchaDbTable () {
         metadataTitles = new String[]{"Upload Time", "Last Update Time",
-                                      "Filled", "Corrupted", "tables"};
+                                      "Filled", "Corrupted", "Tables"};
         metadataObjects = new Object[]{uploadTimeInMillis, 
                                        lastUpdateTimeInMillis, databaseFilled,
                                        databaseCorrupted, tables};
