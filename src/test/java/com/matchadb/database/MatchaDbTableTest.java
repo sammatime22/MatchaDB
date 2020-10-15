@@ -7,6 +7,7 @@ import com.matchadb.models.MatchaDbCommandResult;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,8 +15,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import mockit.Tested;
-import mockit.Expectations;
-//mport mockit.NonStrictExpectations;
 import mockit.Mocked;
 
 /**
@@ -24,10 +23,6 @@ import mockit.Mocked;
 public class MatchaDbTableTest {
 
     @Tested MatchaDbTable matchaDbTable;
-
-    // Load in our mock table for comparison. We might not end up using this.
-    // HashMap<String, Object> mockClothesWebsiteAPITable =
-    //     MatchaDbGenerateData.generateClothesWebsiteAPITable();
 
     /**
      * Sets up everything we'll need before the test starts.
@@ -45,25 +40,34 @@ public class MatchaDbTableTest {
     public void testLoadDataTestFileClothesWebsiteAPI() {
         String filename = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
         long timeBeforeDBLoadAndLastUpdate = System.currentTimeMillis();
+        List<String> expectedTables = new ArrayList<String>() {{
+           add("Shirts"); add("Pants"); add("Hats"); add("Shoes");
+        }};
+
         matchaDbTable = new MatchaDbTable();
         
         try {
             // Load in our real table
             matchaDbTable.loadData(new FileReader(filename));
 
-            // new Expectations() {{
-            //     System.currentTimeMillis();
-            //     result = System.currentTimeMillis();
-            // }};
-
             // Check to see that the metadata is appropriate
             MatchaDbCommandResult metadata = matchaDbTable.retrieveDbMetadata();
             HashMap<String, Object> metadataContents = metadata.getContents();
-            //Assert.assertTrue(timeBeforeDBLoadAndLastUpdate < (long) metadataContents.get("Upload Time"));
-            // Check if "Filled"
-            // Check if "Corrupted"
-            Assert.assertTrue(4 == ((List<String>)metadataContents.get("Tables")).size()); 
-            // Check other "Tables" attributes
+
+            // Check on Timestamps
+            Assert.assertTrue(timeBeforeDBLoadAndLastUpdate < (long) metadataContents.get("Upload Time"));
+            Assert.assertTrue(timeBeforeDBLoadAndLastUpdate < (long) metadataContents.get("Last Update Time"));
+
+            // Check Flags
+            Assert.assertTrue((boolean) metadataContents.get("Filled"));
+            Assert.assertTrue(! (boolean) metadataContents.get("Corrupted"));
+
+            // Check "Tables" Listing
+            Assert.assertTrue(expectedTables.size() == ((List<String>) metadataContents.get("Tables")).size());
+            for (String table : (List<String>) metadataContents.get("Tables")) {
+                Assert.assertTrue(expectedTables.contains(table));
+            }
+
         } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
             Assert.fail();

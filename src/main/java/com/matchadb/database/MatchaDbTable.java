@@ -57,11 +57,7 @@ public class MatchaDbTable {
      * Constructor for the DB Table.
      */
     public MatchaDbTable () {
-        metadataTitles = new String[]{"Upload Time", "Last Update Time",
-                                      "Filled", "Corrupted", "Tables"};
-        metadataObjects = new Object[]{uploadTimeInMillis, 
-                                       lastUpdateTimeInMillis, databaseFilled,
-                                       databaseCorrupted, tables};
+
     }
 
     /**
@@ -210,6 +206,13 @@ public class MatchaDbTable {
      */
     public MatchaDbCommandResult retrieveDbMetadata() {
         MatchaDbCommandResult metadata = new MatchaDbCommandResult();
+
+        metadataTitles = new String[]{"Upload Time", "Last Update Time",
+                                      "Filled", "Corrupted", "Tables"};
+        metadataObjects = new Object[]{uploadTimeInMillis, 
+                                       lastUpdateTimeInMillis, databaseFilled,
+                                       databaseCorrupted, tables};
+
 
         for (int i = 0; i < metadataTitles.length; i++) {
             metadata.put(metadataTitles[i], metadataObjects[i]);
