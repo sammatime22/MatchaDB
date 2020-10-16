@@ -96,8 +96,10 @@ public class MatchaDbTable {
      * This method calls on itself recursively to help build the database table.
      *
      * @param tableData The table data provided to the DB table.
+     *
+     * @return A HashMap with the data within the table/subtables.
      */
-    private HashMap tableBuilder(Object tableData) {
+    private HashMap<String, Object> tableBuilder(Object tableData) {
         HashMap<String, Object> tableComponent = new HashMap<String, Object>();
 
         if (tableData instanceof JSONObject) {

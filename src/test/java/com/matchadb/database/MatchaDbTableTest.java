@@ -25,25 +25,23 @@ public class MatchaDbTableTest {
     @Tested MatchaDbTable matchaDbTable;
 
     /**
-     * Sets up everything we'll need before the test starts.
-     */
-    @Before
-    public void testSetup() {
-       
-    }
-
-    /**
-     * The following tests run through all of the public facing operations of
-     * the database in the scenario of a Clothes Website API.
+     * The following test checks to see that our Load Data method works appropriately.
      */
     @Test
     public void testLoadDataTestFileClothesWebsiteAPI() {
+        // Location of the test file used
         String filename = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
+
+        // A timestamp before the start of the test, to make sure the timestamps in the db
+        // are updated.
         long timeBeforeDBLoadAndLastUpdate = System.currentTimeMillis();
+
+        // The expected tables within the DB.
         List<String> expectedTables = new ArrayList<String>() {{
            add("Shirts"); add("Pants"); add("Hats"); add("Shoes");
         }};
 
+        // Instantiating the matchaDbTable Instance
         matchaDbTable = new MatchaDbTable();
         
         try {
@@ -69,6 +67,7 @@ public class MatchaDbTableTest {
             }
 
         } catch (FileNotFoundException fnfe) {
+            // If a FileNotFoundException comes up, fail the test.
             fnfe.printStackTrace();
             Assert.fail();
         }
