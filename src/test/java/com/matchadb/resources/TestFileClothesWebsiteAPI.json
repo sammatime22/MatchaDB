@@ -1,0 +1,94 @@
+{
+    "Shirts" : [
+        {
+            "Item Name" : "Button Down in Black",
+            "Item Brand" : "ghjkl",
+            "Item Description" : "You're new favorite Black Button Down!",
+            "Item Price" : 20.99
+        }, {
+            "Item Name" : "Nice Green T-Shirt",
+            "Item Brand" : "ghjkl",
+            "Item Description" : "Get ready for Earth Day",
+            "Item Price" : 15.99
+        }, {
+            "Item Name" : "T-Shirt w/Artwork",
+            "Item Brand" : "zxcvb",
+            "Item Description" : "Show off your favorite painting",
+            "Item Price" : 15.99
+        }, {
+            "Item Name" : "Sleeveless T",
+            "Item Brand" : "zxcvb",
+            "Item Description" : "Your arms can move so much more!",
+            "Item Price" : 9.95
+        }
+    ], 
+    "Pants" : [
+        {
+            "Item Name" : "Work Pants",
+            "Item Brand" : "ghjkl",
+            "Item Description" : "Going to a meeting today?",
+            "Item Price" : 51.76
+        }, {
+            "Item Name" : "Cool Jeans",
+            "Item Brand" : "ghjkl",
+            "Item Description" : "It's almost time for Summer!",
+            "Item Price" : 29.99
+        }, {
+            "Item Name" : "Tan Slim Pants",
+            "Item Brand" : "zxcvb",
+            "Item Description" : "For that look",
+            "Item Price" : 29.99
+        }, {
+            "Item Name" : "More Work Pants",
+            "Item Brand" : "zxcvb",
+            "Item Description" : "Another meeting?",
+            "Item Price" : 59.99
+        }
+    ], 
+    "Shoes" : [
+        {
+            "Item Name" : "Dress Shoes",
+            "Item Brand" : "ghjkl",
+            "Item Description" : "To go with those work pants",
+            "Item Price" : 89.70
+        }, {
+            "Item Name" : "High Tops",
+            "Item Brand" : "ghjkl",
+            "Item Description" : "Going back to high school?",
+            "Item Price" : 39.99
+        }, {
+            "Item Name" : "Skate Shoes",
+            "Item Brand" : "zxcvb",
+            "Item Description" : "Going back to high school?",
+            "Item Price" : 39.99
+        }, {
+            "Item Name" : "Light Up Shoes",
+            "Item Brand" : "zxcvb",
+            "Item Description" : "Show them off when you walk!",
+            "Item Price" : 1000.99
+        }
+    ],
+    "Hats" : [
+        {
+            "Item Name" : "Top Hat",
+            "Item Brand" : "ghjkl",
+            "Item Description" : "Fancy right?",
+            "Item Price" : 9.99
+        }, {
+            "Item Name" : "Baseball Hat",
+            "Item Brand" : "ghjkl",
+            "Item Description" : "Show off your favorite team!",
+            "Item Price" : 18.99
+        }, {
+            "Item Name" : "Dad Hat",
+            "Item Brand" : "zxcvb",
+            "Item Description" : "Really just a Baseball Hat",
+            "Item Price" : 19.87
+        }, {
+            "Item Name" : "Beanie",
+            "Item Brand" : "zxcvb",
+            "Item Description" : "So warm...",
+            "Item Price" : 19.00
+        }
+    ]
+}

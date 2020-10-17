@@ -17,6 +17,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
@@ -27,6 +28,17 @@ dependencies {
 	testImplementation 'org.jmockit:jmockit:1.49'
 }
 
+/**
+ * TODO
+ * A method that builds the Instrumentation jar for MatchaDB. 
+ */
+task buildInstrumentationJar2(type: Exec) {
+	commandLine 'javac', 'src/main/java/com/matchadb/instrumentation/MatchaDbInstrumentationTool.java'	
+	commandLine 'jar', 'cmf', 'resources/MANIFEST.MF', 'resources/MatchaDbInstrumentationTool.jar', 'src/main/java/com/matchadb/instrumentation/MatchaDbInstrumentationTool.class'
+}
+
 test {
+	// TODO: Determine error with improper VM instantiation.
+	// jvmArgs "-javaagent:resources/MatchaDbInstrumentationTool.jar"
 	useJUnitPlatform()
 }
