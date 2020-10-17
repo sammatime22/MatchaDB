@@ -8,6 +8,7 @@ import com.matchadb.models.MatchaDbCommandResult;
 import com.matchadb.models.MatchaQuery;
 
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import java.lang.instrument.Instrumentation;
@@ -29,22 +30,25 @@ import org.springframework.stereotype.Service;
 @Service
 public class MatchaDbTable {
 
+    // The name of the database.
+    private String databaseName;
+
     // The actual table which is to have operations run upon it.
     private HashMap<String, Object> table;
 
     // A Unix timestamp of the time the data was uploaded into the db.
     private long uploadTimeInMillis = 0l;
 
-    // The time of the last update to the database in Unix Timestamp
+    // The time of the last update to the database in Unix Timestamp.
     private long lastUpdateTimeInMillis = 0l;
 
-    // A boolean describing if the database was filled (ie if data was uploaded)
+    // A boolean describing if the database was filled (ie if data was uploaded).
     private boolean databaseFilled = false;
 
-    // A boolean describing if the database is corrupted somehow
+    // A boolean describing if the database is corrupted somehow.
     private boolean databaseCorrupted = false;
 
-    // A List defining the different tables that exist within the db
+    // A List defining the different tables that exist within the db.
     private List<String> tables;    
 
     // An array of all of the titles of relevant metadata.
@@ -52,6 +56,9 @@ public class MatchaDbTable {
 
     // An array of objects associated with the relevant metadata.
     private Object[] metadataObjects;
+
+    // The extension to a JSON file.
+    private final String JSON_EXTENSION = ".json";
 
     /**
      * Constructor for the DB Table.
@@ -64,9 +71,11 @@ public class MatchaDbTable {
      * Loads data into the DB Table.
      *
      * @param file A FileReader object that has reference to the filedata.
+     * @param databaseName The name of the database.
      */
-    public void loadData(FileReader file) {
+    public void loadData(FileReader file, String databaseName) {
         JSONParser jsonParser = new JSONParser();
+        this.databaseName = databaseName;
 
         table = new HashMap<String, Object>();
 
@@ -134,11 +143,38 @@ public class MatchaDbTable {
     }
 
     /**
-     * Converts the object back to a JSON file and saves it on the system. the 
-     * file gets saved onto the filesystem.
+     * Converts the object back to a JSON file and saves it on the system. 
      */
     public void saveData() {
+        JSONObject tableInJSONObjectForm = transformHashMapToJSONObject(this.table);
 
+        // Still need to determine the right path.
+        try (FileWriter fileWriter = new FileWriter(getSaveDataFilename())) {
+            fileWriter.write(tableInJSONObjectForm.toString());
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+    }
+
+    /**
+     * Returns a filename that can be used by the saveData method.
+     *
+     * @return A filename that can be used by the saveData method.
+     */
+    private String getSaveDataFilename() {
+        return String.valueOf(System.currentTimeMillis()) + this.databaseName + JSON_EXTENSION;
+    }
+
+    /**
+     * This method is a helper method that is used to revert the HashMap back into a 
+     * JSONObject object.
+     *
+     * @param hashmap The HashMap object to be transformed.
+     *
+     * @return A JSONObject object, representing the HashMap in object form.
+     */
+    private JSONObject transformHashMapToJSONObject(HashMap<String, Object> hashmap) {
+        return null;
     }
 
     /**

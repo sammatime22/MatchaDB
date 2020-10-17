@@ -32,6 +32,9 @@ public class MatchaDbTableTest {
         // Location of the test file used
         String filename = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
 
+        // Database name
+        String databaseName = "TestFileClothesWebsiteAPI";
+
         // A timestamp before the start of the test, to make sure the timestamps in the db
         // are updated.
         long timeBeforeDBLoadAndLastUpdate = System.currentTimeMillis();
@@ -46,7 +49,7 @@ public class MatchaDbTableTest {
         
         try {
             // Load in our real table
-            matchaDbTable.loadData(new FileReader(filename));
+            matchaDbTable.loadData(new FileReader(filename), "TestFileClothesWebsiteAPI");
 
             // Check to see that the metadata is appropriate
             MatchaDbCommandResult metadata = matchaDbTable.retrieveDbMetadata();
@@ -77,13 +80,22 @@ public class MatchaDbTableTest {
      * Tests that, upon exiting the application, the DbTable can save the 
      * table to a JSON file.
      */
+    @Test
     public void testSaveData() {
+        // Clean the test directory
+
+        // Build the database
+
+        // Load in the data for the DB
+
+        // Save the data and check that the data within the file is as expected.
 
     }
 
     /**
      * Tests that, given a command, the DB can run said command.
      */
+    @Test
     public void testRunCommand() {
 
     }
