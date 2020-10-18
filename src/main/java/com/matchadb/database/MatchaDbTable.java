@@ -33,6 +33,9 @@ public class MatchaDbTable {
     // The name of the database.
     private String databaseName;
 
+    // The path to where data is to be dropped off.
+    private String dropoffPath;
+
     // The actual table which is to have operations run upon it.
     private HashMap<String, Object> table;
 
@@ -63,8 +66,8 @@ public class MatchaDbTable {
     /**
      * Constructor for the DB Table.
      */
-    public MatchaDbTable () {
-
+    public MatchaDbTable (String dropoffPath) {
+        this.dropoffPath = dropoffPath;
     }
 
     /**
@@ -162,7 +165,8 @@ public class MatchaDbTable {
      * @return A filename that can be used by the saveData method.
      */
     private String getSaveDataFilename() {
-        return String.valueOf(System.currentTimeMillis()) + this.databaseName + JSON_EXTENSION;
+        return this.dropoffPath + String.valueOf(System.currentTimeMillis()) 
+            + this.databaseName + JSON_EXTENSION;
     }
 
     /**

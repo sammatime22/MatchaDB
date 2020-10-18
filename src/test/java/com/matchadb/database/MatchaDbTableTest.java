@@ -29,6 +29,9 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testLoadDataTestFileClothesWebsiteAPI() {
+        // An empty dropoff path - not used in this test
+        String emptyPath = null;
+
         // Location of the test file used
         String filename = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
 
@@ -45,7 +48,7 @@ public class MatchaDbTableTest {
         }};
 
         // Instantiating the matchaDbTable Instance
-        matchaDbTable = new MatchaDbTable();
+        matchaDbTable = new MatchaDbTable(emptyPath);
         
         try {
             // Load in our real table
@@ -82,7 +85,12 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testSaveData() {
+        // Path to be used in the test.
+        // We'll check to see if this path actually exists and is usable before starting.
+        String testPath = ""; 
+
         // Clean the test directory
+
 
         // Build the database
 
@@ -141,6 +149,16 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testDeleteData() {
+
+    }
+
+    /**
+     * Develops the test directory/cleans out the test directory. Will fail if 
+     * an error occurs in the development of the directory.
+     *
+     * @param pathToDirectory The path to the directory.
+     */
+    private void prepareTestDirectory(String pathToDirectory) {
 
     }
 }
