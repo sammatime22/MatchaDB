@@ -4,6 +4,7 @@ import com.matchadb.generate.MatchaDbGenerateData;
 
 import com.matchadb.models.MatchaDbCommandResult;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
 
@@ -108,7 +109,8 @@ public class MatchaDbTableTest {
      * @param testDirectory The test directory to be used.
      */
     public void developTestDirectory(String testDirectory) {
-        try (File directory = new File(testDirectory)) {
+        File directory = new File(testDirectory);
+        try {
             // Were we given a directory? If not, fail.
 
             // Were any files in the directory?
