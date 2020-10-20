@@ -89,8 +89,8 @@ public class MatchaDbTableTest {
         // We'll check to see if this path actually exists and is usable before starting.
         String testPath = ""; 
 
-        // Clean the test directory
-
+        // Clean/Create the test directory
+        developTestDirectory(testPath);
 
         // Build the database
 
@@ -98,6 +98,26 @@ public class MatchaDbTableTest {
 
         // Save the data and check that the data within the file is as expected.
 
+    }
+
+    /**
+     * Develops the test directory given a test path. If the directory does not
+     * exist, it will be created, and likewise, if it is full, will be cleaned.
+     * Will fail if an exception occurs.
+     *
+     * @param testDirectory The test directory to be used.
+     */
+    public void developTestDirectory(String testDirectory) {
+        try (File directory = new File(testDirectory)) {
+            // Were we given a directory? If not, fail.
+
+            // Were any files in the directory?
+                // If so, can we iterate through them?
+                    // Can this file be deleted? If not, fail. 
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
     }
 
     /**
