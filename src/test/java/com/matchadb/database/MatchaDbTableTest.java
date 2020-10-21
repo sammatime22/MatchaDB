@@ -88,10 +88,10 @@ public class MatchaDbTableTest {
     public void testSaveData() {
         // Path to be used in the test.
         // We'll check to see if this path actually exists and is usable before starting.
-        String testPath = ""; 
+        String testDirectory = "testdirectory/"; 
 
         // Clean/Create the test directory
-        developTestDirectory(testPath);
+        developTestDirectory(testDirectory);
 
         // Build the database
 
@@ -99,6 +99,8 @@ public class MatchaDbTableTest {
 
         // Save the data and check that the data within the file is as expected.
 
+        // Remove the test directory
+        deleteTestDirectory(testDirectory);
     }
 
     /**
@@ -111,11 +113,31 @@ public class MatchaDbTableTest {
     public void developTestDirectory(String testDirectory) {
         File directory = new File(testDirectory);
         try {
-            // Were we given a directory? If not, fail.
+            // Were we given a directory or a spot that could be If not, fail.
+            if (directory.isFile()) {
+                throw new Exception("Was given something other than a directory.");
+            }
 
-            // Were any files in the directory?
-                // If so, can we iterate through them?
-                    // Can this file be deleted? If not, fail. 
+            // Does the directory exist? If not, make it.
+            if (!directory.exists()) {
+                directory.mkdir();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Deletes the test directory after the test is done.
+     *
+     * @param testDirectory The test directory to be used.
+     */
+    public void deleteTestDirectory(String testDirectory) {
+        File directory = new File(testDirectory);
+
+        try {
+            directory.delete();
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
