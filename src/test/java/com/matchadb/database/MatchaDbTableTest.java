@@ -94,13 +94,29 @@ public class MatchaDbTableTest {
         developTestDirectory(testDirectory);
 
         // Build the database
+        matchaDbTable = new MatchaDbTable(testDirectory);
 
-        // Load in the data for the DB
+        // Location of the test file used
+        String filename = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";        
 
-        // Save the data and check that the data within the file is as expected.
+        boolean failed = false;
 
+        try {
+            // Load in the data for the DB
+            matchaDbTable.loadData(new FileReader(filename), "TestFileClothesWebsiteAPI");
+
+            // Save the data and check that the data within the file is as expected.
+            matchaDbTable.saveData();
+        } catch (Exception e) {
+            e.printStackTrace();
+            failed = true;
+        }
         // Remove the test directory
         deleteTestDirectory(testDirectory);
+
+        if (failed) {
+            Assert.fail();
+        }
     }
 
     /**
