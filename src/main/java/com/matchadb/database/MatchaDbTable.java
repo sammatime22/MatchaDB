@@ -171,14 +171,21 @@ public class MatchaDbTable {
 
     /**
      * This method is a helper method that is used to revert the HashMap back into a 
-     * JSONObject object.
+     * JSONObject object. This method acts recursively.
      *
      * @param hashmap The HashMap object to be transformed.
      *
      * @return A JSONObject object, representing the HashMap in object form.
      */
     private JSONObject transformHashMapToJSONObject(HashMap<String, Object> hashmap) {
-        return null;
+        JSONObject jsonObject = new JSONObject();
+        
+        // For each string key and object pair
+            // Assign each string to an object
+                // See if the object is a HashMap or value
+                // If it's a value, we can simply assign
+                // If not, call this method on it
+        return jsonObject;
     }
 
     /**
