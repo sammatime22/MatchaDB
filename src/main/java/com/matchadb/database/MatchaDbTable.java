@@ -82,6 +82,9 @@ public class MatchaDbTable {
             this.lastUpdateTimeInMillis = System.currentTimeMillis();
 
             this.tables = table.keySet().stream().collect(Collectors.toList());
+
+            System.out.println(this.table);
+
             this.databaseFilled = true;
         } catch (IOException ioe) {
             ioe.printStackTrace();
