@@ -153,6 +153,13 @@ public class MatchaDbTableTest {
         File directory = new File(testDirectory);
 
         try {
+            // Since this is just test code and we only expect there
+            // to be files, ie no other directories, just recursively 
+            // delete all files.
+            for (File fileInDirectory : directory.listFiles()) {
+                fileInDirectory.delete();
+            }
+
             directory.delete();
         } catch (Exception e) {
             e.printStackTrace();
