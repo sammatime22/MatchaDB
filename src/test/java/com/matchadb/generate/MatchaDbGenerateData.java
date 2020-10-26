@@ -21,7 +21,8 @@ public class MatchaDbGenerateData {
      *         file.
      */
     public static HashMap<String, Object> generateClothesWebsiteAPITable() {
-        HashMap<String, Object> table = new HashMap<String, Object>();
+        List<Object> table = new ArrayList<Object>();
+        HashMap<String, Object> tableIndexes = new HashMap<String, Object>();
 
 
         // Add in the Shirts
@@ -143,7 +144,7 @@ public class MatchaDbGenerateData {
 
         table.put("Hats", hats);
 
-
+        table.add(tableIndexes);
         return table; 
     }
 

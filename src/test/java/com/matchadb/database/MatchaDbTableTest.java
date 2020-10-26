@@ -29,7 +29,7 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testLoadDataTestFileClothesWebsiteAPI() {
-        HashMap<String,Object> expectedTable = MatchaDbGenerateData.generateClothesWebsiteAPITable();
+        List<Object> expectedTable = MatchaDbGenerateData.generateClothesWebsiteAPITable();
 
         // Location of the test file used
         String filename = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
@@ -56,13 +56,9 @@ public class MatchaDbTableTest {
             // Check Flags
             Assert.assertTrue((boolean) metadataContents.get("Filled"));
             Assert.assertTrue(! (boolean) metadataContents.get("Corrupted"));
-
-            // Check "Tables" Listing
-            Assert.assertTrue(expectedTable.size() == ((List<String>) metadataContents.get("Tables")).size());
             
-            for (String table : (List<String>) metadataContents.get("Tables")) {
-                Assert.assertTrue(expectedTable.keySet().contains(table));
-            }
+            // Check that the table name was properly set.
+            Assert.assertTrue(tableName.equals((String) metadataContents.get("Table Name")));
 
         } catch (FileNotFoundException fnfe) {
             // If a FileNotFoundException comes up, fail the test.

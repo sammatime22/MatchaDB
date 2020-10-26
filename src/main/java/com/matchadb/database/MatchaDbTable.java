@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import java.lang.instrument.Instrumentation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +31,7 @@ import org.springframework.stereotype.Service;
 public class MatchaDbTable {
 
     // The actual table which is to have operations run upon it.
-    private HashMap<String, Object> table;
+    private List<Object> table;
 
     // A Unix timestamp of the time the data was uploaded into the db.
     private long uploadTimeInMillis = 0l;
@@ -44,8 +45,8 @@ public class MatchaDbTable {
     // A boolean describing if the database is corrupted somehow
     private boolean databaseCorrupted = false;
 
-    // A List defining the different tables that exist within the db
-    private List<String> tables;    
+    // The databases table name.
+    private String databaseTableName;
 
     // An array of all of the titles of relevant metadata.
     private String[] metadataTitles;
@@ -64,11 +65,12 @@ public class MatchaDbTable {
      * Loads data into the DB Table.
      *
      * @param file A FileReader object that has reference to the filedata.
+     * @param databaseTableName The name of the database table.
      */
-    public void loadData(FileReader file) {
+    public void loadData(FileReader file, String databaseTableName) {
         JSONParser jsonParser = new JSONParser();
 
-        table = new HashMap<String, Object>();
+        table = new ArrayList<Object>();
 
         try {
             // Parse the incoming FileReader for Data
@@ -80,8 +82,6 @@ public class MatchaDbTable {
 
             this.uploadTimeInMillis = System.currentTimeMillis();
             this.lastUpdateTimeInMillis = System.currentTimeMillis();
-
-            this.tables = table.keySet().stream().collect(Collectors.toList());
 
             System.out.println(this.table);
 
