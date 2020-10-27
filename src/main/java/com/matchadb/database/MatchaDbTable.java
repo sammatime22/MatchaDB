@@ -102,11 +102,14 @@ public class MatchaDbTable {
      *
      * @return A HashMap with the data within the table/subtables.
      */
-    private HashMap<String, Object> tableBuilder(Object tableData) {
-        HashMap<String, Object> tableComponent = new HashMap<String, Object>();
+    private List<Object> tableBuilder(Object tableData) {
+        List<Object> tableComponent = new ArrayList<Object>();
 
         if (tableData instanceof JSONObject) {
             // if tableData was a JSONObject
+            HashMap<String, Object> jsonObjectTableComponent = 
+                new ArrayList<String, Object>();
+
             JSONObject jsonObject = (JSONObject) tableData;
             for (Iterator keyIterator = jsonObject.keySet().iterator(); 
                     keyIterator.hasNext();) {
@@ -123,7 +126,6 @@ public class MatchaDbTable {
             }
         } else if (tableData instanceof JSONArray) {
             // if the tableData was a JSONArray
-            int position = 0; // For now, maybe we just give numeric indecies
             JSONArray jsonArray = (JSONArray) tableData;
             for (Iterator jsonArrayIterator = jsonArray.iterator(); 
                     jsonArrayIterator.hasNext();) {
@@ -134,6 +136,18 @@ public class MatchaDbTable {
         }
 
         return tableComponent;
+    }
+
+    /**
+     * A recursive helper method that properly constructs singular and ... HashMaps
+     * such to repersent JSON Objects.
+     * 
+     * @param jsonObject The JSON object to interpret.
+     *
+     * @return A hashmap representing the interpreted JSON object.
+     */
+    private HashMap<String, Object> interpretJSONObject(JSONObject jsonObject) {
+        return null;
     }
 
     /**
@@ -213,10 +227,10 @@ public class MatchaDbTable {
         MatchaDbCommandResult metadata = new MatchaDbCommandResult();
 
         metadataTitles = new String[]{"Upload Time", "Last Update Time",
-                                      "Filled", "Corrupted", "Tables"};
+                                      "Filled", "Corrupted", "Table Name"};
         metadataObjects = new Object[]{uploadTimeInMillis, 
                                        lastUpdateTimeInMillis, databaseFilled,
-                                       databaseCorrupted, tables};
+                                       databaseCorrupted, databaseTableName};
 
 
         for (int i = 0; i < metadataTitles.length; i++) {
