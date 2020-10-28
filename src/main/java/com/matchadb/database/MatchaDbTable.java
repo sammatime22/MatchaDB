@@ -106,6 +106,11 @@ public class MatchaDbTable {
         List<Object> tableComponent = new ArrayList<Object>();
 
         if (tableData instanceof JSONObject) {
+            tableComponent.add(interpretJSONObject((JSONObject) tableData));
+        } else if (tableData instanceof JSONArray) {
+            tableComponent = interpretJSONArray((JSONArray) tableData);
+        }
+        /*if (tableData instanceof JSONObject) {
             // if tableData was a JSONObject
             HashMap<String, Object> jsonObjectTableComponent = 
                 new ArrayList<String, Object>();
@@ -133,21 +138,58 @@ public class MatchaDbTable {
                 tableComponent.put(String.valueOf(position++), 
                     tableBuilder(jsonArrayIterator.next()));
             }
-        }
+        }*/
 
         return tableComponent;
     }
 
     /**
-     * A recursive helper method that properly constructs singular and ... HashMaps
-     * such to repersent JSON Objects.
+     * A recursive helper method that properly constructs HashMaps to repersent JSON Objects.
      * 
      * @param jsonObject The JSON object to interpret.
      *
      * @return A hashmap representing the interpreted JSON object.
      */
     private HashMap<String, Object> interpretJSONObject(JSONObject jsonObject) {
-        return null;
+        HashMap<String, Object> jsonObjectTableComponent = new HashMap<String, Object>();
+
+        for (Iterator keyIterator = jsonObject.keySet().iterator(); 
+                keyIterator.hasNext();) {
+            String key = (String) keyIterator.next();
+            if (jsonObject.get(key) instanceof JSONObject) {
+                jsonObjectTableComponent.put(key, interpretJSONObject((JSONObject) jsonObject.get(key)));
+            } else if (jsonObject.get(key) instanceof JSONArray) {
+                jsonObjectTableComponent.put(key, interpretJSONArray((JSONArray) jsonObject.get(key)));
+            } else {
+                jsonObjectTableComponent.put(key, jsonObject.get(key));
+            }
+        }
+
+        return jsonObjectTableComponent;
+    }
+
+    /**
+     * A recursive helper method that properly constructs HashMaps to repersent JSON Arrays.
+     * 
+     * @param jsonArray The JSON object to interpret.
+     *
+     * @return A list representing the interpreted JSON array.
+     */
+    private List<Object> interpretJSONArray(JSONArray jsonArray) {
+        List<Object> jsonArrayTableComponent = new ArrayList<Object>();
+
+        for (Iterator jsonArrayIterator = jsonArray.iterator(); jsonArrayIterator.hasNext();) {
+            Object nextObject = jsonArrayIterator.next();
+            if (nextObject instanceof JSONObject) {
+                jsonArrayTableComponent.add(interpretJSONObject((JSONObject) nextObject));
+            } else if (nextObject instanceof JSONArray) {
+                jsonArrayTableComponent.add(interpretJSONArray((JSONArray) nextObject));
+            } else {
+                jsonArrayTableComponent.add(nextObject);
+            }
+        }
+
+        return jsonArrayTableComponent;
     }
 
     /**
