@@ -110,35 +110,6 @@ public class MatchaDbTable {
         } else if (tableData instanceof JSONArray) {
             tableComponent = interpretJSONArray((JSONArray) tableData);
         }
-        /*if (tableData instanceof JSONObject) {
-            // if tableData was a JSONObject
-            HashMap<String, Object> jsonObjectTableComponent = 
-                new ArrayList<String, Object>();
-
-            JSONObject jsonObject = (JSONObject) tableData;
-            for (Iterator keyIterator = jsonObject.keySet().iterator(); 
-                    keyIterator.hasNext();) {
-                String key = (String) keyIterator.next();
-                // See if it has any children objects
-                if (jsonObject.get(key) instanceof JSONObject ||
-                    jsonObject.get(key) instanceof JSONArray) {
-                    // If so, recursively call the method
-                    tableComponent.put(key, tableBuilder(jsonObject.get(key)));
-                } else {
-                    // Simply add values to the hashmap as expected
-                    tableComponent.put(key, jsonObject.get(key));
-                }
-            }
-        } else if (tableData instanceof JSONArray) {
-            // if the tableData was a JSONArray
-            JSONArray jsonArray = (JSONArray) tableData;
-            for (Iterator jsonArrayIterator = jsonArray.iterator(); 
-                    jsonArrayIterator.hasNext();) {
-                // Get each object and add it to the table
-                tableComponent.put(String.valueOf(position++), 
-                    tableBuilder(jsonArrayIterator.next()));
-            }
-        }*/
 
         return tableComponent;
     }
@@ -161,7 +132,21 @@ public class MatchaDbTable {
             } else if (jsonObject.get(key) instanceof JSONArray) {
                 jsonObjectTableComponent.put(key, interpretJSONArray((JSONArray) jsonObject.get(key)));
             } else {
-                jsonObjectTableComponent.put(key, jsonObject.get(key));
+                // If the data wasn't of type JSONObject or JSONArray, let's interpret
+                // it in the following branching statements
+                if (jsonObject.get(key) instanceof Boolean) { 
+                    jsonObjectTableComponent.put(key, (boolean) jsonObject.get(key));
+                } else if (jsonObject.get(key) instanceof Integer) {
+                    jsonObjectTableComponent.put(key, (int) jsonObject.get(key));
+                } else if (jsonObject.get(key) instanceof Double) {
+                    jsonObjectTableComponent.put(key, (double) jsonObject.get(key));
+                } else if (jsonObject.get(key) instanceof String) {
+                    jsonObjectTableComponent.put(key, (String) jsonObject.get(key));
+                } else {
+                    // If we couldn't figure out the type, we will just turn the object into
+                    // a string.
+                    jsonObjectTableComponent.put(key, jsonObject.get(key).toString());
+                }
             }
         }
 
@@ -180,12 +165,27 @@ public class MatchaDbTable {
 
         for (Iterator jsonArrayIterator = jsonArray.iterator(); jsonArrayIterator.hasNext();) {
             Object nextObject = jsonArrayIterator.next();
+
             if (nextObject instanceof JSONObject) {
                 jsonArrayTableComponent.add(interpretJSONObject((JSONObject) nextObject));
             } else if (nextObject instanceof JSONArray) {
                 jsonArrayTableComponent.add(interpretJSONArray((JSONArray) nextObject));
             } else {
-                jsonArrayTableComponent.add(nextObject);
+                // If the data wasn't of type JSONObject or JSONArray, let's interpret
+                // it in the following branching statements
+                if (nextObject instanceof Boolean) { 
+                    jsonArrayTableComponent.add((boolean) nextObject);
+                } else if (nextObject instanceof Integer) {
+                    jsonArrayTableComponent.add((int) nextObject);
+                } else if (nextObject instanceof Double) {
+                    jsonArrayTableComponent.add((double) nextObject);
+                } else if (nextObject instanceof String) {
+                    jsonArrayTableComponent.add((String) nextObject);
+                } else {
+                    // If we couldn't figure out the type, we will just turn the object into
+                    // a string.
+                    jsonArrayTableComponent.add(nextObject.toString());
+                }
             }
         }
 

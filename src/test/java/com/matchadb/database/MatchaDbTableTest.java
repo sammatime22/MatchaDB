@@ -30,6 +30,7 @@ public class MatchaDbTableTest {
     @Test
     public void testLoadDataTestFileClothesWebsiteAPI() {
         List<Object> expectedTable = MatchaDbGenerateData.generateClothesWebsiteAPITable();
+        String tableName = "TestFileClothesWebsiteAPI";
 
         // Location of the test file used
         String filename = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
@@ -43,7 +44,7 @@ public class MatchaDbTableTest {
         
         try {
             // Load in our real table
-            matchaDbTable.loadData(new FileReader(filename));
+            matchaDbTable.loadData(new FileReader(filename), tableName);
 
             // Check to see that the metadata is appropriate
             MatchaDbCommandResult metadata = matchaDbTable.retrieveDbMetadata();

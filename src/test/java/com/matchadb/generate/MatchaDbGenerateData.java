@@ -20,7 +20,7 @@ public class MatchaDbGenerateData {
      * @return The expected generated table from the TestFileClothesWebsiteAPI.json
      *         file.
      */
-    public static HashMap<String, Object> generateClothesWebsiteAPITable() {
+    public static List<Object> generateClothesWebsiteAPITable() {
         List<Object> table = new ArrayList<Object>();
         HashMap<String, Object> tableIndexes = new HashMap<String, Object>();
 
@@ -52,7 +52,7 @@ public class MatchaDbGenerateData {
         shirts.add(artT);
         shirts.add(sleevelessT);
 
-        table.put("Shirts", shirts);
+        tableIndexes.put("Shirts", shirts);
 
 
         // Add in the Pants
@@ -82,7 +82,7 @@ public class MatchaDbGenerateData {
         pants.add(tanPants);
         pants.add(moreWorkPants);
 
-        table.put("Pants", pants);
+        tableIndexes.put("Pants", pants);
 
 
         // Add in the Shoes
@@ -112,7 +112,7 @@ public class MatchaDbGenerateData {
         shoes.add(skateShoes);
         shoes.add(lightUp);
 
-        table.put("Shoes", shoes);
+        tableIndexes.put("Shoes", shoes);
 
 
         // Add in the Hats
@@ -142,7 +142,7 @@ public class MatchaDbGenerateData {
         hats.add(dadHat);
         hats.add(beanie);
 
-        table.put("Hats", hats);
+        tableIndexes.put("Hats", hats);
 
         table.add(tableIndexes);
         return table; 
