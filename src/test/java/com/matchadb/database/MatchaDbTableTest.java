@@ -29,6 +29,9 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testLoadDataTestFileClothesWebsiteAPI() {
+        List<Object> expectedTable = MatchaDbGenerateData.generateClothesWebsiteAPITable();
+        String tableName = "TestFileClothesWebsiteAPI";
+
         // Location of the test file used
         String filename = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
 
@@ -36,17 +39,12 @@ public class MatchaDbTableTest {
         // are updated.
         long timeBeforeDBLoadAndLastUpdate = System.currentTimeMillis();
 
-        // The expected tables within the DB.
-        List<String> expectedTables = new ArrayList<String>() {{
-           add("Shirts"); add("Pants"); add("Hats"); add("Shoes");
-        }};
-
         // Instantiating the matchaDbTable Instance
         matchaDbTable = new MatchaDbTable();
         
         try {
             // Load in our real table
-            matchaDbTable.loadData(new FileReader(filename));
+            matchaDbTable.loadData(new FileReader(filename), tableName);
 
             // Check to see that the metadata is appropriate
             MatchaDbCommandResult metadata = matchaDbTable.retrieveDbMetadata();
@@ -59,12 +57,9 @@ public class MatchaDbTableTest {
             // Check Flags
             Assert.assertTrue((boolean) metadataContents.get("Filled"));
             Assert.assertTrue(! (boolean) metadataContents.get("Corrupted"));
-
-            // Check "Tables" Listing
-            Assert.assertTrue(expectedTables.size() == ((List<String>) metadataContents.get("Tables")).size());
-            for (String table : (List<String>) metadataContents.get("Tables")) {
-                Assert.assertTrue(expectedTables.contains(table));
-            }
+            
+            // Check that the table name was properly set.
+            Assert.assertTrue(tableName.equals((String) metadataContents.get("Table Name")));
 
         } catch (FileNotFoundException fnfe) {
             // If a FileNotFoundException comes up, fail the test.

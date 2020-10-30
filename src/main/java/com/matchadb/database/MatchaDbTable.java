@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import java.lang.instrument.Instrumentation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +31,7 @@ import org.springframework.stereotype.Service;
 public class MatchaDbTable {
 
     // The actual table which is to have operations run upon it.
-    private HashMap<String, Object> table;
+    private List<Object> table;
 
     // A Unix timestamp of the time the data was uploaded into the db.
     private long uploadTimeInMillis = 0l;
@@ -44,8 +45,8 @@ public class MatchaDbTable {
     // A boolean describing if the database is corrupted somehow
     private boolean databaseCorrupted = false;
 
-    // A List defining the different tables that exist within the db
-    private List<String> tables;    
+    // The databases table name.
+    private String databaseTableName;
 
     // An array of all of the titles of relevant metadata.
     private String[] metadataTitles;
@@ -64,11 +65,13 @@ public class MatchaDbTable {
      * Loads data into the DB Table.
      *
      * @param file A FileReader object that has reference to the filedata.
+     * @param databaseTableName The name of the database table.
      */
-    public void loadData(FileReader file) {
+    public void loadData(FileReader file, String databaseTableName) {
         JSONParser jsonParser = new JSONParser();
+        this.databaseTableName = databaseTableName;
 
-        table = new HashMap<String, Object>();
+        table = new ArrayList<Object>();
 
         try {
             // Parse the incoming FileReader for Data
@@ -81,7 +84,6 @@ public class MatchaDbTable {
             this.uploadTimeInMillis = System.currentTimeMillis();
             this.lastUpdateTimeInMillis = System.currentTimeMillis();
 
-            this.tables = table.keySet().stream().collect(Collectors.toList());
             this.databaseFilled = true;
         } catch (IOException ioe) {
             ioe.printStackTrace();
@@ -99,38 +101,94 @@ public class MatchaDbTable {
      *
      * @return A HashMap with the data within the table/subtables.
      */
-    private HashMap<String, Object> tableBuilder(Object tableData) {
-        HashMap<String, Object> tableComponent = new HashMap<String, Object>();
+    private List<Object> tableBuilder(Object tableData) {
+        List<Object> tableComponent = new ArrayList<Object>();
 
         if (tableData instanceof JSONObject) {
-            // if tableData was a JSONObject
-            JSONObject jsonObject = (JSONObject) tableData;
-            for (Iterator keyIterator = jsonObject.keySet().iterator(); 
-                    keyIterator.hasNext();) {
-                String key = (String) keyIterator.next();
-                // See if it has any children objects
-                if (jsonObject.get(key) instanceof JSONObject ||
-                    jsonObject.get(key) instanceof JSONArray) {
-                    // If so, recursively call the method
-                    tableComponent.put(key, tableBuilder(jsonObject.get(key)));
-                } else {
-                    // Simply add values to the hashmap as expected
-                    tableComponent.put(key, jsonObject.get(key));
-                }
-            }
+            tableComponent.add(interpretJSONObject((JSONObject) tableData));
         } else if (tableData instanceof JSONArray) {
-            // if the tableData was a JSONArray
-            int position = 0; // For now, maybe we just give numeric indecies
-            JSONArray jsonArray = (JSONArray) tableData;
-            for (Iterator jsonArrayIterator = jsonArray.iterator(); 
-                    jsonArrayIterator.hasNext();) {
-                // Get each object and add it to the table
-                tableComponent.put(String.valueOf(position++), 
-                    tableBuilder(jsonArrayIterator.next()));
-            }
+            tableComponent = interpretJSONArray((JSONArray) tableData);
         }
 
         return tableComponent;
+    }
+
+    /**
+     * A recursive helper method that properly constructs HashMaps to repersent JSON Objects.
+     * 
+     * @param jsonObject The JSON object to interpret.
+     *
+     * @return A hashmap representing the interpreted JSON object.
+     */
+    private HashMap<String, Object> interpretJSONObject(JSONObject jsonObject) {
+        HashMap<String, Object> jsonObjectTableComponent = new HashMap<String, Object>();
+
+        for (Iterator keyIterator = jsonObject.keySet().iterator(); 
+                keyIterator.hasNext();) {
+            String key = (String) keyIterator.next();
+            if (jsonObject.get(key) instanceof JSONObject) {
+                jsonObjectTableComponent.put(key, interpretJSONObject((JSONObject) jsonObject.get(key)));
+            } else if (jsonObject.get(key) instanceof JSONArray) {
+                jsonObjectTableComponent.put(key, interpretJSONArray((JSONArray) jsonObject.get(key)));
+            } else {
+                // If the data wasn't of type JSONObject or JSONArray, let's interpret
+                // it in the following branching statements
+                if (jsonObject.get(key) instanceof Boolean) { 
+                    jsonObjectTableComponent.put(key, (boolean) jsonObject.get(key));
+                } else if (jsonObject.get(key) instanceof Integer) {
+                    jsonObjectTableComponent.put(key, (int) jsonObject.get(key));
+                } else if (jsonObject.get(key) instanceof Double) {
+                    jsonObjectTableComponent.put(key, (double) jsonObject.get(key));
+                } else if (jsonObject.get(key) instanceof String) {
+                    jsonObjectTableComponent.put(key, (String) jsonObject.get(key));
+                } else {
+                    // If we couldn't figure out the type, we will just turn the object into
+                    // a string.
+                    jsonObjectTableComponent.put(key, jsonObject.get(key).toString());
+                }
+            }
+        }
+
+        return jsonObjectTableComponent;
+    }
+
+    /**
+     * A recursive helper method that properly constructs HashMaps to repersent JSON Arrays.
+     * 
+     * @param jsonArray The JSON object to interpret.
+     *
+     * @return A list representing the interpreted JSON array.
+     */
+    private List<Object> interpretJSONArray(JSONArray jsonArray) {
+        List<Object> jsonArrayTableComponent = new ArrayList<Object>();
+
+        for (Iterator jsonArrayIterator = jsonArray.iterator(); jsonArrayIterator.hasNext();) {
+            Object nextObject = jsonArrayIterator.next();
+
+            if (nextObject instanceof JSONObject) {
+                jsonArrayTableComponent.add(interpretJSONObject((JSONObject) nextObject));
+            } else if (nextObject instanceof JSONArray) {
+                jsonArrayTableComponent.add(interpretJSONArray((JSONArray) nextObject));
+            } else {
+                // If the data wasn't of type JSONObject or JSONArray, let's interpret
+                // it in the following branching statements
+                if (nextObject instanceof Boolean) { 
+                    jsonArrayTableComponent.add((boolean) nextObject);
+                } else if (nextObject instanceof Integer) {
+                    jsonArrayTableComponent.add((int) nextObject);
+                } else if (nextObject instanceof Double) {
+                    jsonArrayTableComponent.add((double) nextObject);
+                } else if (nextObject instanceof String) {
+                    jsonArrayTableComponent.add((String) nextObject);
+                } else {
+                    // If we couldn't figure out the type, we will just turn the object into
+                    // a string.
+                    jsonArrayTableComponent.add(nextObject.toString());
+                }
+            }
+        }
+
+        return jsonArrayTableComponent;
     }
 
     /**
@@ -210,10 +268,10 @@ public class MatchaDbTable {
         MatchaDbCommandResult metadata = new MatchaDbCommandResult();
 
         metadataTitles = new String[]{"Upload Time", "Last Update Time",
-                                      "Filled", "Corrupted", "Tables"};
+                                      "Filled", "Corrupted", "Table Name"};
         metadataObjects = new Object[]{uploadTimeInMillis, 
                                        lastUpdateTimeInMillis, databaseFilled,
-                                       databaseCorrupted, tables};
+                                       databaseCorrupted, databaseTableName};
 
 
         for (int i = 0; i < metadataTitles.length; i++) {
@@ -232,6 +290,6 @@ public class MatchaDbTable {
      * @return The size of the table in Bytes;     
      */
     public long getTableSizeInBytes() {
-        return 0L;//MatchaDbInstrumentationTool.getObjectSize(this.table);
+        return 0L;
     }
 }
