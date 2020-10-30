@@ -13,10 +13,6 @@ public class MatchaDbGenerateData {
      * Generates the expected table to be created by the MatchaDbTable when 
      * the TestFileClothesWebsiteAPI.json file is given.
      *
-     * In this test:
-     *   b - 2  // Branching Factor
-     *   m - 2  // Number of Children per Node
-     *
      * @return The expected generated table from the TestFileClothesWebsiteAPI.json
      *         file.
      */

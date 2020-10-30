@@ -290,6 +290,6 @@ public class MatchaDbTable {
      * @return The size of the table in Bytes;     
      */
     public long getTableSizeInBytes() {
-        return 0L;//MatchaDbInstrumentationTool.getObjectSize(this.table);
+        return 0L;
     }
 }
