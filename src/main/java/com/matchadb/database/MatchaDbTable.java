@@ -69,6 +69,7 @@ public class MatchaDbTable {
      */
     public void loadData(FileReader file, String databaseTableName) {
         JSONParser jsonParser = new JSONParser();
+        this.databaseTableName = databaseTableName;
 
         table = new ArrayList<Object>();
 
@@ -82,8 +83,6 @@ public class MatchaDbTable {
 
             this.uploadTimeInMillis = System.currentTimeMillis();
             this.lastUpdateTimeInMillis = System.currentTimeMillis();
-
-            System.out.println(this.table);
 
             this.databaseFilled = true;
         } catch (IOException ioe) {
