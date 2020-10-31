@@ -32,6 +32,7 @@ public class MatchaDbTableTest {
     public void testLoadDataTestFileClothesWebsiteAPI() {
         List<Object> expectedTable = MatchaDbGenerateData.generateClothesWebsiteAPITable();
         String tableName = "TestFileClothesWebsiteAPI";
+        String emptyPath = "";
 
         // Location of the test file used
         String filename = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";

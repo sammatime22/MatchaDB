@@ -205,11 +205,11 @@ public class MatchaDbTable {
      * Converts the object back to a JSON file and saves it on the system. 
      */
     public void saveData() {
-        JSONObject tableInJSONObjectForm = transformHashMapToJSONObject(this.table);
+        JSONArray tableInJSONArrayForm = gatherJSONArrayFromTable(this.table);
 
         // Still need to determine the right path.
         try (FileWriter fileWriter = new FileWriter(getSaveDataFilename())) {
-            fileWriter.write(tableInJSONObjectForm.toString());
+            fileWriter.write(tableInJSONArrayForm.toString());
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
@@ -226,22 +226,17 @@ public class MatchaDbTable {
     }
 
     /**
-     * This method is a helper method that is used to revert the HashMap back into a 
-     * JSONObject object. This method acts recursively.
+     * This method is a helper method that is used to revert the current table
+     * into a JSON Array, particularly to save the database back to a json file.
      *
-     * @param hashmap The HashMap object to be transformed.
+     * @param listObject The table to be transformed into a JSON Object.
      *
      * @return A JSONObject object, representing the HashMap in object form.
      */
-    private JSONObject transformHashMapToJSONObject(HashMap<String, Object> hashmap) {
-        JSONObject jsonObject = new JSONObject();
+    private JSONArray gatherJSONArrayFromTable(List<Object> tableObject) {
+        JSONArray jsonArray = new JSONArray();
         
-        // For each string key and object pair
-            // Assign each string to an object
-                // See if the object is a HashMap or value
-                // If it's a value, we can simply assign
-                // If not, call this method on it
-        return jsonObject;
+        return jsonArray;
     }
 
     /**
