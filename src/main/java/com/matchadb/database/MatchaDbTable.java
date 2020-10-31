@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.json.simple.JSONArray;
@@ -235,8 +236,46 @@ public class MatchaDbTable {
      */
     private JSONArray gatherJSONArrayFromTable(List<Object> tableObject) {
         JSONArray jsonArray = new JSONArray();
+
+        for (Object object : tableObject) {
+            if (object instanceof List) {
+                jsonArray.add(gatherJSONArrayFromTable((List) object));
+            } else if (object instanceof Map) {
+                jsonArray.add(gatherJSONObjectFromTable((HashMap) object));
+            } else {
+                // Here we will put anything that would be generic data
+                jsonArray.add(object);
+            }
+        }
         
         return jsonArray;
+    }
+
+    /**
+     * This method is a helper method that is used to revert the current table
+     * into a JSON Array, particularly to save the database back to a json file.
+     *
+     * @param listObject The table to be transformed into a JSON Object.
+     *
+     * @return A JSONObject object, representing the HashMap in object form.
+     */
+    private JSONObject gatherJSONObjectFromTable(HashMap tableObject) {
+        JSONObject jsonObject = new JSONObject();
+
+        for (Iterator objectKeyIterator = tableObject.keySet().iterator(); objectKeyIterator.hasNext();) {
+            String objectKey = (String) objectKeyIterator.next();
+            Object object = tableObject.get(objectKey);
+            if (object instanceof List) {
+                jsonObject.put(objectKey, gatherJSONArrayFromTable((ArrayList<Object>) object));
+            } else if (object instanceof Map) {
+                jsonObject.put(objectKey, gatherJSONObjectFromTable((HashMap<String, Object>) object));
+            } else {
+                // Here we will put anything that would be generic data
+                jsonObject.put(objectKey, object);
+            }
+        }
+        
+        return jsonObject;
     }
 
     /**

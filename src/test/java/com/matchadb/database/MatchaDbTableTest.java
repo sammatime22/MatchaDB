@@ -56,8 +56,8 @@ public class MatchaDbTableTest {
             HashMap<String, Object> metadataContents = metadata.getContents();
 
             // Check on Timestamps
-            Assert.assertTrue(timeBeforeDBLoadAndLastUpdate < (long) metadataContents.get("Upload Time"));
-            Assert.assertTrue(timeBeforeDBLoadAndLastUpdate < (long) metadataContents.get("Last Update Time"));
+            Assert.assertTrue(timeBeforeDBLoadAndLastUpdate <= (long) metadataContents.get("Upload Time"));
+            Assert.assertTrue(timeBeforeDBLoadAndLastUpdate <= (long) metadataContents.get("Last Update Time"));
 
             // Check Flags
             Assert.assertTrue((boolean) metadataContents.get("Filled"));
