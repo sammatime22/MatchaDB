@@ -89,8 +89,7 @@ public class MatchaDbTable {
             Object data = jsonParser.parse(file);
 
             // Insert the data into the table
-            JSONObject tableData = (JSONObject) data;
-            this.table = tableBuilder(tableData);
+            this.table = tableBuilder(data);
 
             this.uploadTimeInMillis = System.currentTimeMillis();
             this.lastUpdateTimeInMillis = System.currentTimeMillis();

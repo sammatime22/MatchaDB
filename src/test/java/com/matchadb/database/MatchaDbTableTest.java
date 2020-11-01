@@ -82,6 +82,7 @@ public class MatchaDbTableTest {
         // Path to be used in the test.
         // We'll check to see if this path actually exists and is usable before starting.
         String testDirectory = "testdirectory/"; 
+        int testFileLocation = 0;
 
         // Clean/Create the test directory
         developTestDirectory(testDirectory);
@@ -100,6 +101,28 @@ public class MatchaDbTableTest {
 
             // Save the data and check that the data within the file is as expected.
             matchaDbTable.saveData();
+
+            // With the exception of tabs, spaces, or returns, check that each character in the file matches
+            File testFile = File.listFiles(testDirectory)[testFileLocation];
+            try (FileReader testFileReader = new FileReader(testFile); FileReader templateFileReader = new FileReader(
+                new File("src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json"))) {
+                while (true) {
+                    int templateCharacterValue = ;
+                    if (we get a vaue of null or something like that) {
+                        break; // Done comparing the two files!
+                    }
+                    else if (the character can be accepted as an okay character to evaluate) {
+
+                        if (the character does not match the other character we would look at) {
+                            failed = true;
+                            break;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                failed = true;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             failed = true;
