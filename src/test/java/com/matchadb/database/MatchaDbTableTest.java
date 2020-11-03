@@ -5,6 +5,7 @@ import com.matchadb.generate.MatchaDbGenerateData;
 import com.matchadb.models.MatchaDbCommandResult;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
 
@@ -83,6 +84,8 @@ public class MatchaDbTableTest {
         // We'll check to see if this path actually exists and is usable before starting.
         String testDirectory = "testdirectory/"; 
         int testFileLocation = 0;
+        int endOfFile = -1;
+        FilenameFilter directory = new FilenameFilter(testDirectory, null);
 
         // Clean/Create the test directory
         developTestDirectory(testDirectory);
@@ -103,20 +106,21 @@ public class MatchaDbTableTest {
             matchaDbTable.saveData();
 
             // With the exception of tabs, spaces, or returns, check that each character in the file matches
-            File testFile = File.listFiles(testDirectory)[testFileLocation];
+            File testFile = File.listFiles(directory)[testFileLocation];
             try (FileReader testFileReader = new FileReader(testFile); FileReader templateFileReader = new FileReader(
                 new File("src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json"))) {
                 while (true) {
-                    int templateCharacterValue = ;
-                    if (we get a vaue of null or something like that) {
+                    int templateCharacterValue = templateFileReader.read();
+                    int generatedFileCharacterValue = testFileReader.read();
+                    if (templateCharacterValue == endOfFile && generatedFileCharacterValue == endOfFile) {
                         break; // Done comparing the two files!
                     }
-                    else if (the character can be accepted as an okay character to evaluate) {
-
-                        if (the character does not match the other character we would look at) {
-                            failed = true;
-                            break;
-                        }
+                    if ((templateCharacterValue != endOfFile && generatedFileCharacterValue == endOfFile) ||
+                        (templateCharacterValue == endOfFile && generatedFileCharacterValue != endOfFile) ||
+                        (templateCharacterValue != generatedFileCharacterValue)) {
+                        // Either one of the files is larger than the other, or the characters do not match.
+                        failed = true;
+                        break;
                     }
                 }
             } catch (Exception e) {
