@@ -107,11 +107,20 @@ public class MatchaDbTableTest {
 
             // With the exception of tabs, spaces, or returns, check that each character in the file matches
             File testFile = new File(testDirectoryFileObject.list()[testFileLocation]);
-            try (FileReader testFileReader = new FileReader(testFile); FileReader templateFileReader = new FileReader(
+            try (FileReader testFileReader = new FileReader(testDirectory + testFile); FileReader templateFileReader = new FileReader(
                 new File("src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json"))) {
+                int place = 0;
                 while (true) {
                     int templateCharacterValue = templateFileReader.read();
+                    // Move until we are at a character we want to compare
+                    while (templateCharacterValue == 34) {
+                        templateCharacterValue = templateFileReader.read();
+                    }
                     int generatedFileCharacterValue = testFileReader.read();
+                    // Move until we are at a character we want to compare
+                    while (generatedFileCharacterValue == 34) {
+                        generatedFileCharacterValue = testFileReader.read();
+                    }
                     if (templateCharacterValue == endOfFile && generatedFileCharacterValue == endOfFile) {
                         break; // Done comparing the two files!
                     }
@@ -119,16 +128,20 @@ public class MatchaDbTableTest {
                         (templateCharacterValue == endOfFile && generatedFileCharacterValue != endOfFile) ||
                         (templateCharacterValue != generatedFileCharacterValue)) {
                         // Either one of the files is larger than the other, or the characters do not match.
+                        System.out.println("Failed in comparison for " + (char) templateCharacterValue + " and " + (char) generatedFileCharacterValue + " @" + place);
                         failed = true;
                         break;
                     }
+                    place++;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                System.out.println("Failed in Filereader trycatch");
                 failed = true;
             }
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Failed in load data trycatch");
             failed = true;
         }
         // Remove the test directory
