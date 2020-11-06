@@ -113,12 +113,12 @@ public class MatchaDbTableTest {
                 while (true) {
                     int templateCharacterValue = templateFileReader.read();
                     // Move until we are at a character we want to compare
-                    while (templateCharacterValue == 34) {
+                    while (templateCharacterValue == 10 || templateCharacterValue == 32) {
                         templateCharacterValue = templateFileReader.read();
                     }
                     int generatedFileCharacterValue = testFileReader.read();
                     // Move until we are at a character we want to compare
-                    while (generatedFileCharacterValue == 34) {
+                    while (generatedFileCharacterValue == 10 || generatedFileCharacterValue == 32) {
                         generatedFileCharacterValue = testFileReader.read();
                     }
                     if (templateCharacterValue == endOfFile && generatedFileCharacterValue == endOfFile) {
@@ -128,7 +128,7 @@ public class MatchaDbTableTest {
                         (templateCharacterValue == endOfFile && generatedFileCharacterValue != endOfFile) ||
                         (templateCharacterValue != generatedFileCharacterValue)) {
                         // Either one of the files is larger than the other, or the characters do not match.
-                        System.out.println("Failed in comparison for " + (char) templateCharacterValue + " and " + (char) generatedFileCharacterValue + " @" + place);
+                        System.out.println("Failed in comparison for " + templateCharacterValue + " and " + generatedFileCharacterValue + " @" + place);
                         failed = true;
                         break;
                     }
