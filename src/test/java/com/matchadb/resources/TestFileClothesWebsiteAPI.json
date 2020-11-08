@@ -11,7 +11,7 @@
             "Item Brand" : "ghjkl",
             "Item Description" : "Get ready for Earth Day"
         }, {
-            "Item Name" : "T-Shirt w/Artwork",
+            "Item Name" : "T-Shirt with Artwork",
             "Item Price" : 15.99,
             "Item Brand" : "zxcvb",
             "Item Description" : "Show off your favorite painting"
@@ -48,7 +48,7 @@
     "Shoes" : [
         {
             "Item Name" : "Dress Shoes",
-            "Item Price" : 89.70,
+            "Item Price" : 89.79,
             "Item Brand" : "ghjkl",
             "Item Description" : "To go with those work pants"
         }, {
@@ -87,7 +87,7 @@
             "Item Description" : "Really just a Baseball Hat"
         }, {
             "Item Name" : "Beanie",
-            "Item Price" : 19.00,
+            "Item Price" : 19.01,
             "Item Brand" : "zxcvb",
             "Item Description" : "So warm..."
         }
