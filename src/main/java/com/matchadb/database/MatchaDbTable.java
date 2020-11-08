@@ -8,6 +8,7 @@ import com.matchadb.models.MatchaDbCommandResult;
 import com.matchadb.models.MatchaQuery;
 
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import java.lang.instrument.Instrumentation;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.json.simple.JSONArray;
@@ -30,19 +32,25 @@ import org.springframework.stereotype.Service;
 @Service
 public class MatchaDbTable {
 
+    // The name of the database.
+    private String databaseName;
+
+    // The path to where data is to be dropped off.
+    private String dropoffPath;
+
     // The actual table which is to have operations run upon it.
     private List<Object> table;
 
     // A Unix timestamp of the time the data was uploaded into the db.
     private long uploadTimeInMillis = 0l;
 
-    // The time of the last update to the database in Unix Timestamp
+    // The time of the last update to the database in Unix Timestamp.
     private long lastUpdateTimeInMillis = 0l;
 
-    // A boolean describing if the database was filled (ie if data was uploaded)
+    // A boolean describing if the database was filled (ie if data was uploaded).
     private boolean databaseFilled = false;
 
-    // A boolean describing if the database is corrupted somehow
+    // A boolean describing if the database is corrupted somehow.
     private boolean databaseCorrupted = false;
 
     // The databases table name.
@@ -54,11 +62,14 @@ public class MatchaDbTable {
     // An array of objects associated with the relevant metadata.
     private Object[] metadataObjects;
 
+    // The extension to a JSON file.
+    private final String JSON_EXTENSION = ".json";
+
     /**
      * Constructor for the DB Table.
      */
-    public MatchaDbTable () {
-
+    public MatchaDbTable (String dropoffPath) {
+        this.dropoffPath = dropoffPath;
     }
 
     /**
@@ -78,8 +89,7 @@ public class MatchaDbTable {
             Object data = jsonParser.parse(file);
 
             // Insert the data into the table
-            JSONObject tableData = (JSONObject) data;
-            this.table = tableBuilder(tableData);
+            this.table = tableBuilder(data);
 
             this.uploadTimeInMillis = System.currentTimeMillis();
             this.lastUpdateTimeInMillis = System.currentTimeMillis();
@@ -192,11 +202,79 @@ public class MatchaDbTable {
     }
 
     /**
-     * Converts the object back to a JSON file and saves it on the system. the 
-     * file gets saved onto the filesystem.
+     * Converts the object back to a JSON file and saves it on the system. 
      */
     public void saveData() {
+        JSONArray tableInJSONArrayForm = gatherJSONArrayFromTable(this.table);
 
+        // Still need to determine the right path.
+        try (FileWriter fileWriter = new FileWriter(getSaveDataFilename())) {
+            fileWriter.write(tableInJSONArrayForm.toString());
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+    }
+
+    /**
+     * Returns a filename that can be used by the saveData method.
+     *
+     * @return A filename that can be used by the saveData method.
+     */
+    private String getSaveDataFilename() {
+        return this.dropoffPath + String.valueOf(System.currentTimeMillis()) 
+            + this.databaseName + JSON_EXTENSION;
+    }
+
+    /**
+     * This method is a helper method that is used to revert the current table
+     * into a JSON Array, particularly to save the database back to a json file.
+     *
+     * @param listObject The table to be transformed into a JSON Object.
+     *
+     * @return A JSONObject object, representing the HashMap in object form.
+     */
+    private JSONArray gatherJSONArrayFromTable(List<Object> tableObject) {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Object object : tableObject) {
+            if (object instanceof List) {
+                jsonArray.add(gatherJSONArrayFromTable((List) object));
+            } else if (object instanceof Map) {
+                jsonArray.add(gatherJSONObjectFromTable((HashMap) object));
+            } else {
+                // Here we will put anything that would be generic data
+                jsonArray.add(object);
+            }
+        }
+        
+        return jsonArray;
+    }
+
+    /**
+     * This method is a helper method that is used to revert the current table
+     * into a JSON Array, particularly to save the database back to a json file.
+     *
+     * @param listObject The table to be transformed into a JSON Object.
+     *
+     * @return A JSONObject object, representing the HashMap in object form.
+     */
+    private JSONObject gatherJSONObjectFromTable(HashMap tableObject) {
+        JSONObject jsonObject = new JSONObject();
+
+        for (Iterator objectKeyIterator = tableObject.keySet().iterator(); objectKeyIterator.hasNext();) {
+            String objectKey = (String) objectKeyIterator.next();
+            Object object = tableObject.get(objectKey);
+            if (object instanceof List) {
+                jsonObject.put(objectKey, gatherJSONArrayFromTable((ArrayList<Object>) object));
+            } else if (object instanceof Map) {
+                jsonObject.put(objectKey, gatherJSONObjectFromTable((HashMap<String, Object>) object));
+            } else {
+                // Here we will put anything that would be generic data
+                jsonObject.put(objectKey, object);
+            }
+        }
+        
+        return jsonObject;
     }
 
     /**

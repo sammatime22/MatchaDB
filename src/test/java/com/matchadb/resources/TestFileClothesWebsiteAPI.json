@@ -1,94 +1,95 @@
-{
+[{
     "Shirts" : [
         {
             "Item Name" : "Button Down in Black",
+            "Item Price" : 20.99,
             "Item Brand" : "ghjkl",
-            "Item Description" : "You're new favorite Black Button Down!",
-            "Item Price" : 20.99
+            "Item Description" : "You're new favorite Black Button Down!"
         }, {
             "Item Name" : "Nice Green T-Shirt",
+            "Item Price" : 15.99,
             "Item Brand" : "ghjkl",
-            "Item Description" : "Get ready for Earth Day",
-            "Item Price" : 15.99
+            "Item Description" : "Get ready for Earth Day"
         }, {
-            "Item Name" : "T-Shirt w/Artwork",
+            "Item Name" : "T-Shirt with Artwork",
+            "Item Price" : 15.99,
             "Item Brand" : "zxcvb",
-            "Item Description" : "Show off your favorite painting",
-            "Item Price" : 15.99
+            "Item Description" : "Show off your favorite painting"
         }, {
             "Item Name" : "Sleeveless T",
+            "Item Price" : 9.95,
             "Item Brand" : "zxcvb",
-            "Item Description" : "Your arms can move so much more!",
-            "Item Price" : 9.95
+            "Item Description" : "Your arms can move so much more!"
         }
     ], 
     "Pants" : [
         {
             "Item Name" : "Work Pants",
+            "Item Price" : 51.76,
             "Item Brand" : "ghjkl",
-            "Item Description" : "Going to a meeting today?",
-            "Item Price" : 51.76
+            "Item Description" : "Going to a meeting today?"
         }, {
             "Item Name" : "Cool Jeans",
+            "Item Price" : 29.99,
             "Item Brand" : "ghjkl",
-            "Item Description" : "It's almost time for Summer!",
-            "Item Price" : 29.99
+            "Item Description" : "It's almost time for Summer!"
         }, {
             "Item Name" : "Tan Slim Pants",
+            "Item Price" : 29.99,
             "Item Brand" : "zxcvb",
-            "Item Description" : "For that look",
-            "Item Price" : 29.99
+            "Item Description" : "For that look"
         }, {
             "Item Name" : "More Work Pants",
+            "Item Price" : 59.99,
             "Item Brand" : "zxcvb",
-            "Item Description" : "Another meeting?",
-            "Item Price" : 59.99
+            "Item Description" : "Another meeting?"
         }
     ], 
     "Shoes" : [
         {
             "Item Name" : "Dress Shoes",
+            "Item Price" : 89.79,
             "Item Brand" : "ghjkl",
-            "Item Description" : "To go with those work pants",
-            "Item Price" : 89.70
+            "Item Description" : "To go with those work pants"
         }, {
             "Item Name" : "High Tops",
+            "Item Price" : 39.99,
             "Item Brand" : "ghjkl",
-            "Item Description" : "Going back to high school?",
-            "Item Price" : 39.99
+            "Item Description" : "Going back to high school?"
         }, {
             "Item Name" : "Skate Shoes",
+            "Item Price" : 39.99,
             "Item Brand" : "zxcvb",
-            "Item Description" : "Going back to high school?",
-            "Item Price" : 39.99
+            "Item Description" : "Going back to high school?"
         }, {
             "Item Name" : "Light Up Shoes",
+            "Item Price" : 1000.99,
             "Item Brand" : "zxcvb",
-            "Item Description" : "Show them off when you walk!",
-            "Item Price" : 1000.99
+            "Item Description" : "Show them off when you walk!"
+
         }
     ],
     "Hats" : [
         {
             "Item Name" : "Top Hat",
+            "Item Price" : 9.99,
             "Item Brand" : "ghjkl",
-            "Item Description" : "Fancy right?",
-            "Item Price" : 9.99
+            "Item Description" : "Fancy right?"
         }, {
             "Item Name" : "Baseball Hat",
+            "Item Price" : 18.99,
             "Item Brand" : "ghjkl",
-            "Item Description" : "Show off your favorite team!",
-            "Item Price" : 18.99
+            "Item Description" : "Show off your favorite team!"
         }, {
             "Item Name" : "Dad Hat",
+            "Item Price" : 19.87,
             "Item Brand" : "zxcvb",
-            "Item Description" : "Really just a Baseball Hat",
-            "Item Price" : 19.87
+            "Item Description" : "Really just a Baseball Hat"
         }, {
             "Item Name" : "Beanie",
+            "Item Price" : 19.01,
             "Item Brand" : "zxcvb",
-            "Item Description" : "So warm...",
-            "Item Price" : 19.00
+            "Item Description" : "So warm..."
         }
     ]
-}
+}]
