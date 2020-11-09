@@ -201,22 +201,6 @@ public class MatchaDbTableTest {
     }
 
     /**
-     * Tests that, given a command, the DB can run said command.
-     */
-    @Test
-    public void testRunCommand() {
-
-    }
-
-    /**
-     * Tests the self searching mechanism.
-     */
-    @Test
-    public void testSearchForData() {
-
-    }
-
-    /**
      * Tests the system to get data from a specific portion of 
      * memory.
      */

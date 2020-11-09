@@ -278,28 +278,6 @@ public class MatchaDbTable {
     }
 
     /**
-     * Runs the command as prompted by the Request Service.
-     *
-     * @param requestObject The request made from the Request Service
-     *
-     * @return A CommandResult object that contains details on the execution.
-     */
-    public MatchaDbCommandResult runCommand(MatchaDbRequestObject requestObject) {
-        return null;
-    }
-
-    /**
-     * Places the DB Pointer to positions that accurately reflect
-     * the data to be manipulated, or the appropriate place for data
-     * to be placed.
-     *
-     * @param query The search conditions
-     */
-    public void searchForData(MatchaQuery query) {
-
-    }
-
-    /**
      * Returns data depending on where the pointer is.
      *
      * @return The data encapsulated in a MatchaData object.
