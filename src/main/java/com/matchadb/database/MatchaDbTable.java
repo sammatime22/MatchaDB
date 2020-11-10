@@ -282,8 +282,23 @@ public class MatchaDbTable {
      *
      * @return The data encapsulated in a MatchaData object.
      */
-    public MatchaData getData() {
-        return null;
+    public Object getData(MatchaQuery query) {
+        Object selection = this.table; // Not sure if we really want to set this like this
+
+        // First, perform the dive portion of our query
+        for (String diveSelection : query.diveSelections()) {
+            // To be performed recursively
+            // selection = selection.get(diveSelection); 
+        }
+        
+        // Next, perform the subset query
+        for (Object value : selection.keySet()) {
+            if (canExist(value, query.subsetQuery())) {
+                // do action
+            }
+        }
+
+        return selection;
     }
 
     /**
@@ -310,6 +325,23 @@ public class MatchaDbTable {
      * @return A boolean describing a successful insert.
      */
     public boolean deleteData() {
+        return false;
+    }
+
+    /**
+     * Allows for the subset of a query to take action on a potential candidate
+     * for action, whether this candidate matches some regex pattern, has a value
+     * within some pattern, or likewise.
+     *
+     * @param value The value or Object to be identified or have queries enacted 
+     *        upon it.
+     * @param querySubset The query subset that was passed along into the system.
+     */
+    public boolean canExist(Object value, String[] querySubset) {
+        // We require the following helper methods
+            // Regex check
+            // Size check
+            // Numerical check
         return false;
     }
 

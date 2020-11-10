@@ -206,7 +206,8 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testGetData() {
-
+        // We want to set up the MatchaQuery object for the following query
+        // Select * from * where Item Name contains 's' and Item Price < 30.00
     }
 
     /**
