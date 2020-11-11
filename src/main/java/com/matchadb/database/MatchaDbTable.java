@@ -286,14 +286,14 @@ public class MatchaDbTable {
         Object selection = this.table; // Not sure if we really want to set this like this
 
         // First, perform the dive portion of our query
-        for (String diveSelection : query.diveSelections()) {
+        for (String diveSelection : query.getDiveSections()) {
             // To be performed recursively
             // selection = selection.get(diveSelection); 
         }
         
         // Next, perform the subset query
-        for (Object value : selection.keySet()) {
-            if (canExist(value, query.subsetQuery())) {
+        for (Object value : (HashMap<String, Object>) selection.keySet()) {
+            if (canExist(value, query.getSubsetQuery())) {
                 // do action
             }
         }

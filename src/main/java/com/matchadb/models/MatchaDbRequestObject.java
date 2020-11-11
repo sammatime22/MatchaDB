@@ -1,6 +1,6 @@
 package com.matchadb.models;
 
-import com.matchadb.MatchaDbRequestType;
+import com.matchadb.enums.MatchaDbRequestType;
 
 /**
  * The Request Object of the MatchaDb system, which is the actual "request" to
