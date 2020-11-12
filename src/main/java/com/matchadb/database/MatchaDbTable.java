@@ -290,9 +290,9 @@ public class MatchaDbTable {
             // To be performed recursively
             // selection = selection.get(diveSelection); 
         }
-        
+
         // Next, perform the subset query
-        for (Object value : (HashMap<String, Object>) selection.keySet()) {
+        for (Object value : (HashMap<String, Object>) selection.values()) {
             if (canExist(value, query.getSubsetQuery())) {
                 // do action
             }

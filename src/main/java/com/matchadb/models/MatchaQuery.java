@@ -5,9 +5,9 @@ package com.matchadb.models;
  */
 public class MatchaQuery {
 
-    private String[] diveSections;
+    private String[] diveSections; // This should be named "location" or something
 
-    private String[] subsetQuery;
+    private String[] subsetQuery; // and this could be "query"
 
     public MatchaQuery(String[] diveSections, String[] subsetQuery) {
         this.diveSections = diveSections;
