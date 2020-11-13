@@ -282,23 +282,31 @@ public class MatchaDbTable {
      *
      * @return The data encapsulated in a MatchaData object.
      */
-    public Object getData(MatchaQuery query) {
-        Object selection = this.table; // Not sure if we really want to set this like this
+    public List<Object> getData(MatchaQuery query) {
+        HashMap<String, Object> selection = this.table; // Not sure if we really want to set this like this
 
         // First, perform the dive portion of our query
         for (String diveSelection : query.getDiveSections()) {
             // To be performed recursively
-            // selection = selection.get(diveSelection); 
+            if (selection.containsKey(diveSelection)) {
+                selection = (HashMap<String, Object>) selection.get(diveSelection);
+            } else {
+                // If we couldn't move further down the table, our query is faulty and 
+                // we should return an empty list to describe that.
+                return new ArrayList<Object>();
+            }
         }
 
+        List<Object> valuesToReturn = new ArrayList<Object>();
+
         // Next, perform the subset query
-        for (Object value : (HashMap<String, Object>) selection.values()) {
+        for (Object value : selection.values()) {
             if (canExist(value, query.getSubsetQuery())) {
                 // do action
             }
         }
 
-        return selection;
+        return valuesToReturn;
     }
 
     /**
