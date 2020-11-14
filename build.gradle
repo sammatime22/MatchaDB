@@ -40,5 +40,6 @@ task buildInstrumentationJar2(type: Exec) {
 test {
 	// TODO: Determine error with improper VM instantiation.
 	// jvmArgs "-javaagent:resources/MatchaDbInstrumentationTool.jar"
+	jvmArgs "--enable-preview"
 	useJUnitPlatform()
 }

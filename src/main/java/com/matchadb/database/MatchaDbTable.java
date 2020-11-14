@@ -283,13 +283,14 @@ public class MatchaDbTable {
      * @return The data encapsulated in a MatchaData object.
      */
     public List<Object> getData(MatchaQuery query) {
-        HashMap<String, Object> selection = this.table; // Not sure if we really want to set this like this
+        Object selection = this.table; // Not sure if we really want to set this like this
 
         // First, perform the dive portion of our query
         for (String diveSelection : query.getDiveSections()) {
-            // To be performed recursively
-            if (selection.containsKey(diveSelection)) {
-                selection = (HashMap<String, Object>) selection.get(diveSelection);
+            if (selection instanceof List<Object> listSelection) {
+                // Do the operations to dive down as if this were a list
+            } else if (selection instanceof HashMap<String, Object> hashmapSelection) {
+                // Do the operations to dive down as if this were a hashmap
             } else {
                 // If we couldn't move further down the table, our query is faulty and 
                 // we should return an empty list to describe that.
@@ -297,6 +298,9 @@ public class MatchaDbTable {
             }
         }
 
+
+        // The values to return should also be more generic, reflective of what
+        // we are actually seeing coming in.
         List<Object> valuesToReturn = new ArrayList<Object>();
 
         // Next, perform the subset query
