@@ -287,9 +287,9 @@ public class MatchaDbTable {
 
         // First, perform the dive portion of our query
         for (String diveSelection : query.getDiveSections()) {
-            if (selection instanceof List<Object> listSelection) {
+            if (selection instanceof List listSelection) {
                 // Do the operations to dive down as if this were a list
-            } else if (selection instanceof HashMap<String, Object> hashmapSelection) {
+            } else if (selection instanceof HashMap hashmapSelection) {
                 // Do the operations to dive down as if this were a hashmap
             } else {
                 // If we couldn't move further down the table, our query is faulty and 
@@ -304,11 +304,11 @@ public class MatchaDbTable {
         List<Object> valuesToReturn = new ArrayList<Object>();
 
         // Next, perform the subset query
-        for (Object value : selection.values()) {
-            if (canExist(value, query.getSubsetQuery())) {
-                // do action
-            }
-        }
+        // for (Object value : selection.values()) { // Need to find other means to go about this
+        //     if (canExist(value, query.getSubsetQuery())) {
+        //         // do action
+        //     }
+        // }
 
         return valuesToReturn;
     }
