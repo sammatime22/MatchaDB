@@ -282,33 +282,55 @@ public class MatchaDbTable {
      *
      * @return The data encapsulated in a MatchaData object.
      */
-    public List<Object> getData(MatchaQuery query) {
+    public Object getData(MatchaQuery query) {
         Object selection = this.table; // Not sure if we really want to set this like this
 
         // First, perform the dive portion of our query
         for (String diveSelection : query.getDiveSections()) {
             if (selection instanceof List listSelection) {
-                // Do the operations to dive down as if this were a list
+                int indexOfInterest = listSelection.indexOf(diveSelection);
+                if (indexOfInterest != -1) {
+                    selection = listSelection.get(indexOfInterest);
+                }
             } else if (selection instanceof HashMap hashmapSelection) {
-                // Do the operations to dive down as if this were a hashmap
+                if (hashmapSelection.containsKey(diveSelection)) {
+                    selection = hashmapSelection.get(diveSelection);
+                } 
             } else {
-                // If we couldn't move further down the table, our query is faulty and 
-                // we should return an empty list to describe that.
-                return new ArrayList<Object>();
+                // If we searched down too far, then we can't interpret the query. Return
+                // an empty list as a result.
+                return new ArrayList<>();
             }
         }
 
 
         // The values to return should also be more generic, reflective of what
         // we are actually seeing coming in.
-        List<Object> valuesToReturn = new ArrayList<Object>();
+        Object valuesToReturn = null;
 
         // Next, perform the subset query
-        // for (Object value : selection.values()) { // Need to find other means to go about this
-        //     if (canExist(value, query.getSubsetQuery())) {
-        //         // do action
-        //     }
-        // }
+        if (selection instanceof List finalListselection) {
+            valuesToReturn = new ArrayList<>();
+            for (Object value : finalListselection.toArray()) { 
+                if (canExist(value, query.getSubsetQuery())) {
+                    ((ArrayList) valuesToReturn).add(value);
+                }
+            }     
+        } else if (selection instanceof HashMap finalHashmapSelection) {
+            valuesToReturn = new HashMap<>();
+            for (Iterator finalHashmapSelectionIterator = finalHashmapSelection.keySet().iterator(); 
+                finalHashmapSelectionIterator.hasNext();) {
+                String key = (String) finalHashmapSelectionIterator.next();
+                Object value = finalHashmapSelection.get(key);
+                if (canExist(value, query.getSubsetQuery())) {
+                    ((HashMap) valuesToReturn).put(key, value);
+                }
+            }
+        } else {
+            if (canExist(selection, query.getSubsetQuery())) {
+                valuesToReturn = selection;
+            }
+        }   
 
         return valuesToReturn;
     }
