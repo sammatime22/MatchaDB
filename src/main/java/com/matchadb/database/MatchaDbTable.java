@@ -285,16 +285,16 @@ public class MatchaDbTable {
     public Object getData(MatchaQuery query) {
         Object selection = this.table; // Not sure if we really want to set this like this
 
-        // First, perform the dive portion of our query
-        for (String diveSelection : query.getDiveSections()) {
+        // First, perform the from portion of our query
+        for (String fromQueryPortion : query.getFromQuery()) {
             if (selection instanceof List listSelection) {
-                int indexOfInterest = listSelection.indexOf(diveSelection);
+                int indexOfInterest = listSelection.indexOf(fromQueryPortion);
                 if (indexOfInterest != -1) {
                     selection = listSelection.get(indexOfInterest);
                 }
             } else if (selection instanceof HashMap hashmapSelection) {
-                if (hashmapSelection.containsKey(diveSelection)) {
-                    selection = hashmapSelection.get(diveSelection);
+                if (hashmapSelection.containsKey(fromQueryPortion)) {
+                    selection = hashmapSelection.get(fromQueryPortion);
                 } 
             } else {
                 // If we searched down too far, then we can't interpret the query. Return
@@ -312,7 +312,7 @@ public class MatchaDbTable {
         if (selection instanceof List finalListselection) {
             valuesToReturn = new ArrayList<>();
             for (Object value : finalListselection.toArray()) { 
-                if (canExist(value, query.getSubsetQuery())) {
+                if (canExist(value, query.getSelectQuery())) {
                     ((ArrayList) valuesToReturn).add(value);
                 }
             }     
@@ -322,12 +322,12 @@ public class MatchaDbTable {
                 finalHashmapSelectionIterator.hasNext();) {
                 String key = (String) finalHashmapSelectionIterator.next();
                 Object value = finalHashmapSelection.get(key);
-                if (canExist(value, query.getSubsetQuery())) {
+                if (canExist(value, query.getSelectQuery())) {
                     ((HashMap) valuesToReturn).put(key, value);
                 }
             }
         } else {
-            if (canExist(selection, query.getSubsetQuery())) {
+            if (canExist(selection, query.getSelectQuery())) {
                 valuesToReturn = selection;
             }
         }   
@@ -363,15 +363,15 @@ public class MatchaDbTable {
     }
 
     /**
-     * Allows for the subset of a query to take action on a potential candidate
+     * Allows for the select query contents to take action on a potential candidate
      * for action, whether this candidate matches some regex pattern, has a value
      * within some pattern, or likewise.
      *
      * @param value The value or Object to be identified or have queries enacted 
      *        upon it.
-     * @param querySubset The query subset that was passed along into the system.
+     * @param selectQueryContents The select query passed into the system.
      */
-    public boolean canExist(Object value, String[] querySubset) {
+    public boolean canExist(Object value, String[] selectQueryContents) {
         // We require the following helper methods
             // Regex check
             // Size check

@@ -5,30 +5,30 @@ package com.matchadb.models;
  */
 public class MatchaQuery {
 
-    private String[] diveSections; // This should be named "location" or something
+    private String[] fromQuery;
 
-    private String[] subsetQuery; // and this could be "query"
+    private String[] selectQuery; 
 
-    public MatchaQuery(String[] diveSections, String[] subsetQuery) {
-        this.diveSections = diveSections;
-        this.subsetQuery = subsetQuery;
+    public MatchaQuery(String[] fromQuery, String[] selectQuery) {
+        this.fromQuery = fromQuery;
+        this.selectQuery = selectQuery;
     }
 
     /**
-     * Gets the dive sections of the query.
+     * Gets the "from query" of the query.
      *
-     * @return the dive sections of the query.
+     * @return the "from query" of the query.
      */
-    public String[] getDiveSections() {
-        return this.diveSections;
+    public String[] getFromQuery() {
+        return this.fromQuery;
     }
 
     /**
-     * Gets the subset query.
+     * Gets the select query.
      *
-     * @return the subset query.
+     * @return the select query.
      */
-    public String[] getSubsetQuery() {
-        return this.subsetQuery;
+    public String[] getSelectQuery() {
+        return this.selectQuery;
     }
 }
