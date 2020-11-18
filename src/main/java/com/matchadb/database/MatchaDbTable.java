@@ -372,11 +372,21 @@ public class MatchaDbTable {
      * @param selectQueryContents The select query passed into the system.
      */
     public boolean canExist(Object value, String[] selectQueryContents) {
-        // We require the following helper methods
-            // Regex check
-            // Size check
-            // Numerical check
-        return false;
+        // Run each subquery, and if all match, finish the method by returning true.
+        // Otherwise, return false promptly.
+        for (String selectQuery : selectQueryContents) {
+            String[] querySubcontents = selectQuery.split(" "); // Need less magic strings
+            if (querySubcontents[2].startsWith("'") && querySubcontents[2].endsWith("'")) { // Need less magic numbers
+                // Run a regex check on this param
+            } else if (!(querySubcontents[2].startsWith("'") || querySubcontents[2].endsWith("'"))) {
+                // Run a numerical check on the params
+            } else {
+                // For whatever the reason, the query was not written correctly
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
