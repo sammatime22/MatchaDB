@@ -65,6 +65,18 @@ public class MatchaDbTable {
     // The extension to a JSON file.
     private final String JSON_EXTENSION = ".json";
 
+    // A single quotation mark.
+    private final String SINGLE_QUOTE = "'";
+
+    // A space.
+    private final String SPACE = " ";
+
+    // The position of the key in the query subset.
+    private final int QUERY_KEY_POSITION = 0;
+
+    // The position of the value in the query subset.
+    private final int QUERY_VALUE_POSITION = 2;
+
     /**
      * Constructor for the DB Table.
      */
@@ -375,11 +387,15 @@ public class MatchaDbTable {
         // Run each subquery, and if all match, finish the method by returning true.
         // Otherwise, return false promptly.
         for (String selectQuery : selectQueryContents) {
-            String[] querySubcontents = selectQuery.split(" "); // Need less magic strings
-            if (querySubcontents[2].startsWith("'") && querySubcontents[2].endsWith("'")) { // Need less magic numbers
+            String[] querySubcontents = selectQuery.split(SPACE); 
+            if (querySubcontents[QUERY_VALUE_POSITION].startsWith(SINGLE_QUOTE) 
+                && querySubcontents[QUERY_VALUE_POSITION].endsWith(SINGLE_QUOTE)) {
                 // Run a regex check on this param
-            } else if (!(querySubcontents[2].startsWith("'") || querySubcontents[2].endsWith("'"))) {
+                // will need helper method
+            } else if (!(querySubcontents[QUERY_VALUE_POSITION].startsWith(SINGLE_QUOTE) 
+                || querySubcontents[QUERY_VALUE_POSITION].endsWith(SINGLE_QUOTE))) {
                 // Run a numerical check on the params
+                // will need helper method
             } else {
                 // For whatever the reason, the query was not written correctly
                 return false;
