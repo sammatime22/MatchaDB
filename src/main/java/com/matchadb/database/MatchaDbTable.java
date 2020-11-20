@@ -384,6 +384,8 @@ public class MatchaDbTable {
      * @param selectQueryContents The select query passed into the system.
      */
     public boolean canExist(Object value, String[] selectQueryContents) {
+        HashMap<String, Object> valueMap = new HashMap<>();
+
         // Run each subquery, and if all match, finish the method by returning true.
         // Otherwise, return false promptly.
         for (String selectQuery : selectQueryContents) {
@@ -391,11 +393,21 @@ public class MatchaDbTable {
             if (querySubcontents[QUERY_VALUE_POSITION].startsWith(SINGLE_QUOTE) 
                 && querySubcontents[QUERY_VALUE_POSITION].endsWith(SINGLE_QUOTE)) {
                 // Run a regex check on this param
-                // will need helper method
+                // will need helper method in the future, for now assume all queries are "equals to"
+                if (!querySubcontents[QUERY_VALUE_POSITION].substring(1, querySubcontents[QUERY_VALUE_POSITION].length())
+                        .equals(valueMap.get(querySubcontents[QUERY_KEY_POSITION]))) { // no magic numbers
+                    // Our regex failed
+                    return false;
+                }
             } else if (!(querySubcontents[QUERY_VALUE_POSITION].startsWith(SINGLE_QUOTE) 
                 || querySubcontents[QUERY_VALUE_POSITION].endsWith(SINGLE_QUOTE))) {
                 // Run a numerical check on the params
-                // will need helper method
+                // will need helper method in the future, for now assume all queries are "equals to"
+                if (valueMap.get(querySubcontents[QUERY_KEY_POSITION]) 
+                        != Integer.valueOf(querySubcontents[QUERY_VALUE_POSITION])) {
+                    // Our contents weren't equal
+                    return false;
+                }
             } else {
                 // For whatever the reason, the query was not written correctly
                 return false;
