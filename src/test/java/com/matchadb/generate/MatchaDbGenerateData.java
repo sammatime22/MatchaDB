@@ -166,4 +166,7 @@ public class MatchaDbGenerateData {
         return clothesObject;
     }
 
+    public List<HashMap<String,Object>> getAllObjectsForMatchaDbTableGetDataTest() {
+        return null
+    }
 }

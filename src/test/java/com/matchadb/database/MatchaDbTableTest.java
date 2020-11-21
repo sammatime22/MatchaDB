@@ -208,6 +208,16 @@ public class MatchaDbTableTest {
     public void testGetData() {
         // We want to set up the MatchaQuery object for the following query
         // Select * from * where Item Name contains 's' and Item Price < 30.00
+        List<HashMap<String, Object>> expectedObjects = 
+            MatchaDbGenerateData.getAllObjectsForMatchaDbTableGetDataTest();
+
+        List<HashMap<String, Object>> actualObjects = null;
+
+        // for object in expectedObjects
+            // for object in actualObjects
+                // If expectedObject has same name as actualObject
+                    // If the two do not have the same price
+                        // fail
     }
 
     /**

@@ -324,7 +324,7 @@ public class MatchaDbTable {
         if (selection instanceof List finalListselection) {
             valuesToReturn = new ArrayList<>();
             for (Object value : finalListselection.toArray()) { 
-                if (canExist(value, query.getSelectQuery())) {
+                if (meetsQueryRequirement(value, query.getSelectQuery())) {
                     ((ArrayList) valuesToReturn).add(value);
                 }
             }     
@@ -334,12 +334,12 @@ public class MatchaDbTable {
                 finalHashmapSelectionIterator.hasNext();) {
                 String key = (String) finalHashmapSelectionIterator.next();
                 Object value = finalHashmapSelection.get(key);
-                if (canExist(value, query.getSelectQuery())) {
+                if (meetsQueryRequirement(value, query.getSelectQuery())) {
                     ((HashMap) valuesToReturn).put(key, value);
                 }
             }
         } else {
-            if (canExist(selection, query.getSelectQuery())) {
+            if (meetsQueryRequirement(selection, query.getSelectQuery())) {
                 valuesToReturn = selection;
             }
         }   
@@ -383,7 +383,7 @@ public class MatchaDbTable {
      *        upon it.
      * @param selectQueryContents The select query passed into the system.
      */
-    public boolean canExist(Object value, String[] selectQueryContents) {
+    public boolean meetsQueryRequirement(Object value, String[] selectQueryContents) {
         HashMap<String, Object> valueMap = new HashMap<>();
 
         // Run each subquery, and if all match, finish the method by returning true.
