@@ -172,11 +172,11 @@ public class MatchaDbGenerateData {
      * returned provided the query presented to the MatchaDBTable.
      *
      * @param nameContainsChar A char that should exist in every Item Name of every
-     *                         item returned from the query.
+     *                         item returned from the query. (Case Sensitive)
      * @param brandContainsChar A char that should exist in every Brand Name of every
-     *                         item returned from the query.
+     *                         item returned from the query. (Case Sensitive)
      * @param descriptionContainsChar A char that should exist in every Description Name of 
-     *                                every item returned from the query.
+     *                                every item returned from the query. (Case Sensitive)
      * @param priceGreaterThanOrEqualTo A double that represents the price each item returned
      *                                  should be greater than or equal to.
      * @param priceLessThan A double that represents the price each item returned
@@ -199,23 +199,23 @@ public class MatchaDbGenerateData {
                 for (Object item : (List) subTable) {
                     HashMap<String, Object> itemAsMap = ((HashMap) item);
                     // check name contains
-                    if (nameContainsChar != null && ((String) itemAsMap.get("Item Name")).contains(nameContainsChar)){
+                    if (nameContainsChar != null && !((String) itemAsMap.get("Item Name")).contains(nameContainsChar)) {
                         continue;
                     }
                     // check brand contains
-                    if (brandContainsChar != null && ((String) itemAsMap.get("Item Brand")).contains(brandContainsChar)){
+                    if (brandContainsChar != null && !((String) itemAsMap.get("Item Brand")).contains(brandContainsChar)) {
                         continue;
                     }
                     // check description contains
-                    if (descriptionContainsChar != null && ((String) itemAsMap.get("Item Description")).contains(descriptionContainsChar)){
+                    if (descriptionContainsChar != null && !((String) itemAsMap.get("Item Description")).contains(descriptionContainsChar)) {
                         continue;
                     }
                     // check price greater than or equal to
-                    if (priceGreaterThanOrEqualTo != null && (((Integer) itemAsMap.get("Item Price")) >= priceGreaterThanOrEqualTo)) {
+                    if (priceGreaterThanOrEqualTo != null && !(((Double) itemAsMap.get("Item Price")) >= priceGreaterThanOrEqualTo)) {
                         continue;
                     }
                     // check price less than
-                    if (priceLessThan != null && (((Integer) itemAsMap.get("Item Price")) < priceLessThan)){
+                    if (priceLessThan != null && !(((Double) itemAsMap.get("Item Price")) < priceLessThan)) {
                         continue;
                     }
                     // If we met all query parameters, add the item

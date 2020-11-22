@@ -209,10 +209,9 @@ public class MatchaDbTableTest {
         // We want to set up the MatchaQuery object for the following query
         // Select * from * where Item Name contains 's' and Item Price < 30.00
         List<HashMap<String, Object>> expectedObjects = 
-            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams(null, null, null, null, null);
-        System.out.println(expectedObjects);
+            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams("s", null, null, null, 30.00);
 
-        List<HashMap<String, Object>> actualObjects = null;
+        List<HashMap<String, Object>> actualObjects = null; // (List<HashMap<String, Object>>) matchaDbTable.getData(null);
 
         // for object in expectedObjects
             // for object in actualObjects
@@ -227,7 +226,11 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testPostData() {
+        // Show the item is not there (get)
 
+        // Add new item
+
+        // Search (get) and see that it is where it is expected
     }
 
     /**
@@ -236,7 +239,11 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testUpdateData() {
+        // Show the item is unmodified (get)
 
+        // Update item
+
+        // Search (get) and see that it is updated
     }
 
     /**
@@ -245,16 +252,10 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testDeleteData() {
+        // Show the item is there (get)
 
-    }
+        // Delete item
 
-    /**
-     * Develops the test directory/cleans out the test directory. Will fail if 
-     * an error occurs in the development of the directory.
-     *
-     * @param pathToDirectory The path to the directory.
-     */
-    private void prepareTestDirectory(String pathToDirectory) {
-
+        // Seaarch and see that it is no longer there
     }
 }
