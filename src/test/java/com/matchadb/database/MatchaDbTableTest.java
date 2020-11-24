@@ -3,6 +3,7 @@ package com.matchadb.database;
 import com.matchadb.generate.MatchaDbGenerateData;
 
 import com.matchadb.models.MatchaDbCommandResult;
+import com.matchadb.models.MatchaQuery;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -206,18 +207,35 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testGetData() {
+        // Location of the test file used
+        String filename = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
+
         // We want to set up the MatchaQuery object for the following query
         // Select * from * where Item Name contains 's' and Item Price < 30.00
+        // And the item is from the "Shoes" table
         List<HashMap<String, Object>> expectedObjects = 
-            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams("s", null, null, null, 30.00);
+            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams("s", null, null, null, 30.00, "Shoes");
 
-        List<HashMap<String, Object>> actualObjects = null; // (List<HashMap<String, Object>>) matchaDbTable.getData(null);
+        MatchaQuery matchaQuery = new MatchaQuery(new String[]{ "Shoes" }, new String[]{ "'Item Name'", "has", "'s'" });
 
-        // for object in expectedObjects
-            // for object in actualObjects
-                // If expectedObject has same name as actualObject
-                    // If the two do not have the same price
-                        // fail
+        matchaDbTable = new MatchaDbTable("");
+
+        try {
+            // Load in the data for the DB
+            matchaDbTable.loadData(new FileReader(filename), "TestFileClothesWebsiteAPI");
+            List<HashMap<String, Object>> actualObjects = 
+                (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQuery);
+
+            // for object in expectedObjects
+                // for object in actualObjects
+                    // If expectedObject has same name as actualObject
+                        // If the two do not have the same price
+                            // fail
+        } catch (FileNotFoundException fnfe) {
+            // If a FileNotFoundException comes up, fail the test.
+            fnfe.printStackTrace();
+            Assert.fail();
+        }
     }
 
     /**
