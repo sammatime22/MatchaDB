@@ -7,6 +7,7 @@ public class MatchaQuery {
 
     private String[] fromQuery;
 
+    // Turn this into a 2D array
     private String[] selectQuery; 
 
     public MatchaQuery(String[] fromQuery, String[] selectQuery) {

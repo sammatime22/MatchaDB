@@ -216,7 +216,8 @@ public class MatchaDbTableTest {
         List<HashMap<String, Object>> expectedObjects = 
             MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams("s", null, null, null, 30.00, "Shoes");
 
-        MatchaQuery matchaQuery = new MatchaQuery(new String[]{ "Shoes" }, new String[]{ "'Item Name'", "has", "'s'" });
+        // The no space for Item Name worked, but we'll try again in a 2D Array for the query
+        MatchaQuery matchaQuery = new MatchaQuery(new String[]{ "Shoes" }, new String[]{ "'ItemName' has 's'" });
 
         matchaDbTable = new MatchaDbTable("");
 

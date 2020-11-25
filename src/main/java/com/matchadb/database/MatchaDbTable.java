@@ -389,7 +389,7 @@ public class MatchaDbTable {
         // Run each subquery, and if all match, finish the method by returning true.
         // Otherwise, return false promptly.
         for (String selectQuery : selectQueryContents) {
-            String[] querySubcontents = selectQuery.split(SPACE); 
+            String[] querySubcontents = selectQuery.split(SPACE);  // Rewrite for 2D array query
             if (querySubcontents[QUERY_VALUE_POSITION].startsWith(SINGLE_QUOTE) 
                 && querySubcontents[QUERY_VALUE_POSITION].endsWith(SINGLE_QUOTE)) {
                 // Run a regex check on this param
