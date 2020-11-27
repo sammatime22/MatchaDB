@@ -297,12 +297,24 @@ public class MatchaDbTable {
     public Object getData(MatchaQuery query) {
         Object selection = this.table; // Not sure if we really want to set this like this
 
+        System.out.println(selection);
+
         // First, perform the from portion of our query
+        // We need to find a generic means to dig deeper
         for (String fromQueryPortion : query.getFromQuery()) {
+            System.out.println(fromQueryPortion);
             if (selection instanceof List listSelection) {
                 int indexOfInterest = listSelection.indexOf(fromQueryPortion);
                 if (indexOfInterest != -1) {
                     selection = listSelection.get(indexOfInterest);
+                } else {
+                    System.out.println(selection);
+                    // Remove magic number - just saying if the tag didn't exist our single entry
+                    // is probably just an encapsulation of the list
+                    selection = listSelection.get(0).get(fromQueryPortion);
+                    System.out.println("Here " + selection);
+                    // In this case, we'll do a second round of interpolation on the object
+                    //if (selection instanceof)
                 }
             } else if (selection instanceof HashMap hashmapSelection) {
                 if (hashmapSelection.containsKey(fromQueryPortion)) {
@@ -344,6 +356,7 @@ public class MatchaDbTable {
             }
         }   
 
+        System.out.println(valuesToReturn);
         return valuesToReturn;
     }
 
