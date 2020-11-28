@@ -311,7 +311,7 @@ public class MatchaDbTable {
                     System.out.println(selection);
                     // Remove magic number - just saying if the tag didn't exist our single entry
                     // is probably just an encapsulation of the list
-                    selection = listSelection.get(0).get(fromQueryPortion);
+                    selection = ((HashMap) listSelection.get(0)).get(fromQueryPortion);
                     System.out.println("Here " + selection);
                     // In this case, we'll do a second round of interpolation on the object
                     //if (selection instanceof)
@@ -392,26 +392,43 @@ public class MatchaDbTable {
      * for action, whether this candidate matches some regex pattern, has a value
      * within some pattern, or likewise.
      *
+     * Current Query Implementations:
+     *     has - Does the object "have" the specific character in their field?
+     *     equals - Does the value in the query equal the value in the queried field?
+     * To Implement:
+     *     less than - Is the value less than what was expected?
+     *     greater than - Is the value greater than what was expected?
+     *     is - Is the object a 1-to-1 string match?
+     *
+     *
      * @param value The value or Object to be identified or have queries enacted 
      *        upon it.
      * @param selectQueryContents The select query passed into the system.
      */
     public boolean meetsQueryRequirement(Object value, String[][] selectQueryContents) {
         HashMap<String, Object> valueMap = new HashMap<>();
+        System.out.println(value);
 
         // Run each subquery, and if all match, finish the method by returning true.
         // Otherwise, return false promptly.
         for (String[] selectQuery : selectQueryContents) {
+            // has query
             if (selectQuery[QUERY_VALUE_POSITION].startsWith(SINGLE_QUOTE) 
                 && selectQuery[QUERY_VALUE_POSITION].endsWith(SINGLE_QUOTE)) {
                 // Run a regex check on this param
                 // will need helper method in the future, for now assume all queries are "equals to"
-                if (!selectQuery[QUERY_VALUE_POSITION].substring(1, selectQuery[QUERY_VALUE_POSITION].length())
-                        .equals(valueMap.get(selectQuery[QUERY_KEY_POSITION]))) { // no magic numbers
+                // This needs to be turned into a "has"
+                System.out.println("Value: " + ((HashMap) value).get(selectQuery[QUERY_KEY_POSITION]));
+                if (!((String) (((HashMap) value).get(selectQuery[QUERY_KEY_POSITION]))).contains(
+                    selectQuery[QUERY_VALUE_POSITION].substring(1, selectQuery[QUERY_VALUE_POSITION].length() - 1)
+                )) { // Get rid of magic numbers
                     // Our regex failed
+                    System.out.println("Regex Failed");
                     return false;
                 }
-            } else if (!(selectQuery[QUERY_VALUE_POSITION].startsWith(SINGLE_QUOTE) 
+            } 
+            // equals query
+            else if (!(selectQuery[QUERY_VALUE_POSITION].startsWith(SINGLE_QUOTE) 
                 || selectQuery[QUERY_VALUE_POSITION].endsWith(SINGLE_QUOTE))) {
                 // Run a numerical check on the params
                 // will need helper method in the future, for now assume all queries are "equals to"
