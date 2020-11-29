@@ -1,5 +1,6 @@
 package com.matchadb.generate;
 
+import java.lang.CharSequence;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,7 +91,7 @@ public class MatchaDbGenerateData {
         );
         HashMap<String, Object> highTops = buildClothesObject(
             "High Tops", "ghjkl", "Going back to high school?",
-            15.99
+            39.99
         );
 
         shoes.add(dressShoes);
@@ -166,4 +167,66 @@ public class MatchaDbGenerateData {
         return clothesObject;
     }
 
+    /**
+     * This method allows other test methods to gather the exact items that would be 
+     * returned provided the query presented to the MatchaDBTable.
+     *
+     * @param nameContainsChar A char that should exist in every Item Name of every
+     *                         item returned from the query. (Case Sensitive)
+     * @param brandContainsChar A char that should exist in every Brand Name of every
+     *                         item returned from the query. (Case Sensitive)
+     * @param descriptionContainsChar A char that should exist in every Description Name of 
+     *                                every item returned from the query. (Case Sensitive)
+     * @param priceGreaterThanOrEqualTo A double that represents the price each item returned
+     *                                  should be greater than or equal to.
+     * @param priceLessThan A double that represents the price each item returned
+     *                      should be less than.
+     * @param subtableKey The subtable key that the item should belong to.
+     *
+     * @return An exact replica of what Clothes Website items would be returned 
+     *         given the parameters provided by the user.
+     */
+    public static List<HashMap<String,Object>> getClothesWebsiteItemsViaQueryParams(
+        CharSequence nameContainsChar, CharSequence brandContainsChar, CharSequence descriptionContainsChar,
+        Double priceGreaterThanOrEqualTo, Double priceLessThan, String subtableKey) {
+        
+        List<HashMap<String, Object>> quaryParamViableClothesWebsiteItems = new ArrayList<>();
+        List<Object> currentTableItemsWithTableHeads = generateClothesWebsiteAPITable();
+
+        for (Object table : currentTableItemsWithTableHeads) {
+            for (Object tableKey : ((HashMap)table).keySet().toArray()) {
+                String tableKeyAsString = (String) tableKey;
+                if (tableKeyAsString.equals(subtableKey)) {
+                    Object subTable = ((HashMap)table).get(tableKeyAsString);
+                    for (Object item : (List) subTable) {
+                        HashMap<String, Object> itemAsMap = ((HashMap) item);
+                        // check name contains
+                        if (nameContainsChar != null && !((String) itemAsMap.get("Item Name")).contains(nameContainsChar)) {
+                            continue;
+                        }
+                        // check brand contains
+                        if (brandContainsChar != null && !((String) itemAsMap.get("Item Brand")).contains(brandContainsChar)) {
+                            continue;
+                        }
+                        // check description contains
+                        if (descriptionContainsChar != null && !((String) itemAsMap.get("Item Description")).contains(descriptionContainsChar)) {
+                            continue;
+                        }
+                        // check price greater than or equal to
+                        if (priceGreaterThanOrEqualTo != null && !(((Double) itemAsMap.get("Item Price")) >= priceGreaterThanOrEqualTo)) {
+                            continue;
+                        }
+                        // check price less than
+                        if (priceLessThan != null && !(((Double) itemAsMap.get("Item Price")) < priceLessThan)) {
+                            continue;
+                        }
+                        // If we met all query parameters, add the item
+                        quaryParamViableClothesWebsiteItems.add(itemAsMap);
+                    }
+                }
+            }
+        }
+        
+        return quaryParamViableClothesWebsiteItems;
+    }
 }

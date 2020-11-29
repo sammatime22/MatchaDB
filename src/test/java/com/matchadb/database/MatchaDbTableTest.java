@@ -3,6 +3,7 @@ package com.matchadb.database;
 import com.matchadb.generate.MatchaDbGenerateData;
 
 import com.matchadb.models.MatchaDbCommandResult;
+import com.matchadb.models.MatchaQuery;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -201,28 +202,57 @@ public class MatchaDbTableTest {
     }
 
     /**
-     * Tests that, given a command, the DB can run said command.
-     */
-    @Test
-    public void testRunCommand() {
-
-    }
-
-    /**
-     * Tests the self searching mechanism.
-     */
-    @Test
-    public void testSearchForData() {
-
-    }
-
-    /**
      * Tests the system to get data from a specific portion of 
      * memory.
      */
     @Test
     public void testGetData() {
+        // Location of the test file used
+        String filename = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
 
+        // We want to set up the MatchaQuery object for the following query
+        // Select * from * where Item Name contains 's' and Item Price < 30.00
+        // And the item is from the "Shoes" table
+        List<HashMap<String, Object>> expectedObjects = 
+            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams("s", null, null, null, 30.00, "Shirts");
+
+        MatchaQuery matchaQuery = new MatchaQuery(new String[]{ "Shirts" }, 
+            new String[][]{{ "Item Name", "has", "'s'" }});
+
+        matchaDbTable = new MatchaDbTable("");
+
+        try {
+            // Load in the data for the DB
+            matchaDbTable.loadData(new FileReader(filename), "TestFileClothesWebsiteAPI");
+            List<HashMap<String, Object>> actualObjects = 
+                (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQuery);
+
+            for (HashMap expectedObject : expectedObjects) {
+                boolean success = false;
+                for (HashMap actualObject : actualObjects) {
+
+                    if (expectedObject.get("Item Name").equals(actualObject.get("Item Name"))) {
+                        if (expectedObject.get("Item Brand").equals(actualObject.get("Item Brand"))
+                            && expectedObject.get("Item Price").equals(actualObject.get("Item Price"))
+                            && expectedObject.get("Item Description").equals(actualObject.get("Item Description"))) {
+                            success = true;
+                            break;
+                        } else {
+                            Assert.fail();
+                        }
+                    }
+                }
+                
+                // If the object didn't come up, we should just fail the test.
+                if (!success) {
+                    Assert.fail();
+                }
+            }
+        } catch (FileNotFoundException fnfe) {
+            // If a FileNotFoundException comes up, fail the test.
+            fnfe.printStackTrace();
+            Assert.fail();
+        }
     }
 
     /**
@@ -231,7 +261,11 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testPostData() {
+        // Show the item is not there (get)
 
+        // Add new item
+
+        // Search (get) and see that it is where it is expected
     }
 
     /**
@@ -240,7 +274,11 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testUpdateData() {
+        // Show the item is unmodified (get)
 
+        // Update item
+
+        // Search (get) and see that it is updated
     }
 
     /**
@@ -249,16 +287,10 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testDeleteData() {
+        // Show the item is there (get)
 
-    }
+        // Delete item
 
-    /**
-     * Develops the test directory/cleans out the test directory. Will fail if 
-     * an error occurs in the development of the directory.
-     *
-     * @param pathToDirectory The path to the directory.
-     */
-    private void prepareTestDirectory(String pathToDirectory) {
-
+        // Seaarch and see that it is no longer there
     }
 }

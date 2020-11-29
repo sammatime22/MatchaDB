@@ -65,6 +65,24 @@ public class MatchaDbTable {
     // The extension to a JSON file.
     private final String JSON_EXTENSION = ".json";
 
+    // A single quotation mark.
+    private final String SINGLE_QUOTE = "'";
+
+    // A space.
+    private final String SPACE = " ";
+
+    // The position of the key in the query subset.
+    private final int QUERY_KEY_POSITION = 0;
+
+    // The position of the value in the query subset.
+    private final int QUERY_VALUE_POSITION = 2;
+
+    // The value returned if the index does not exist.
+    private final int INDEX_NONEXISTANT = -1;
+
+    // The value of the index of an element within a single encapsulated list.
+    private final int SINGLE_ENCAPSULATED_LIST_INDEX = 0;
+
     /**
      * Constructor for the DB Table.
      */
@@ -278,34 +296,69 @@ public class MatchaDbTable {
     }
 
     /**
-     * Runs the command as prompted by the Request Service.
-     *
-     * @param requestObject The request made from the Request Service
-     *
-     * @return A CommandResult object that contains details on the execution.
-     */
-    public MatchaDbCommandResult runCommand(MatchaDbRequestObject requestObject) {
-        return null;
-    }
-
-    /**
-     * Places the DB Pointer to positions that accurately reflect
-     * the data to be manipulated, or the appropriate place for data
-     * to be placed.
-     *
-     * @param query The search conditions
-     */
-    public void searchForData(MatchaQuery query) {
-
-    }
-
-    /**
      * Returns data depending on where the pointer is.
+     *
+     * @param MatchaQuery The query provided to gather the data.
      *
      * @return The data encapsulated in a MatchaData object.
      */
-    public MatchaData getData() {
-        return null;
+    public Object getData(MatchaQuery query) {
+        Object selection = this.table;
+
+
+        for (String fromQueryPortion : query.getFromQuery()) {
+            if (selection instanceof List listSelection) {
+                int indexOfInterest = listSelection.indexOf(fromQueryPortion);
+                if (indexOfInterest != INDEX_NONEXISTANT) {
+                    selection = listSelection.get(indexOfInterest);
+                } else {
+                    // Remove magic number - just saying if the tag didn't exist our single entry
+                    // is probably just an encapsulation of the list
+                    selection = ((HashMap) 
+                        listSelection.get(SINGLE_ENCAPSULATED_LIST_INDEX)).get(fromQueryPortion);
+                }
+            } else if (selection instanceof HashMap hashmapSelection) {
+                if (hashmapSelection.containsKey(fromQueryPortion)) {
+                    selection = hashmapSelection.get(fromQueryPortion);
+                } 
+            } else {
+                // If we searched down too far, then we can't interpret the query. Return
+                // an empty list as a result.
+                return new ArrayList<>();
+            }
+        }
+
+
+        // We should make sure the values to return are in a generic object.
+        // We don't know what the User had asked for, and we want to be as
+        // dynamic as possible.
+        Object valuesToReturn = null;
+
+        // Next, perform the subset query
+        if (selection instanceof List finalListselection) {
+            valuesToReturn = new ArrayList<>();
+            for (Object value : finalListselection.toArray()) { 
+                if (meetsQueryRequirement(value, query.getSelectQuery())) {
+                    ((ArrayList) valuesToReturn).add(value);
+                }
+            }     
+        } else if (selection instanceof HashMap finalHashmapSelection) {
+            valuesToReturn = new HashMap<>();
+            for (Iterator finalHashmapSelectionIterator = finalHashmapSelection.keySet().iterator(); 
+                finalHashmapSelectionIterator.hasNext();) {
+                String key = (String) finalHashmapSelectionIterator.next();
+                Object value = finalHashmapSelection.get(key);
+                if (meetsQueryRequirement(value, query.getSelectQuery())) {
+                    ((HashMap) valuesToReturn).put(key, value);
+                }
+            }
+        } else {
+            if (meetsQueryRequirement(selection, query.getSelectQuery())) {
+                valuesToReturn = selection;
+            }
+        }   
+
+        return valuesToReturn;
     }
 
     /**
@@ -333,6 +386,71 @@ public class MatchaDbTable {
      */
     public boolean deleteData() {
         return false;
+    }
+
+    /**
+     * Allows for the select query contents to take action on a potential candidate
+     * for action, whether this candidate matches some regex pattern, has a value
+     * within some pattern, or likewise.
+     *
+     * Current Query Implementations:
+     *     has - Does the object "have" the specific character in their field?
+     *     equals - Does the value in the query equal the value in the queried field?
+     *              (This relating to numerical based queries only)
+     * To Implement:
+     *     less than - Is the value less than what was expected?
+     *     greater than - Is the value greater than what was expected?
+     *     is - Is the object a 1-to-1 string match?
+     *
+     *
+     * @param value The value or Object to be identified or have queries enacted 
+     *        upon it.
+     * @param selectQueryContents The select query passed into the system.
+     *
+     * @return A boolean describing if our value meets our query requirements.
+     */
+    public boolean meetsQueryRequirement(Object value, String[][] selectQueryContents) {
+        HashMap<String, Object> valueMap = new HashMap<>();
+        List<Boolean> queryResults = new ArrayList<>();
+
+        // Run each subquery, and if all match, finish the method by returning true.
+        // Otherwise, return false promptly.
+        for (String[] selectQuery : selectQueryContents) {
+            // has query
+            if (selectQuery[QUERY_VALUE_POSITION].startsWith(SINGLE_QUOTE) 
+                && selectQuery[QUERY_VALUE_POSITION].endsWith(SINGLE_QUOTE)) {
+                if (!((String) (((HashMap) value).get(selectQuery[QUERY_KEY_POSITION]))).contains(
+                    selectQuery[QUERY_VALUE_POSITION].substring(1, selectQuery[QUERY_VALUE_POSITION].length() - 1)
+                )) { // Get rid of magic numbers
+                    // Our regex failed
+                    queryResults.add(false);
+                } else {
+                    queryResults.add(true);
+                }
+            } 
+            // equals query
+            else if (!(selectQuery[QUERY_VALUE_POSITION].startsWith(SINGLE_QUOTE) 
+                || selectQuery[QUERY_VALUE_POSITION].endsWith(SINGLE_QUOTE))) {
+                // Run a numerical check on the params
+                if (valueMap.get(selectQuery[QUERY_KEY_POSITION]) 
+                        != Integer.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
+                    queryResults.add(false);
+                } else {
+                    queryResults.add(true);
+                }
+            } else {
+                // For whatever the reason, the query returned no expected results
+                queryResults.add(false);
+            }
+        }
+
+        for (Boolean queryResult : queryResults) {
+            if (!queryResult) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

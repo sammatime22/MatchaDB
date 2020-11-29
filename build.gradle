@@ -37,8 +37,13 @@ task buildInstrumentationJar2(type: Exec) {
 	commandLine 'jar', 'cmf', 'resources/MANIFEST.MF', 'resources/MatchaDbInstrumentationTool.jar', 'src/main/java/com/matchadb/instrumentation/MatchaDbInstrumentationTool.class'
 }
 
+tasks.withType(JavaCompile) {
+    options.compilerArgs.add("--enable-preview")
+}
+
 test {
 	// TODO: Determine error with improper VM instantiation.
 	// jvmArgs "-javaagent:resources/MatchaDbInstrumentationTool.jar"
+	jvmArgs (["--enable-preview"])
 	useJUnitPlatform()
 }
