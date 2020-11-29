@@ -91,7 +91,7 @@ public class MatchaDbGenerateData {
         );
         HashMap<String, Object> highTops = buildClothesObject(
             "High Tops", "ghjkl", "Going back to high school?",
-            15.99
+            39.99
         );
 
         shoes.add(dressShoes);

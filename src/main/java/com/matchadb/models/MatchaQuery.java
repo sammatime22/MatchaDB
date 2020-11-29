@@ -5,8 +5,15 @@ package com.matchadb.models;
  */
 public class MatchaQuery {
 
+    /**
+     * A query that defines exactly where the expected data should come from 
+     * within the database.
+     */
     private String[] fromQuery;
 
+    /**
+     * Describes the conditions on which a set of data should be selected.
+     */
     private String[][] selectQuery; 
 
     public MatchaQuery(String[] fromQuery, String[][] selectQuery) {

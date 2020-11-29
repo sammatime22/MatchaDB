@@ -227,6 +227,29 @@ public class MatchaDbTableTest {
             List<HashMap<String, Object>> actualObjects = 
                 (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQuery);
 
+            for (HashMap expectedObject : expectedObjects) {
+                boolean success = false;
+                for (HashMap actualObject : actualObjects) {
+
+                    if (expectedObject.get("Item Name").equals(actualObject.get("Item Name"))) {
+                        if (expectedObject.get("Item Brand").equals(actualObject.get("Item Brand"))
+                            && expectedObject.get("Item Price").equals(actualObject.get("Item Price"))
+                            && expectedObject.get("Item Description").equals(actualObject.get("Item Description"))) {
+                            success = true;
+                            break;
+                        } else {
+                            System.out.println("Expected: " + expectedObject + " Actual: " + actualObject);
+                            Assert.fail();
+                        }
+                    }
+                }
+                
+                // If the object didn't come up, we should just fail the test.
+                if (!success) {
+                    Assert.fail();
+                }
+            }
+
             // for object in expectedObjects
                 // for object in actualObjects
                     // If expectedObject has same name as actualObject
