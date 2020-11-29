@@ -13,6 +13,8 @@ class
 
 2020/11/07 - saveData method implemented, Some other changes to test data
 
+2020/11/29 - getData, meetsQueryRequirements methods implemented, implementations 
+for data generation code
 **System Requirements**
 
 Java: 
