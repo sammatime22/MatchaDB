@@ -77,6 +77,12 @@ public class MatchaDbTable {
     // The position of the value in the query subset.
     private final int QUERY_VALUE_POSITION = 2;
 
+    // The value returned if the index does not exist.
+    private final int INDEX_NONEXISTANT = -1;
+
+    // The value of the index of an element within a single encapsulated list.
+    private final int SINGLE_ENCAPSULATED_LIST_INDEX = 0;
+
     /**
      * Constructor for the DB Table.
      */
@@ -295,26 +301,19 @@ public class MatchaDbTable {
      * @return The data encapsulated in a MatchaData object.
      */
     public Object getData(MatchaQuery query) {
-        Object selection = this.table; // Not sure if we really want to set this like this
+        Object selection = this.table;
 
-        System.out.println(selection);
 
-        // First, perform the from portion of our query
-        // We need to find a generic means to dig deeper
         for (String fromQueryPortion : query.getFromQuery()) {
-            System.out.println(fromQueryPortion);
             if (selection instanceof List listSelection) {
                 int indexOfInterest = listSelection.indexOf(fromQueryPortion);
-                if (indexOfInterest != -1) {
+                if (indexOfInterest != INDEX_NONEXISTANT) {
                     selection = listSelection.get(indexOfInterest);
                 } else {
-                    System.out.println(selection);
                     // Remove magic number - just saying if the tag didn't exist our single entry
                     // is probably just an encapsulation of the list
-                    selection = ((HashMap) listSelection.get(0)).get(fromQueryPortion);
-                    System.out.println("Here " + selection);
-                    // In this case, we'll do a second round of interpolation on the object
-                    //if (selection instanceof)
+                    selection = ((HashMap) 
+                        listSelection.get(SINGLE_ENCAPSULATED_LIST_INDEX)).get(fromQueryPortion);
                 }
             } else if (selection instanceof HashMap hashmapSelection) {
                 if (hashmapSelection.containsKey(fromQueryPortion)) {
@@ -328,8 +327,9 @@ public class MatchaDbTable {
         }
 
 
-        // The values to return should also be more generic, reflective of what
-        // we are actually seeing coming in.
+        // We should make sure the values to return are in a generic object.
+        // We don't know what the User had asked for, and we want to be as
+        // dynamic as possible.
         Object valuesToReturn = null;
 
         // Next, perform the subset query
@@ -356,7 +356,6 @@ public class MatchaDbTable {
             }
         }   
 
-        System.out.println(valuesToReturn);
         return valuesToReturn;
     }
 
@@ -395,6 +394,7 @@ public class MatchaDbTable {
      * Current Query Implementations:
      *     has - Does the object "have" the specific character in their field?
      *     equals - Does the value in the query equal the value in the queried field?
+     *              (This relating to numerical based queries only)
      * To Implement:
      *     less than - Is the value less than what was expected?
      *     greater than - Is the value greater than what was expected?
@@ -407,7 +407,7 @@ public class MatchaDbTable {
      */
     public boolean meetsQueryRequirement(Object value, String[][] selectQueryContents) {
         HashMap<String, Object> valueMap = new HashMap<>();
-        System.out.println(value);
+        List<Boolean> queryResults = new ArrayList<>();
 
         // Run each subquery, and if all match, finish the method by returning true.
         // Otherwise, return false promptly.
@@ -415,30 +415,33 @@ public class MatchaDbTable {
             // has query
             if (selectQuery[QUERY_VALUE_POSITION].startsWith(SINGLE_QUOTE) 
                 && selectQuery[QUERY_VALUE_POSITION].endsWith(SINGLE_QUOTE)) {
-                // Run a regex check on this param
-                // will need helper method in the future, for now assume all queries are "equals to"
-                // This needs to be turned into a "has"
-                System.out.println("Value: " + ((HashMap) value).get(selectQuery[QUERY_KEY_POSITION]));
                 if (!((String) (((HashMap) value).get(selectQuery[QUERY_KEY_POSITION]))).contains(
                     selectQuery[QUERY_VALUE_POSITION].substring(1, selectQuery[QUERY_VALUE_POSITION].length() - 1)
                 )) { // Get rid of magic numbers
                     // Our regex failed
-                    System.out.println("Regex Failed");
-                    return false;
+                    queryResults.add(false);
+                } else {
+                    queryResults.add(true);
                 }
             } 
             // equals query
             else if (!(selectQuery[QUERY_VALUE_POSITION].startsWith(SINGLE_QUOTE) 
                 || selectQuery[QUERY_VALUE_POSITION].endsWith(SINGLE_QUOTE))) {
                 // Run a numerical check on the params
-                // will need helper method in the future, for now assume all queries are "equals to"
                 if (valueMap.get(selectQuery[QUERY_KEY_POSITION]) 
                         != Integer.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
-                    // Our contents weren't equal
-                    return false;
+                    queryResults.add(false);
+                } else {
+                    queryResults.add(true);
                 }
             } else {
-                // For whatever the reason, the query was not written correctly
+                // For whatever the reason, the query returned no expected results
+                queryResults.add(false);
+            }
+        }
+
+        for (Boolean queryResult : queryResults) {
+            if (!queryResult) {
                 return false;
             }
         }

@@ -214,9 +214,9 @@ public class MatchaDbTableTest {
         // Select * from * where Item Name contains 's' and Item Price < 30.00
         // And the item is from the "Shoes" table
         List<HashMap<String, Object>> expectedObjects = 
-            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams("s", null, null, null, 30.00, "Shoes");
+            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams("s", null, null, null, 30.00, "Shirts");
 
-        MatchaQuery matchaQuery = new MatchaQuery(new String[]{ "Shoes" }, 
+        MatchaQuery matchaQuery = new MatchaQuery(new String[]{ "Shirts" }, 
             new String[][]{{ "Item Name", "has", "'s'" }});
 
         matchaDbTable = new MatchaDbTable("");
@@ -238,7 +238,6 @@ public class MatchaDbTableTest {
                             success = true;
                             break;
                         } else {
-                            System.out.println("Expected: " + expectedObject + " Actual: " + actualObject);
                             Assert.fail();
                         }
                     }
@@ -249,12 +248,6 @@ public class MatchaDbTableTest {
                     Assert.fail();
                 }
             }
-
-            // for object in expectedObjects
-                // for object in actualObjects
-                    // If expectedObject has same name as actualObject
-                        // If the two do not have the same price
-                            // fail
         } catch (FileNotFoundException fnfe) {
             // If a FileNotFoundException comes up, fail the test.
             fnfe.printStackTrace();
