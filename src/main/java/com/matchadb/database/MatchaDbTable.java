@@ -298,6 +298,8 @@ public class MatchaDbTable {
     /**
      * Returns data depending on where the pointer is.
      *
+     * @param MatchaQuery The query provided to gather the data.
+     *
      * @return The data encapsulated in a MatchaData object.
      */
     public Object getData(MatchaQuery query) {
@@ -404,6 +406,8 @@ public class MatchaDbTable {
      * @param value The value or Object to be identified or have queries enacted 
      *        upon it.
      * @param selectQueryContents The select query passed into the system.
+     *
+     * @return A boolean describing if our value meets our query requirements.
      */
     public boolean meetsQueryRequirement(Object value, String[][] selectQueryContents) {
         HashMap<String, Object> valueMap = new HashMap<>();
