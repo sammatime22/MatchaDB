@@ -11,10 +11,13 @@
 2020/10/16 - First work done with Tests, Loading in DB info for MatchaDbTable
 class
 
+2020/10/29 - Fixed the table builder methods in MatchaDBTable
+
 2020/11/07 - saveData method implemented, Some other changes to test data
 
 2020/11/29 - getData, meetsQueryRequirements methods implemented, implementations 
 for data generation code
+
 **System Requirements**
 
 Java: 
