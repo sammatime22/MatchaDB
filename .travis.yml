@@ -1,0 +1,5 @@
+language: java
+
+java: 14.0.1
+
+script: gradle test
