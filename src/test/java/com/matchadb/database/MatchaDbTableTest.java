@@ -261,8 +261,12 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testPostData() {
-        // Show the item is not there (get)
+        // Not sure if we want to try inserting multiple items - maybe that doesn't
+        // make sense actually
+        HashMap<String, Object> fancyHatToAdd = MatchaDbGenerateData.newClothesItemsToInsert().get(0);
 
+        // Show the item is not there (get)
+        
         // Add new item
 
         // Search (get) and see that it is where it is expected

@@ -146,6 +146,20 @@ public class MatchaDbGenerateData {
     }
 
     /**
+     * A generator method that returns a list of clothes item(s) to insert.
+     *
+     * @return a list of clothes items to insert.
+     */
+    public static List<HashMap<String, Object>> newClothesItemsToInsert() {
+        List<HashMap<String, Object>> newClothingItems = new ArrayList<>();
+
+        newClothingItems.add(buildClothesObject("Trendy Hat", "qwertu", 
+            "A hat with a feather for a feather.", 9000000.95));
+
+        return newClothingItems;
+    }
+
+    /**
      * A helper method to build a clothes object.
      *
      * @param name The item name
