@@ -265,11 +265,26 @@ public class MatchaDbTableTest {
         // make sense actually
         HashMap<String, Object> fancyHatToAdd = MatchaDbGenerateData.newClothesItemsToInsert().get(0);
 
-        // Show the item is not there (get)
-        
-        // Add new item
+        // Query to get item
 
-        // Search (get) and see that it is where it is expected
+        // Query to insert item
+
+        matchaDbTable = new MatchaDbTable("");
+
+        try {
+            // Maybe consider a before method..?
+            // Load in the data for the DB
+            matchaDbTable.loadData(new FileReader(filename), "TestFileClothesWebsiteAPI");
+            // Show the item is not there (get)
+            
+            // Add new item
+
+            // Search (get) and see that it is where it is expected
+        } catch (FileNotFoundException fnfe) {
+            // If a FileNotFoundException comes up, fail the test.
+            fnfe.printStackTrace();
+            Assert.fail();            
+        }
     }
 
     /**
