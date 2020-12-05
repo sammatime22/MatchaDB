@@ -266,20 +266,40 @@ public class MatchaDbTableTest {
         HashMap<String, Object> fancyHatToAdd = MatchaDbGenerateData.newClothesItemsToInsert().get(0);
 
         // Query to get item
+        MatchaQuery matchaQueryGetFancyHat = new MatchaQuery(new String[] {"Hats"},
+            new String[][] {{"Item Name", "has", "'Trendy Hat'"}}
+        );
 
         // Query to insert item
-
+        MatchaQuery matchaQueryInsertFancyHat = new MatchaQuery(new String[] {"Hats"},
+            new String[][] {{ fancyHatToAdd.toString() }}
+        );
         matchaDbTable = new MatchaDbTable("");
+        String filename = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
 
         try {
             // Maybe consider a before method..?
             // Load in the data for the DB
             matchaDbTable.loadData(new FileReader(filename), "TestFileClothesWebsiteAPI");
-            // Show the item is not there (get)
             
-            // Add new item
+            // Show the item is not there (get)
+            matchaDbTable.getData(matchaQueryGetFancyHat);
+
+            if (matchaDbTable.getData(matchaQueryGetFancyHat) != null) {
+                Assert.fail();
+            }
+
+            // Add new item, fail if the method fails
+            if (!matchaDbTable.postData(matchaQueryInsertFancyHat)) {
+                Assert.fail();
+            }
 
             // Search (get) and see that it is where it is expected
+            HashMap<String, Object> fancyHat = 
+                ((HashMap) ((List) matchaDbTable.getData(matchaQueryGetFancyHat)).get(0));
+            if (fancyHat != null) {
+                // Check the contents to see that they are correct
+            }
         } catch (FileNotFoundException fnfe) {
             // If a FileNotFoundException comes up, fail the test.
             fnfe.printStackTrace();

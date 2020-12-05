@@ -364,9 +364,11 @@ public class MatchaDbTable {
     /**
      * Inserts the data into the appropriate position of the table.
      *
+     * @param query The query to insert data.
+     *
      * @return A boolean describing a successful insert.
      */
-    public boolean postData() {
+    public boolean postData(MatchaQuery query) {
         return false;
     }
 
