@@ -285,7 +285,7 @@ public class MatchaDbTableTest {
             // Show the item is not there (get)
             matchaDbTable.getData(matchaQueryGetFancyHat);
 
-            if (matchaDbTable.getData(matchaQueryGetFancyHat) != null) {
+            if (((List)matchaDbTable.getData(matchaQueryGetFancyHat)).size() > 0) {
                 Assert.fail();
             }
 
@@ -294,11 +294,26 @@ public class MatchaDbTableTest {
                 Assert.fail();
             }
 
-            // Search (get) and see that it is where it is expected
-            HashMap<String, Object> fancyHat = 
-                ((HashMap) ((List) matchaDbTable.getData(matchaQueryGetFancyHat)).get(0));
-            if (fancyHat != null) {
-                // Check the contents to see that they are correct
+            List<HashMap<String,Object>> fancyHatQueryResults = 
+                (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQueryGetFancyHat);
+            if (fancyHatQueryResults.size() == 1) {
+                // Search (get) and see that it is where it is expected
+                HashMap<String, Object> fancyHat = fancyHatQueryResults.get(0);
+                if (fancyHat != null) {
+                    // Check the contents to see that they are correct, otherwise, fail
+                    if (
+                        fancyHat.get("Item Name") != fancyHatToAdd.get("Item Name") ||
+                        fancyHat.get("Item Brand") != fancyHatToAdd.get("Item Brand") ||
+                        fancyHat.get("Item Price") != fancyHatToAdd.get("Item Price") ||
+                        fancyHat.get("Item Description") != fancyHatToAdd.get("Item Description") 
+                    ) {
+                        Assert.fail();
+                    }
+                } else {
+                    Assert.fail();
+                }
+            } else {
+                Assert.fail();
             }
         } catch (FileNotFoundException fnfe) {
             // If a FileNotFoundException comes up, fail the test.
