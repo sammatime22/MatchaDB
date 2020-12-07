@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -312,7 +313,7 @@ public class MatchaDbTable {
                 if (indexOfInterest != INDEX_NONEXISTANT) {
                     selection = listSelection.get(indexOfInterest);
                 } else {
-                    // Remove magic number - just saying if the tag didn't exist our single entry
+                    // just saying if the tag didn't exist our single entry
                     // is probably just an encapsulation of the list
                     selection = ((HashMap) 
                         listSelection.get(SINGLE_ENCAPSULATED_LIST_INDEX)).get(fromQueryPortion);
@@ -369,7 +370,25 @@ public class MatchaDbTable {
      * @return A boolean describing a successful insert.
      */
     public boolean postData(MatchaQuery query) {
-        return false;
+        // Rewrite for multiple inserts
+        // HashMap<String, Object> subtable = 
+        //     (HashMap) ((HashMap)((List) this.table).get(0)).get(query.getFromQuery()[0]);
+
+        // System.out.println(subtable);
+
+        System.out.println(this.table);
+        System.out.println(((List)this.table).get(0));
+        System.out.println(((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0]));
+
+        ((List) ((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0])).add(
+            (HashMap<String, Object>) Arrays.asList(query.getSelectQuery()[0][0].split(","))
+                .stream().map(keyValuePair -> keyValuePair.split(":"))
+                .collect(Collectors.toMap(keyValuePair -> keyValuePair[0], keyValuePair -> (Object) keyValuePair[0]))
+        );
+
+        System.out.println(((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0]));
+
+        return true;
     }
 
     /**
