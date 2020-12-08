@@ -376,15 +376,18 @@ public class MatchaDbTable {
 
         // System.out.println(subtable);
 
+        System.out.println(query.getSelectQuery()[0][0]);
+
         System.out.println(this.table);
         System.out.println(((List)this.table).get(0));
         System.out.println(((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0]));
 
-        ((List) ((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0])).add(
-            (HashMap<String, Object>) Arrays.asList(query.getSelectQuery()[0][0].split(","))
-                .stream().map(keyValuePair -> keyValuePair.split(":"))
-                .collect(Collectors.toMap(keyValuePair -> keyValuePair[0], keyValuePair -> (Object) keyValuePair[0]))
-        );
+        // Re-write more "manual" means
+        // ((List) ((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0])).add(
+        //     (HashMap<String, Object>) Arrays.asList(query.getSelectQuery()[0][0].split(","))
+        //         .stream().map(keyValuePair -> keyValuePair.split(":"))
+        //         .collect(Collectors.toMap(keyValuePair -> keyValuePair[0], keyValuePair -> (Object) keyValuePair[1]))
+        // );
 
         System.out.println(((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0]));
 

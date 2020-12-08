@@ -263,7 +263,7 @@ public class MatchaDbTableTest {
     public void testPostData() {
         // Not sure if we want to try inserting multiple items - maybe that doesn't
         // make sense actually
-        HashMap<String, Object> fancyHatToAdd = MatchaDbGenerateData.newClothesItemsToInsert().get(0);
+        String fancyHatToAddAsJSON = MatchaDbGenerateData.newClothesItemToInsert();
 
         // Query to get item
         MatchaQuery matchaQueryGetFancyHat = new MatchaQuery(new String[] {"Hats"},
@@ -272,7 +272,7 @@ public class MatchaDbTableTest {
 
         // Query to insert item
         MatchaQuery matchaQueryInsertFancyHat = new MatchaQuery(new String[] {"Hats"},
-            new String[][] {{ fancyHatToAdd.toString() }}
+            new String[][] {{ fancyHatToAddAsJSON }}
         );
         matchaDbTable = new MatchaDbTable("");
         String filename = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
@@ -302,10 +302,10 @@ public class MatchaDbTableTest {
                 if (fancyHat != null) {
                     // Check the contents to see that they are correct, otherwise, fail
                     if (
-                        fancyHat.get("Item Name") != fancyHatToAdd.get("Item Name") ||
-                        fancyHat.get("Item Brand") != fancyHatToAdd.get("Item Brand") ||
-                        fancyHat.get("Item Price") != fancyHatToAdd.get("Item Price") ||
-                        fancyHat.get("Item Description") != fancyHatToAdd.get("Item Description") 
+                        fancyHat.get("Item Name") != null ||
+                        fancyHat.get("Item Brand") != null ||
+                        fancyHat.get("Item Price") != null ||
+                        fancyHat.get("Item Description") != null
                     ) {
                         Assert.fail();
                     }
