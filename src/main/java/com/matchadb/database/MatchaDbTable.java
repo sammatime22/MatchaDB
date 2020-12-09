@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import org.springframework.stereotype.Service;
 
@@ -369,7 +370,7 @@ public class MatchaDbTable {
      *
      * @return A boolean describing a successful insert.
      */
-    public boolean postData(MatchaQuery query) {
+    public boolean postData(MatchaQuery query) throws ParseException {
         // Rewrite for multiple inserts
         // HashMap<String, Object> subtable = 
         //     (HashMap) ((HashMap)((List) this.table).get(0)).get(query.getFromQuery()[0]);
@@ -382,12 +383,10 @@ public class MatchaDbTable {
         System.out.println(((List)this.table).get(0));
         System.out.println(((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0]));
 
-        // Re-write more "manual" means
-        // ((List) ((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0])).add(
-        //     (HashMap<String, Object>) Arrays.asList(query.getSelectQuery()[0][0].split(","))
-        //         .stream().map(keyValuePair -> keyValuePair.split(":"))
-        //         .collect(Collectors.toMap(keyValuePair -> keyValuePair[0], keyValuePair -> (Object) keyValuePair[1]))
-        // );
+        JSONParser parser = new JSONParser();
+        HashMap<String, Object> newItem = (HashMap) parser.parse(query.getSelectQuery()[0][0]);
+        ((List) ((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0])).add(newItem);
+
 
         System.out.println(((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0]));
 

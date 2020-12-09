@@ -17,6 +17,9 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
+
+import org.json.simple.parser.ParseException;
+
 import mockit.Tested;
 import mockit.Mocked;
 
@@ -260,7 +263,7 @@ public class MatchaDbTableTest {
      * memory.
      */
     @Test
-    public void testPostData() {
+    public void testPostData() throws ParseException {
         // Not sure if we want to try inserting multiple items - maybe that doesn't
         // make sense actually
         String fancyHatToAddAsJSON = MatchaDbGenerateData.newClothesItemToInsert();
