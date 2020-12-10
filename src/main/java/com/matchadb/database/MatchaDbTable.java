@@ -384,7 +384,13 @@ public class MatchaDbTable {
         System.out.println(((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0]));
 
         JSONParser parser = new JSONParser();
-        HashMap<String, Object> newItem = (HashMap) parser.parse(query.getSelectQuery()[0][0]);
+        HashMap<String, Object> parsedItem = (HashMap) parser.parse(query.getSelectQuery()[0][0]);
+        HashMap<String, Object> newItem = new HashMap<>();
+
+        for(String key : parsedItem.keySet()) {
+            newItem.put(key, (Object) parsedItem.get(key));
+        }
+
         ((List) ((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0])).add(newItem);
 
 

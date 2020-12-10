@@ -303,12 +303,17 @@ public class MatchaDbTableTest {
                 // Search (get) and see that it is where it is expected
                 HashMap<String, Object> fancyHat = fancyHatQueryResults.get(0);
                 if (fancyHat != null) {
+                    System.out.println(fancyHat);
+                    for (String key : fancyHat.keySet()) {
+                        System.out.println(key + " " + key.length() + " " + fancyHat.get(key));
+                    }
                     // Check the contents to see that they are correct, otherwise, fail
                     if (
-                        fancyHat.get("Item Name") != null ||
-                        fancyHat.get("Item Brand") != null ||
-                        fancyHat.get("Item Price") != null ||
-                        fancyHat.get("Item Description") != null
+                        !"Trendy Hat".equals(fancyHat.get("Item Name")) ||
+                        !"qwertu".equals(fancyHat.get("Item Brand")) ||
+                        (double) fancyHat.get("Item Price") != 9000000.95 ||
+                        !"A hat with a feather for a feather."
+                            .equals(fancyHat.get("Item Description"))
                     ) {
                         Assert.fail();
                     }
