@@ -28,6 +28,20 @@ import mockit.Mocked;
  */
 public class MatchaDbTableTest {
 
+    // Just some constants that seem to be used in all of the tests.
+    private final String TEST_FILE_CLOTHES_WEBSITE_API = "TestFileClothesWebsiteAPI";
+
+    private final String TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE =
+        "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
+
+    private final String ITEM_NAME = "Item Name";
+
+    private final String ITEM_BRAND = "Item Brand";
+
+    private final String ITEM_PRICE = "Item Price";
+
+    private final String ITEM_DESCRIPTION = "Item Description";
+
     @Tested MatchaDbTable matchaDbTable;
 
     /**
@@ -36,14 +50,14 @@ public class MatchaDbTableTest {
     @Test
     public void testLoadDataTestFileClothesWebsiteAPI() {
         List<Object> expectedTable = MatchaDbGenerateData.generateClothesWebsiteAPITable();
-        String tableName = "TestFileClothesWebsiteAPI";
+        String tableName = TEST_FILE_CLOTHES_WEBSITE_API;
         String emptyPath = "";
 
         // Location of the test file used
-        String filename = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
 
         // Database name
-        String databaseName = "TestFileClothesWebsiteAPI";
+        String databaseName = TEST_FILE_CLOTHES_WEBSITE_API;
 
         // A timestamp before the start of the test, to make sure the timestamps in the db
         // are updated.
@@ -98,13 +112,13 @@ public class MatchaDbTableTest {
         matchaDbTable = new MatchaDbTable(testDirectory);
 
         // Location of the test file used
-        String filename = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";        
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;        
 
         boolean failed = false;
 
         try {
             // Load in the data for the DB
-            matchaDbTable.loadData(new FileReader(filename), "TestFileClothesWebsiteAPI");
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
 
             // Save the data and check that the data within the file is as expected.
             matchaDbTable.saveData();
@@ -112,7 +126,7 @@ public class MatchaDbTableTest {
             // With the exception of tabs, spaces, or returns, check that each character in the file matches
             File testFile = new File(testDirectoryFileObject.list()[testFileLocation]);
             try (FileReader testFileReader = new FileReader(testDirectory + testFile); FileReader templateFileReader = new FileReader(
-                new File("src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json"))) {
+                new File(TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE))) {
                 int place = 0;
                 while (true) {
                     int templateCharacterValue = templateFileReader.read();
@@ -211,7 +225,7 @@ public class MatchaDbTableTest {
     @Test
     public void testGetData() {
         // Location of the test file used
-        String filename = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
 
         // We want to set up the MatchaQuery object for the following query
         // Select * from * where Item Name contains 's' and Item Price < 30.00
@@ -220,13 +234,13 @@ public class MatchaDbTableTest {
             MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams("s", null, null, null, 30.00, "Shirts");
 
         MatchaQuery matchaQuery = new MatchaQuery(new String[]{ "Shirts" }, 
-            new String[][]{{ "Item Name", "has", "'s'" }});
+            new String[][]{{ ITEM_NAME, "has", "'s'" }});
 
         matchaDbTable = new MatchaDbTable("");
 
         try {
             // Load in the data for the DB
-            matchaDbTable.loadData(new FileReader(filename), "TestFileClothesWebsiteAPI");
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
             List<HashMap<String, Object>> actualObjects = 
                 (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQuery);
 
@@ -234,10 +248,10 @@ public class MatchaDbTableTest {
                 boolean success = false;
                 for (HashMap actualObject : actualObjects) {
 
-                    if (expectedObject.get("Item Name").equals(actualObject.get("Item Name"))) {
-                        if (expectedObject.get("Item Brand").equals(actualObject.get("Item Brand"))
-                            && expectedObject.get("Item Price").equals(actualObject.get("Item Price"))
-                            && expectedObject.get("Item Description").equals(actualObject.get("Item Description"))) {
+                    if (expectedObject.get(ITEM_NAME).equals(actualObject.get(ITEM_NAME))) {
+                        if (expectedObject.get(ITEM_BRAND).equals(actualObject.get(ITEM_BRAND))
+                            && expectedObject.get(ITEM_PRICE).equals(actualObject.get(ITEM_PRICE))
+                            && expectedObject.get(ITEM_DESCRIPTION).equals(actualObject.get(ITEM_DESCRIPTION))) {
                             success = true;
                             break;
                         } else {
@@ -270,7 +284,7 @@ public class MatchaDbTableTest {
 
         // Query to get item
         MatchaQuery matchaQueryGetFancyHat = new MatchaQuery(new String[] {"Hats"},
-            new String[][] {{"Item Name", "has", "'Trendy Hat'"}}
+            new String[][] {{ITEM_NAME, "has", "'Trendy Hat'"}}
         );
 
         // Query to insert item
@@ -278,12 +292,12 @@ public class MatchaDbTableTest {
             new String[][] {{ fancyHatToAddAsJSON }}
         );
         matchaDbTable = new MatchaDbTable("");
-        String filename = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
 
         try {
             // Maybe consider a before method..?
             // Load in the data for the DB
-            matchaDbTable.loadData(new FileReader(filename), "TestFileClothesWebsiteAPI");
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
             
             // Show the item is not there (get)
             matchaDbTable.getData(matchaQueryGetFancyHat);
@@ -309,11 +323,11 @@ public class MatchaDbTableTest {
                     }
                     // Check the contents to see that they are correct, otherwise, fail
                     if (
-                        !"Trendy Hat".equals(fancyHat.get("Item Name")) ||
-                        !"qwertu".equals(fancyHat.get("Item Brand")) ||
-                        (double) fancyHat.get("Item Price") != 9000000.95 ||
+                        !"Trendy Hat".equals(fancyHat.get(ITEM_NAME)) ||
+                        !"qwertu".equals(fancyHat.get(ITEM_BRAND)) ||
+                        (double) fancyHat.get(ITEM_PRICE) != 9000000.95 ||
                         !"A hat with a feather for a feather."
-                            .equals(fancyHat.get("Item Description"))
+                            .equals(fancyHat.get(ITEM_DESCRIPTION))
                     ) {
                         Assert.fail();
                     }

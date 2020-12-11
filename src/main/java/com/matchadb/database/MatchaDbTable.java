@@ -371,17 +371,7 @@ public class MatchaDbTable {
      * @return A boolean describing a successful insert.
      */
     public boolean postData(MatchaQuery query) throws ParseException {
-        // Rewrite for multiple inserts
-        // HashMap<String, Object> subtable = 
-        //     (HashMap) ((HashMap)((List) this.table).get(0)).get(query.getFromQuery()[0]);
-
-        // System.out.println(subtable);
-
-        System.out.println(query.getSelectQuery()[0][0]);
-
-        System.out.println(this.table);
-        System.out.println(((List)this.table).get(0));
-        System.out.println(((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0]));
+        // Need to determine how we can tell if a request passed or failed
 
         JSONParser parser = new JSONParser();
         HashMap<String, Object> parsedItem = (HashMap) parser.parse(query.getSelectQuery()[0][0]);
@@ -392,9 +382,6 @@ public class MatchaDbTable {
         }
 
         ((List) ((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0])).add(newItem);
-
-
-        System.out.println(((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0]));
 
         return true;
     }
