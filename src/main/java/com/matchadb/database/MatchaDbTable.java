@@ -371,8 +371,6 @@ public class MatchaDbTable {
      * @return A boolean describing a successful insert.
      */
     public boolean postData(MatchaQuery query) throws ParseException {
-        // Need to determine how we can tell if a request passed or failed
-
         JSONParser parser = new JSONParser();
         HashMap<String, Object> parsedItem = (HashMap) parser.parse(query.getSelectQuery()[0][0]);
         HashMap<String, Object> newItem = new HashMap<>();
@@ -381,7 +379,12 @@ public class MatchaDbTable {
             newItem.put(key, (Object) parsedItem.get(key));
         }
 
-        ((List) ((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0])).add(newItem);
+        try {
+            ((List) ((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0])).add(newItem);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
 
         return true;
     }

@@ -34,6 +34,8 @@ public class MatchaDbTableTest {
     private final String TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE =
         "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
 
+    private final String EMPTY_DROPOFF_PATH = "";
+
     private final String ITEM_NAME = "Item Name";
 
     private final String ITEM_BRAND = "Item Brand";
@@ -51,7 +53,6 @@ public class MatchaDbTableTest {
     public void testLoadDataTestFileClothesWebsiteAPI() {
         List<Object> expectedTable = MatchaDbGenerateData.generateClothesWebsiteAPITable();
         String tableName = TEST_FILE_CLOTHES_WEBSITE_API;
-        String emptyPath = "";
 
         // Location of the test file used
         String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
@@ -64,7 +65,7 @@ public class MatchaDbTableTest {
         long timeBeforeDBLoadAndLastUpdate = System.currentTimeMillis();
 
         // Instantiating the matchaDbTable Instance
-        matchaDbTable = new MatchaDbTable(emptyPath);
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
         
         try {
             // Load in our real table
@@ -236,7 +237,7 @@ public class MatchaDbTableTest {
         MatchaQuery matchaQuery = new MatchaQuery(new String[]{ "Shirts" }, 
             new String[][]{{ ITEM_NAME, "has", "'s'" }});
 
-        matchaDbTable = new MatchaDbTable("");
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
 
         try {
             // Load in the data for the DB
@@ -244,6 +245,7 @@ public class MatchaDbTableTest {
             List<HashMap<String, Object>> actualObjects = 
                 (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQuery);
 
+            // Find the matching object from our mock data, and check to see that the contents match
             for (HashMap expectedObject : expectedObjects) {
                 boolean success = false;
                 for (HashMap actualObject : actualObjects) {
@@ -278,8 +280,6 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testPostData() throws ParseException {
-        // Not sure if we want to try inserting multiple items - maybe that doesn't
-        // make sense actually
         String fancyHatToAddAsJSON = MatchaDbGenerateData.newClothesItemToInsert();
 
         // Query to get item
@@ -291,7 +291,7 @@ public class MatchaDbTableTest {
         MatchaQuery matchaQueryInsertFancyHat = new MatchaQuery(new String[] {"Hats"},
             new String[][] {{ fancyHatToAddAsJSON }}
         );
-        matchaDbTable = new MatchaDbTable("");
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
         String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
 
         try {
@@ -306,7 +306,7 @@ public class MatchaDbTableTest {
                 Assert.fail();
             }
 
-            // Add new item, fail if the method fails
+            // Add new item, fail if the method fails.
             if (!matchaDbTable.postData(matchaQueryInsertFancyHat)) {
                 Assert.fail();
             }
@@ -314,14 +314,14 @@ public class MatchaDbTableTest {
             List<HashMap<String,Object>> fancyHatQueryResults = 
                 (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQueryGetFancyHat);
             if (fancyHatQueryResults.size() == 1) {
-                // Search (get) and see that it is where it is expected
+                // Search (get) and see that it is where it is expected.
                 HashMap<String, Object> fancyHat = fancyHatQueryResults.get(0);
                 if (fancyHat != null) {
                     System.out.println(fancyHat);
                     for (String key : fancyHat.keySet()) {
                         System.out.println(key + " " + key.length() + " " + fancyHat.get(key));
                     }
-                    // Check the contents to see that they are correct, otherwise, fail
+                    // Check the contents to see that they are correct; Otherwise, fail.
                     if (
                         !"Trendy Hat".equals(fancyHat.get(ITEM_NAME)) ||
                         !"qwertu".equals(fancyHat.get(ITEM_BRAND)) ||
