@@ -43,6 +43,8 @@ public class MatchaDbTable {
     // The actual table which is to have operations run upon it.
     private List<Object> table;
 
+    private JSONParser parser;
+
     // A Unix timestamp of the time the data was uploaded into the db.
     private long uploadTimeInMillis = 0l;
 
@@ -90,6 +92,7 @@ public class MatchaDbTable {
      */
     public MatchaDbTable (String dropoffPath) {
         this.dropoffPath = dropoffPath;
+        this.parser = new JSONParser();
     }
 
     /**
@@ -99,14 +102,13 @@ public class MatchaDbTable {
      * @param databaseTableName The name of the database table.
      */
     public void loadData(FileReader file, String databaseTableName) {
-        JSONParser jsonParser = new JSONParser();
         this.databaseTableName = databaseTableName;
 
         table = new ArrayList<Object>();
 
         try {
             // Parse the incoming FileReader for Data
-            Object data = jsonParser.parse(file);
+            Object data = this.parser.parse(file);
 
             // Insert the data into the table
             this.table = tableBuilder(data);
@@ -371,13 +373,8 @@ public class MatchaDbTable {
      * @return A boolean describing a successful insert.
      */
     public boolean postData(MatchaQuery query) throws ParseException {
-        JSONParser parser = new JSONParser();
-        HashMap<String, Object> parsedItem = (HashMap) parser.parse(query.getSelectQuery()[0][0]);
-        HashMap<String, Object> newItem = new HashMap<>();
-
-        for(String key : parsedItem.keySet()) {
-            newItem.put(key, (Object) parsedItem.get(key));
-        }
+        HashMap<String, Object> newItem = 
+            interpretJSONObject((JSONObject) this.parser.parse(query.getSelectQuery()[0][0]));
 
         try {
             ((List) ((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0])).add(newItem);

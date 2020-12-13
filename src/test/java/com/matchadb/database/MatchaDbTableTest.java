@@ -44,6 +44,12 @@ public class MatchaDbTableTest {
 
     private final String ITEM_DESCRIPTION = "Item Description";
 
+    private final String HAS_OPERATION = "has";
+
+    private final String SHIRTS_TABLE = "Shirts";
+
+    private final String HATS_TABLE = "Hats";
+
     @Tested MatchaDbTable matchaDbTable;
 
     /**
@@ -232,10 +238,10 @@ public class MatchaDbTableTest {
         // Select * from * where Item Name contains 's' and Item Price < 30.00
         // And the item is from the "Shoes" table
         List<HashMap<String, Object>> expectedObjects = 
-            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams("s", null, null, null, 30.00, "Shirts");
+            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams("s", null, null, null, 30.00, SHIRTS_TABLE);
 
-        MatchaQuery matchaQuery = new MatchaQuery(new String[]{ "Shirts" }, 
-            new String[][]{{ ITEM_NAME, "has", "'s'" }});
+        MatchaQuery matchaQuery = new MatchaQuery(new String[]{SHIRTS_TABLE}, 
+            new String[][]{{ITEM_NAME, HAS_OPERATION, "'s'"}});
 
         matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
 
@@ -283,12 +289,12 @@ public class MatchaDbTableTest {
         String fancyHatToAddAsJSON = MatchaDbGenerateData.newClothesItemToInsert();
 
         // Query to get item
-        MatchaQuery matchaQueryGetFancyHat = new MatchaQuery(new String[] {"Hats"},
-            new String[][] {{ITEM_NAME, "has", "'Trendy Hat'"}}
+        MatchaQuery matchaQueryGetFancyHat = new MatchaQuery(new String[] {HATS_TABLE},
+            new String[][] {{ITEM_NAME, HAS_OPERATION, "'Trendy Hat'"}}
         );
 
         // Query to insert item
-        MatchaQuery matchaQueryInsertFancyHat = new MatchaQuery(new String[] {"Hats"},
+        MatchaQuery matchaQueryInsertFancyHat = new MatchaQuery(new String[] {HATS_TABLE},
             new String[][] {{ fancyHatToAddAsJSON }}
         );
         matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
@@ -301,7 +307,6 @@ public class MatchaDbTableTest {
             
             // Show the item is not there (get)
             matchaDbTable.getData(matchaQueryGetFancyHat);
-
             if (((List)matchaDbTable.getData(matchaQueryGetFancyHat)).size() > 0) {
                 Assert.fail();
             }
@@ -311,16 +316,12 @@ public class MatchaDbTableTest {
                 Assert.fail();
             }
 
+            // Search (get) and see that it is where it is expected.
             List<HashMap<String,Object>> fancyHatQueryResults = 
                 (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQueryGetFancyHat);
             if (fancyHatQueryResults.size() == 1) {
-                // Search (get) and see that it is where it is expected.
                 HashMap<String, Object> fancyHat = fancyHatQueryResults.get(0);
                 if (fancyHat != null) {
-                    System.out.println(fancyHat);
-                    for (String key : fancyHat.keySet()) {
-                        System.out.println(key + " " + key.length() + " " + fancyHat.get(key));
-                    }
                     // Check the contents to see that they are correct; Otherwise, fail.
                     if (
                         !"Trendy Hat".equals(fancyHat.get(ITEM_NAME)) ||
