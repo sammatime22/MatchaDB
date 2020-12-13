@@ -6,8 +6,6 @@
 
 **Recent Updates**:
 
-2020/9/19 - Initial push to GitHub
-
 2020/10/16 - First work done with Tests, Loading in DB info for MatchaDbTable
 class
 
@@ -17,6 +15,8 @@ class
 
 2020/11/29 - getData, meetsQueryRequirements methods implemented, implementations 
 for data generation code
+
+2020/12/13 - postData implemented, travis-ci implemented
 
 **System Requirements**
 

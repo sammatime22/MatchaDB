@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import org.springframework.stereotype.Service;
 
@@ -40,6 +42,8 @@ public class MatchaDbTable {
 
     // The actual table which is to have operations run upon it.
     private List<Object> table;
+
+    private JSONParser parser;
 
     // A Unix timestamp of the time the data was uploaded into the db.
     private long uploadTimeInMillis = 0l;
@@ -88,6 +92,7 @@ public class MatchaDbTable {
      */
     public MatchaDbTable (String dropoffPath) {
         this.dropoffPath = dropoffPath;
+        this.parser = new JSONParser();
     }
 
     /**
@@ -97,16 +102,16 @@ public class MatchaDbTable {
      * @param databaseTableName The name of the database table.
      */
     public void loadData(FileReader file, String databaseTableName) {
-        JSONParser jsonParser = new JSONParser();
         this.databaseTableName = databaseTableName;
 
         table = new ArrayList<Object>();
 
         try {
             // Parse the incoming FileReader for Data
-            Object data = jsonParser.parse(file);
+            Object data = this.parser.parse(file);
 
             // Insert the data into the table
+            // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
             this.table = tableBuilder(data);
 
             this.uploadTimeInMillis = System.currentTimeMillis();
@@ -123,6 +128,7 @@ public class MatchaDbTable {
     }    
 
     /**
+     * // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
      * This method calls on itself recursively to help build the database table.
      *
      * @param tableData The table data provided to the DB table.
@@ -220,6 +226,7 @@ public class MatchaDbTable {
     }
 
     /**
+     * // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
      * Converts the object back to a JSON file and saves it on the system. 
      */
     public void saveData() {
@@ -296,6 +303,7 @@ public class MatchaDbTable {
     }
 
     /**
+     * // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
      * Returns data depending on where the pointer is.
      *
      * @param MatchaQuery The query provided to gather the data.
@@ -312,7 +320,7 @@ public class MatchaDbTable {
                 if (indexOfInterest != INDEX_NONEXISTANT) {
                     selection = listSelection.get(indexOfInterest);
                 } else {
-                    // Remove magic number - just saying if the tag didn't exist our single entry
+                    // just saying if the tag didn't exist our single entry
                     // is probably just an encapsulation of the list
                     selection = ((HashMap) 
                         listSelection.get(SINGLE_ENCAPSULATED_LIST_INDEX)).get(fromQueryPortion);
@@ -362,12 +370,28 @@ public class MatchaDbTable {
     }
 
     /**
+     * // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
      * Inserts the data into the appropriate position of the table.
+     *
+     * @param query The query to insert data.
      *
      * @return A boolean describing a successful insert.
      */
-    public boolean postData() {
-        return false;
+    public boolean postData(MatchaQuery query) throws ParseException {
+        HashMap<String, Object> newItem = 
+            interpretJSONObject((JSONObject) this.parser.parse(query.getSelectQuery()[0][0]));
+
+        try {
+            // Here just make it so that the only means of inserting the element is by getting the
+            // one HashMap that exists as the only element on the List - this will be fixed in the 
+            // next bugfix (Bugfix for Gener-ifying MatchaDbTable's table Object).
+            ((List) ((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0])).add(newItem);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 
     /**
