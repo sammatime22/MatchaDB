@@ -111,6 +111,7 @@ public class MatchaDbTable {
             Object data = this.parser.parse(file);
 
             // Insert the data into the table
+            // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
             this.table = tableBuilder(data);
 
             this.uploadTimeInMillis = System.currentTimeMillis();
@@ -127,6 +128,7 @@ public class MatchaDbTable {
     }    
 
     /**
+     * // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
      * This method calls on itself recursively to help build the database table.
      *
      * @param tableData The table data provided to the DB table.
@@ -224,6 +226,7 @@ public class MatchaDbTable {
     }
 
     /**
+     * // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
      * Converts the object back to a JSON file and saves it on the system. 
      */
     public void saveData() {
@@ -300,6 +303,7 @@ public class MatchaDbTable {
     }
 
     /**
+     * // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
      * Returns data depending on where the pointer is.
      *
      * @param MatchaQuery The query provided to gather the data.
@@ -366,6 +370,7 @@ public class MatchaDbTable {
     }
 
     /**
+     * // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
      * Inserts the data into the appropriate position of the table.
      *
      * @param query The query to insert data.
@@ -377,6 +382,9 @@ public class MatchaDbTable {
             interpretJSONObject((JSONObject) this.parser.parse(query.getSelectQuery()[0][0]));
 
         try {
+            // Here just make it so that the only means of inserting the element is by getting the
+            // one HashMap that exists as the only element on the List - this will be fixed in the 
+            // next bugfix (Bugfix for Gener-ifying MatchaDbTable's table Object).
             ((List) ((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0])).add(newItem);
         } catch (Exception e) {
             e.printStackTrace();
