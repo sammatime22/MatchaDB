@@ -41,7 +41,7 @@ public class MatchaDbTable {
     private String dropoffPath;
 
     // The actual table which is to have operations run upon it.
-    private List<Object> table;
+    private Object table;
 
     private JSONParser parser;
 
@@ -111,8 +111,7 @@ public class MatchaDbTable {
             Object data = this.parser.parse(file);
 
             // Insert the data into the table
-            // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
-            this.table = tableBuilder(data);
+            tableBuilder(data);
 
             this.uploadTimeInMillis = System.currentTimeMillis();
             this.lastUpdateTimeInMillis = System.currentTimeMillis();
@@ -128,23 +127,18 @@ public class MatchaDbTable {
     }    
 
     /**
-     * // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
      * This method calls on itself recursively to help build the database table.
      *
      * @param tableData The table data provided to the DB table.
      *
      * @return A HashMap with the data within the table/subtables.
      */
-    private List<Object> tableBuilder(Object tableData) {
-        List<Object> tableComponent = new ArrayList<Object>();
-
+    private void tableBuilder(Object tableData) {
         if (tableData instanceof JSONObject) {
-            tableComponent.add(interpretJSONObject((JSONObject) tableData));
+            this.table = interpretJSONObject((JSONObject) tableData);
         } else if (tableData instanceof JSONArray) {
-            tableComponent = interpretJSONArray((JSONArray) tableData);
+            this.table = interpretJSONArray((JSONArray) tableData);
         }
-
-        return tableComponent;
     }
 
     /**
@@ -226,15 +220,24 @@ public class MatchaDbTable {
     }
 
     /**
-     * // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
      * Converts the object back to a JSON file and saves it on the system. 
      */
     public void saveData() {
-        JSONArray tableInJSONArrayForm = gatherJSONArrayFromTable(this.table);
+        Object tableInJSONForm = null;
+
+        if (this.table instanceof List tableL) {
+            tableInJSONForm = gatherJSONArrayFromTable(tableL);
+        } else if (this.table instanceof HashMap tableM) {
+            tableInJSONForm = gatherJSONObjectFromTable(tableM);
+        }
 
         // Still need to determine the right path.
         try (FileWriter fileWriter = new FileWriter(getSaveDataFilename())) {
-            fileWriter.write(tableInJSONArrayForm.toString());
+            if (tableInJSONForm != null) {
+                fileWriter.write(tableInJSONForm.toString());
+            } else {
+                fileWriter.write("");
+            }
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
