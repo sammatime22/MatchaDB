@@ -134,10 +134,10 @@ public class MatchaDbTable {
      * @return A HashMap with the data within the table/subtables.
      */
     private void tableBuilder(Object tableData) {
-        if (tableData instanceof JSONObject) {
-            this.table = interpretJSONObject((JSONObject) tableData);
-        } else if (tableData instanceof JSONArray) {
-            this.table = interpretJSONArray((JSONArray) tableData);
+        if (tableData instanceof JSONObject tableDataAsJSONObject) {
+            this.table = interpretJSONObject(tableDataAsJSONObject);
+        } else if (tableData instanceof JSONArray tableDataAsJSONArray) {
+            this.table = interpretJSONArray(tableDataAsJSONArray);
         }
     }
 
@@ -225,10 +225,10 @@ public class MatchaDbTable {
     public void saveData() {
         Object tableInJSONForm = null;
 
-        if (this.table instanceof List tableL) {
-            tableInJSONForm = gatherJSONArrayFromTable(tableL);
-        } else if (this.table instanceof HashMap tableM) {
-            tableInJSONForm = gatherJSONObjectFromTable(tableM);
+        if (this.table instanceof List tableAsList) {
+            tableInJSONForm = gatherJSONArrayFromTable(tableAsList);
+        } else if (this.table instanceof HashMap tableAsHashMap) {
+            tableInJSONForm = gatherJSONObjectFromTable(tableAsHashMap);
         }
 
         // Still need to determine the right path.
@@ -265,10 +265,10 @@ public class MatchaDbTable {
         JSONArray jsonArray = new JSONArray();
 
         for (Object object : tableObject) {
-            if (object instanceof List) {
-                jsonArray.add(gatherJSONArrayFromTable((List) object));
-            } else if (object instanceof Map) {
-                jsonArray.add(gatherJSONObjectFromTable((HashMap) object));
+            if (object instanceof List objectAsList) {
+                jsonArray.add(gatherJSONArrayFromTable(objectAsList));
+            } else if (object instanceof HashMap objectAsHashMap) {
+                jsonArray.add(gatherJSONObjectFromTable(objectAsHashMap));
             } else {
                 // Here we will put anything that would be generic data
                 jsonArray.add(object);
@@ -292,10 +292,10 @@ public class MatchaDbTable {
         for (Iterator objectKeyIterator = tableObject.keySet().iterator(); objectKeyIterator.hasNext();) {
             String objectKey = (String) objectKeyIterator.next();
             Object object = tableObject.get(objectKey);
-            if (object instanceof List) {
-                jsonObject.put(objectKey, gatherJSONArrayFromTable((ArrayList<Object>) object));
-            } else if (object instanceof Map) {
-                jsonObject.put(objectKey, gatherJSONObjectFromTable((HashMap<String, Object>) object));
+            if (object instanceof List objectAsList) {
+                jsonObject.put(objectKey, gatherJSONArrayFromTable(objectAsList));
+            } else if (object instanceof HashMap objectAsHashMap) {
+                jsonObject.put(objectKey, gatherJSONObjectFromTable(objectAsHashMap));
             } else {
                 // Here we will put anything that would be generic data
                 jsonObject.put(objectKey, object);
