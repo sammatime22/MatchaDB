@@ -154,21 +154,21 @@ public class MatchaDbTable {
         for (Iterator keyIterator = jsonObject.keySet().iterator(); 
                 keyIterator.hasNext();) {
             String key = (String) keyIterator.next();
-            if (jsonObject.get(key) instanceof JSONObject) {
-                jsonObjectTableComponent.put(key, interpretJSONObject((JSONObject) jsonObject.get(key)));
-            } else if (jsonObject.get(key) instanceof JSONArray) {
-                jsonObjectTableComponent.put(key, interpretJSONArray((JSONArray) jsonObject.get(key)));
+            if (jsonObject.get(key) instanceof JSONObject jsonObjectsValueAsJsonObject) {
+                jsonObjectTableComponent.put(key, interpretJSONObject(jsonObjectsValueAsJsonObject));
+            } else if (jsonObject.get(key) instanceof JSONArray jsonObjectsValueAsJsonArray) {
+                jsonObjectTableComponent.put(key, interpretJSONArray(jsonObjectsValueAsJsonArray));
             } else {
                 // If the data wasn't of type JSONObject or JSONArray, let's interpret
                 // it in the following branching statements
-                if (jsonObject.get(key) instanceof Boolean) { 
-                    jsonObjectTableComponent.put(key, (boolean) jsonObject.get(key));
-                } else if (jsonObject.get(key) instanceof Integer) {
-                    jsonObjectTableComponent.put(key, (int) jsonObject.get(key));
-                } else if (jsonObject.get(key) instanceof Double) {
-                    jsonObjectTableComponent.put(key, (double) jsonObject.get(key));
-                } else if (jsonObject.get(key) instanceof String) {
-                    jsonObjectTableComponent.put(key, (String) jsonObject.get(key));
+                if (jsonObject.get(key) instanceof Boolean jsonObjectsValueAsBoolean) { 
+                    jsonObjectTableComponent.put(key, jsonObjectsValueAsBoolean);
+                } else if (jsonObject.get(key) instanceof Integer jsonObjectsValueAsInteger) {
+                    jsonObjectTableComponent.put(key, jsonObjectsValueAsInteger);
+                } else if (jsonObject.get(key) instanceof Double jsonObjectsValueAsDouble) {
+                    jsonObjectTableComponent.put(key, jsonObjectsValueAsDouble);
+                } else if (jsonObject.get(key) instanceof String jsonObjectsValueAsString) {
+                    jsonObjectTableComponent.put(key, jsonObjectsValueAsString);
                 } else {
                     // If we couldn't figure out the type, we will just turn the object into
                     // a string.
@@ -193,21 +193,21 @@ public class MatchaDbTable {
         for (Iterator jsonArrayIterator = jsonArray.iterator(); jsonArrayIterator.hasNext();) {
             Object nextObject = jsonArrayIterator.next();
 
-            if (nextObject instanceof JSONObject) {
-                jsonArrayTableComponent.add(interpretJSONObject((JSONObject) nextObject));
-            } else if (nextObject instanceof JSONArray) {
-                jsonArrayTableComponent.add(interpretJSONArray((JSONArray) nextObject));
+            if (nextObject instanceof JSONObject nextObjectAsJsonObject) {
+                jsonArrayTableComponent.add(interpretJSONObject(nextObjectAsJsonObject));
+            } else if (nextObject instanceof JSONArray nextObjectAsJsonArray) {
+                jsonArrayTableComponent.add(interpretJSONArray(nextObjectAsJsonArray));
             } else {
                 // If the data wasn't of type JSONObject or JSONArray, let's interpret
                 // it in the following branching statements
-                if (nextObject instanceof Boolean) { 
-                    jsonArrayTableComponent.add((boolean) nextObject);
-                } else if (nextObject instanceof Integer) {
-                    jsonArrayTableComponent.add((int) nextObject);
-                } else if (nextObject instanceof Double) {
-                    jsonArrayTableComponent.add((double) nextObject);
-                } else if (nextObject instanceof String) {
-                    jsonArrayTableComponent.add((String) nextObject);
+                if (nextObject instanceof Boolean nextObjectAsBoolean) { 
+                    jsonArrayTableComponent.add(nextObjectAsBoolean);
+                } else if (nextObject instanceof Integer nextObjectAsInteger) {
+                    jsonArrayTableComponent.add(nextObjectAsInteger);
+                } else if (nextObject instanceof Double nextObjectAsDouble) {
+                    jsonArrayTableComponent.add(nextObjectAsDouble);
+                } else if (nextObject instanceof String nextObjectAsString) {
+                    jsonArrayTableComponent.add(nextObjectAsString);
                 } else {
                     // If we couldn't figure out the type, we will just turn the object into
                     // a string.
