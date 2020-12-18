@@ -323,15 +323,15 @@ public class MatchaDbTable {
                 if (indexOfInterest != INDEX_NONEXISTANT) {
                     selection = listSelection.get(indexOfInterest);
                 } else {
-                    // just saying if the tag didn't exist our single entry
-                    // is probably just an encapsulation of the list
-                    selection = ((HashMap) 
-                        listSelection.get(SINGLE_ENCAPSULATED_LIST_INDEX)).get(fromQueryPortion);
+                    // If this entry didn't exist, we'll just return an empty list
+                    return new ArrayList<>();
                 }
             } else if (selection instanceof HashMap hashmapSelection) {
                 if (hashmapSelection.containsKey(fromQueryPortion)) {
                     selection = hashmapSelection.get(fromQueryPortion);
-                } 
+                } else {
+                    return new ArrayList<>();
+                }
             } else {
                 // If we searched down too far, then we can't interpret the query. Return
                 // an empty list as a result.
@@ -388,7 +388,11 @@ public class MatchaDbTable {
             // Here just make it so that the only means of inserting the element is by getting the
             // one HashMap that exists as the only element on the List - this will be fixed in the 
             // next bugfix (Bugfix for Gener-ifying MatchaDbTable's table Object).
-            ((List) ((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0])).add(newItem);
+            if (this.table instanceof HashMap tableAsHashMap) {
+                // Add check to see how we should be adding elements to the table
+                ((List) tableAsHashMap.get(query.getFromQuery()[0])).add(newItem);
+            }
+            // Add a similar version for "List" type
         } catch (Exception e) {
             e.printStackTrace();
             return false;
