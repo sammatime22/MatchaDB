@@ -381,18 +381,36 @@ public class MatchaDbTable {
      * @return A boolean describing a successful insert.
      */
     public boolean postData(MatchaQuery query) throws ParseException {
-        HashMap<String, Object> newItem = 
-            interpretJSONObject((JSONObject) this.parser.parse(query.getSelectQuery()[0][0]));
 
         try {
             // Here just make it so that the only means of inserting the element is by getting the
             // one HashMap that exists as the only element on the List - this will be fixed in the 
             // next bugfix (Bugfix for Gener-ifying MatchaDbTable's table Object).
-            if (this.table instanceof HashMap tableAsHashMap) {
-                // Add check to see how we should be adding elements to the table
-                ((List) tableAsHashMap.get(query.getFromQuery()[0])).add(newItem);
+            Object selectionToInsertUpon = this.table;
+
+            for (int i = 0; i < query.getFromQuery().length; i++) {
+                if (selectionToInsertUpon instanceof HashMap tableAsHashMap) {
+                    selectionToInsertUpon = tableAsHashMap.get(query.getFromQuery()[i]);
+                } else if (selectionToInsertUpon instanceof List tableAsList) {
+                    int indexOfInterest = tableAsList.indexOf(query.getFromQuery()[i]);
+                    if (indexOfInterest != INDEX_NONEXISTANT) {
+                        selectionToInsertUpon = tableAsList.get(indexOfInterest);
+                    }
+                }
+
+                for (int j = 0; j < query.getSelectQuery()[i].length; j++) {
+                    HashMap<String, Object> newItem = 
+                        interpretJSONObject((JSONObject) this.parser.parse(query.getSelectQuery()[i][j]));
+                    if (selectionToInsertUpon instanceof HashMap selectionAsHashMap) {
+                        selectionAsHashMap.put("", newItem); // What is the key??
+                    } else if (selectionToInsertUpon instanceof List selectionAsList) {
+                        selectionAsList.add(newItem);
+                    }
+
+                }
             }
-            // Add a similar version for "List" type
+
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;

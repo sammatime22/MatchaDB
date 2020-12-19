@@ -293,7 +293,10 @@ public class MatchaDbTableTest {
             new String[][] {{ITEM_NAME, HAS_OPERATION, "'Trendy Hat'"}}
         );
 
-        // Query to insert item
+        // Query to insert item, which in JSON might come in as...
+        // "Place": "To Hats", 
+        // "Insert": ""{ \"Item Name\": \"Trendy Hat\", \"Item Brand\": \"qwertu\"," +
+        //        "\"Item Description\": \"A hat with a feather for a feather.\", \"Item Price\": 9000000.95 }""
         MatchaQuery matchaQueryInsertFancyHat = new MatchaQuery(new String[] {HATS_TABLE},
             new String[][] {{ fancyHatToAddAsJSON }}
         );
