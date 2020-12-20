@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import java.lang.NumberFormatException;
 import java.lang.instrument.Instrumentation;
 
 import java.util.ArrayList;
@@ -319,7 +320,14 @@ public class MatchaDbTable {
 
         for (String fromQueryPortion : query.getFromQuery()) {
             if (selection instanceof List listSelection) {
-                int indexOfInterest = listSelection.indexOf(fromQueryPortion);
+                int indexOfInterest;
+
+                if (canBeInterpretedAsInteger(fromQueryPortion)) {
+                    indexOfInterest = Integer.parseInt(fromQueryPortion);
+                } else {
+                    indexOfInterest = listSelection.indexOf(fromQueryPortion);
+                }
+
                 if (indexOfInterest != INDEX_NONEXISTANT) {
                     selection = listSelection.get(indexOfInterest);
                 } else {
@@ -392,7 +400,14 @@ public class MatchaDbTable {
                 if (selectionToInsertUpon instanceof HashMap tableAsHashMap) {
                     selectionToInsertUpon = tableAsHashMap.get(query.getFromQuery()[i]);
                 } else if (selectionToInsertUpon instanceof List tableAsList) {
-                    int indexOfInterest = tableAsList.indexOf(query.getFromQuery()[i]);
+                    int indexOfInterest;
+
+                    if (canBeInterpretedAsInteger(query.getFromQuery()[i])) {
+                        indexOfInterest = Integer.parseInt(query.getFromQuery()[i]);
+                    } else {
+                        indexOfInterest = tableAsList.indexOf(query.getFromQuery()[i]);
+                    }
+
                     if (indexOfInterest != INDEX_NONEXISTANT) {
                         selectionToInsertUpon = tableAsList.get(indexOfInterest);
                     }
@@ -458,7 +473,7 @@ public class MatchaDbTable {
      *
      * @return A boolean describing if our value meets our query requirements.
      */
-    public boolean meetsQueryRequirement(Object value, String[][] selectQueryContents) {
+    private boolean meetsQueryRequirement(Object value, String[][] selectQueryContents) {
         HashMap<String, Object> valueMap = new HashMap<>();
         List<Boolean> queryResults = new ArrayList<>();
 
@@ -497,6 +512,29 @@ public class MatchaDbTable {
             if (!queryResult) {
                 return false;
             }
+        }
+
+        return true;
+    }
+
+    /**
+     * A small helper method to determine if a String is in fact convertable to 
+     * an integer value.
+     *
+     * (If more "helper" methods accrue that could be used within multiple 
+     *  multiple services of the application, we will move this over to a Util
+     *  class/service.)
+     *
+     * @param stringToInterpret The string that will be interpreted if it is an 
+     *                          integer/can be turned into an integer.
+     *
+     * @return A boolean describing if the String could be an integer.
+     */
+    private boolean canBeInterpretedAsInteger(String stringToInterpret) {
+        try {
+            Integer.parseInt(stringToInterpret);
+        } catch (NumberFormatException nfe) {
+            return false;
         }
 
         return true;
