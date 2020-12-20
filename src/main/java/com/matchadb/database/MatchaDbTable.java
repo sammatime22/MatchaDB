@@ -417,7 +417,11 @@ public class MatchaDbTable {
                     HashMap<String, Object> newItem = 
                         interpretJSONObject((JSONObject) this.parser.parse(query.getSelectQuery()[i][j]));
                     if (selectionToInsertUpon instanceof HashMap selectionAsHashMap) {
-                        selectionAsHashMap.put("", newItem); // What is the key??
+                        // Given that a value already exists at this position, this will overwrite the 
+                        // former value. I'm going to go under the assumption that this is expected, 
+                        // but an alternative would be to insert all of the new values onto the former
+                        // key, possibly.
+                        selectionAsHashMap.put(query.getFromQuery()[i], newItem); 
                     } else if (selectionToInsertUpon instanceof List selectionAsList) {
                         selectionAsList.add(newItem);
                     }

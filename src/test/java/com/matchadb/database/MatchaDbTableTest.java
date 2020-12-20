@@ -57,7 +57,7 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testLoadDataTestFileClothesWebsiteAPI() {
-        List<Object> expectedTable = MatchaDbGenerateData.generateClothesWebsiteAPITable();
+        HashMap<String, Object> expectedTable = MatchaDbGenerateData.generateClothesWebsiteAPITable();
         String tableName = TEST_FILE_CLOTHES_WEBSITE_API;
 
         // Location of the test file used

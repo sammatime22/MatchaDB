@@ -17,10 +17,8 @@ public class MatchaDbGenerateData {
      * @return The expected generated table from the TestFileClothesWebsiteAPI.json
      *         file.
      */
-    public static List<Object> generateClothesWebsiteAPITable() {
-        List<Object> table = new ArrayList<Object>();
-        HashMap<String, Object> tableIndexes = new HashMap<String, Object>();
-
+    public static HashMap<String, Object> generateClothesWebsiteAPITable() {
+        HashMap<String, Object> table = new HashMap<String, Object>();
 
         // Add in the Shirts
         List<Object> shirts = new ArrayList<Object>();
@@ -49,7 +47,7 @@ public class MatchaDbGenerateData {
         shirts.add(artT);
         shirts.add(sleevelessT);
 
-        tableIndexes.put("Shirts", shirts);
+        table.put("Shirts", shirts);
 
 
         // Add in the Pants
@@ -79,7 +77,7 @@ public class MatchaDbGenerateData {
         pants.add(tanPants);
         pants.add(moreWorkPants);
 
-        tableIndexes.put("Pants", pants);
+        table.put("Pants", pants);
 
 
         // Add in the Shoes
@@ -109,7 +107,7 @@ public class MatchaDbGenerateData {
         shoes.add(skateShoes);
         shoes.add(lightUp);
 
-        tableIndexes.put("Shoes", shoes);
+        table.put("Shoes", shoes);
 
 
         // Add in the Hats
@@ -139,9 +137,8 @@ public class MatchaDbGenerateData {
         hats.add(dadHat);
         hats.add(beanie);
 
-        tableIndexes.put("Hats", hats);
+        table.put("Hats", hats);
 
-        table.add(tableIndexes);
         return table; 
     }
 
@@ -207,38 +204,36 @@ public class MatchaDbGenerateData {
         Double priceGreaterThanOrEqualTo, Double priceLessThan, String subtableKey) {
         
         List<HashMap<String, Object>> quaryParamViableClothesWebsiteItems = new ArrayList<>();
-        List<Object> currentTableItemsWithTableHeads = generateClothesWebsiteAPITable();
+        HashMap<String, Object> currentTableItemsWithTableHeads = generateClothesWebsiteAPITable();
 
-        for (Object table : currentTableItemsWithTableHeads) {
-            for (Object tableKey : ((HashMap)table).keySet().toArray()) {
-                String tableKeyAsString = (String) tableKey;
-                if (tableKeyAsString.equals(subtableKey)) {
-                    Object subTable = ((HashMap)table).get(tableKeyAsString);
-                    for (Object item : (List) subTable) {
-                        HashMap<String, Object> itemAsMap = ((HashMap) item);
-                        // check name contains
-                        if (nameContainsChar != null && !((String) itemAsMap.get("Item Name")).contains(nameContainsChar)) {
-                            continue;
-                        }
-                        // check brand contains
-                        if (brandContainsChar != null && !((String) itemAsMap.get("Item Brand")).contains(brandContainsChar)) {
-                            continue;
-                        }
-                        // check description contains
-                        if (descriptionContainsChar != null && !((String) itemAsMap.get("Item Description")).contains(descriptionContainsChar)) {
-                            continue;
-                        }
-                        // check price greater than or equal to
-                        if (priceGreaterThanOrEqualTo != null && !(((Double) itemAsMap.get("Item Price")) >= priceGreaterThanOrEqualTo)) {
-                            continue;
-                        }
-                        // check price less than
-                        if (priceLessThan != null && !(((Double) itemAsMap.get("Item Price")) < priceLessThan)) {
-                            continue;
-                        }
-                        // If we met all query parameters, add the item
-                        quaryParamViableClothesWebsiteItems.add(itemAsMap);
+        for (Object tableKey : ((HashMap)currentTableItemsWithTableHeads).keySet().toArray()) {
+            String tableKeyAsString = (String) tableKey;
+            if (tableKeyAsString.equals(subtableKey)) {
+                Object subTable = ((HashMap)currentTableItemsWithTableHeads).get(tableKeyAsString);
+                for (Object item : (List) subTable) {
+                    HashMap<String, Object> itemAsMap = ((HashMap) item);
+                    // check name contains
+                    if (nameContainsChar != null && !((String) itemAsMap.get("Item Name")).contains(nameContainsChar)) {
+                        continue;
                     }
+                    // check brand contains
+                    if (brandContainsChar != null && !((String) itemAsMap.get("Item Brand")).contains(brandContainsChar)) {
+                        continue;
+                    }
+                    // check description contains
+                    if (descriptionContainsChar != null && !((String) itemAsMap.get("Item Description")).contains(descriptionContainsChar)) {
+                        continue;
+                    }
+                    // check price greater than or equal to
+                    if (priceGreaterThanOrEqualTo != null && !(((Double) itemAsMap.get("Item Price")) >= priceGreaterThanOrEqualTo)) {
+                        continue;
+                    }
+                    // check price less than
+                    if (priceLessThan != null && !(((Double) itemAsMap.get("Item Price")) < priceLessThan)) {
+                        continue;
+                    }
+                    // If we met all query parameters, add the item
+                    quaryParamViableClothesWebsiteItems.add(itemAsMap);
                 }
             }
         }
