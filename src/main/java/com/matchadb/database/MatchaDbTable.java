@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import java.lang.NumberFormatException;
 import java.lang.instrument.Instrumentation;
 
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class MatchaDbTable {
     private String dropoffPath;
 
     // The actual table which is to have operations run upon it.
-    private List<Object> table;
+    private Object table;
 
     private JSONParser parser;
 
@@ -111,8 +112,7 @@ public class MatchaDbTable {
             Object data = this.parser.parse(file);
 
             // Insert the data into the table
-            // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
-            this.table = tableBuilder(data);
+            tableBuilder(data);
 
             this.uploadTimeInMillis = System.currentTimeMillis();
             this.lastUpdateTimeInMillis = System.currentTimeMillis();
@@ -128,23 +128,18 @@ public class MatchaDbTable {
     }    
 
     /**
-     * // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
      * This method calls on itself recursively to help build the database table.
      *
      * @param tableData The table data provided to the DB table.
      *
      * @return A HashMap with the data within the table/subtables.
      */
-    private List<Object> tableBuilder(Object tableData) {
-        List<Object> tableComponent = new ArrayList<Object>();
-
-        if (tableData instanceof JSONObject) {
-            tableComponent.add(interpretJSONObject((JSONObject) tableData));
-        } else if (tableData instanceof JSONArray) {
-            tableComponent = interpretJSONArray((JSONArray) tableData);
+    private void tableBuilder(Object tableData) {
+        if (tableData instanceof JSONObject tableDataAsJSONObject) {
+            this.table = interpretJSONObject(tableDataAsJSONObject);
+        } else if (tableData instanceof JSONArray tableDataAsJSONArray) {
+            this.table = interpretJSONArray(tableDataAsJSONArray);
         }
-
-        return tableComponent;
     }
 
     /**
@@ -160,21 +155,21 @@ public class MatchaDbTable {
         for (Iterator keyIterator = jsonObject.keySet().iterator(); 
                 keyIterator.hasNext();) {
             String key = (String) keyIterator.next();
-            if (jsonObject.get(key) instanceof JSONObject) {
-                jsonObjectTableComponent.put(key, interpretJSONObject((JSONObject) jsonObject.get(key)));
-            } else if (jsonObject.get(key) instanceof JSONArray) {
-                jsonObjectTableComponent.put(key, interpretJSONArray((JSONArray) jsonObject.get(key)));
+            if (jsonObject.get(key) instanceof JSONObject jsonObjectsValueAsJsonObject) {
+                jsonObjectTableComponent.put(key, interpretJSONObject(jsonObjectsValueAsJsonObject));
+            } else if (jsonObject.get(key) instanceof JSONArray jsonObjectsValueAsJsonArray) {
+                jsonObjectTableComponent.put(key, interpretJSONArray(jsonObjectsValueAsJsonArray));
             } else {
                 // If the data wasn't of type JSONObject or JSONArray, let's interpret
                 // it in the following branching statements
-                if (jsonObject.get(key) instanceof Boolean) { 
-                    jsonObjectTableComponent.put(key, (boolean) jsonObject.get(key));
-                } else if (jsonObject.get(key) instanceof Integer) {
-                    jsonObjectTableComponent.put(key, (int) jsonObject.get(key));
-                } else if (jsonObject.get(key) instanceof Double) {
-                    jsonObjectTableComponent.put(key, (double) jsonObject.get(key));
-                } else if (jsonObject.get(key) instanceof String) {
-                    jsonObjectTableComponent.put(key, (String) jsonObject.get(key));
+                if (jsonObject.get(key) instanceof Boolean jsonObjectsValueAsBoolean) { 
+                    jsonObjectTableComponent.put(key, jsonObjectsValueAsBoolean);
+                } else if (jsonObject.get(key) instanceof Integer jsonObjectsValueAsInteger) {
+                    jsonObjectTableComponent.put(key, jsonObjectsValueAsInteger);
+                } else if (jsonObject.get(key) instanceof Double jsonObjectsValueAsDouble) {
+                    jsonObjectTableComponent.put(key, jsonObjectsValueAsDouble);
+                } else if (jsonObject.get(key) instanceof String jsonObjectsValueAsString) {
+                    jsonObjectTableComponent.put(key, jsonObjectsValueAsString);
                 } else {
                     // If we couldn't figure out the type, we will just turn the object into
                     // a string.
@@ -199,21 +194,21 @@ public class MatchaDbTable {
         for (Iterator jsonArrayIterator = jsonArray.iterator(); jsonArrayIterator.hasNext();) {
             Object nextObject = jsonArrayIterator.next();
 
-            if (nextObject instanceof JSONObject) {
-                jsonArrayTableComponent.add(interpretJSONObject((JSONObject) nextObject));
-            } else if (nextObject instanceof JSONArray) {
-                jsonArrayTableComponent.add(interpretJSONArray((JSONArray) nextObject));
+            if (nextObject instanceof JSONObject nextObjectAsJsonObject) {
+                jsonArrayTableComponent.add(interpretJSONObject(nextObjectAsJsonObject));
+            } else if (nextObject instanceof JSONArray nextObjectAsJsonArray) {
+                jsonArrayTableComponent.add(interpretJSONArray(nextObjectAsJsonArray));
             } else {
                 // If the data wasn't of type JSONObject or JSONArray, let's interpret
                 // it in the following branching statements
-                if (nextObject instanceof Boolean) { 
-                    jsonArrayTableComponent.add((boolean) nextObject);
-                } else if (nextObject instanceof Integer) {
-                    jsonArrayTableComponent.add((int) nextObject);
-                } else if (nextObject instanceof Double) {
-                    jsonArrayTableComponent.add((double) nextObject);
-                } else if (nextObject instanceof String) {
-                    jsonArrayTableComponent.add((String) nextObject);
+                if (nextObject instanceof Boolean nextObjectAsBoolean) { 
+                    jsonArrayTableComponent.add(nextObjectAsBoolean);
+                } else if (nextObject instanceof Integer nextObjectAsInteger) {
+                    jsonArrayTableComponent.add(nextObjectAsInteger);
+                } else if (nextObject instanceof Double nextObjectAsDouble) {
+                    jsonArrayTableComponent.add(nextObjectAsDouble);
+                } else if (nextObject instanceof String nextObjectAsString) {
+                    jsonArrayTableComponent.add(nextObjectAsString);
                 } else {
                     // If we couldn't figure out the type, we will just turn the object into
                     // a string.
@@ -226,15 +221,24 @@ public class MatchaDbTable {
     }
 
     /**
-     * // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
      * Converts the object back to a JSON file and saves it on the system. 
      */
     public void saveData() {
-        JSONArray tableInJSONArrayForm = gatherJSONArrayFromTable(this.table);
+        Object tableInJSONForm = null;
+
+        if (this.table instanceof List tableAsList) {
+            tableInJSONForm = gatherJSONArrayFromTable(tableAsList);
+        } else if (this.table instanceof HashMap tableAsHashMap) {
+            tableInJSONForm = gatherJSONObjectFromTable(tableAsHashMap);
+        }
 
         // Still need to determine the right path.
         try (FileWriter fileWriter = new FileWriter(getSaveDataFilename())) {
-            fileWriter.write(tableInJSONArrayForm.toString());
+            if (tableInJSONForm != null) {
+                fileWriter.write(tableInJSONForm.toString());
+            } else {
+                fileWriter.write("");
+            }
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
@@ -262,10 +266,10 @@ public class MatchaDbTable {
         JSONArray jsonArray = new JSONArray();
 
         for (Object object : tableObject) {
-            if (object instanceof List) {
-                jsonArray.add(gatherJSONArrayFromTable((List) object));
-            } else if (object instanceof Map) {
-                jsonArray.add(gatherJSONObjectFromTable((HashMap) object));
+            if (object instanceof List objectAsList) {
+                jsonArray.add(gatherJSONArrayFromTable(objectAsList));
+            } else if (object instanceof HashMap objectAsHashMap) {
+                jsonArray.add(gatherJSONObjectFromTable(objectAsHashMap));
             } else {
                 // Here we will put anything that would be generic data
                 jsonArray.add(object);
@@ -289,10 +293,10 @@ public class MatchaDbTable {
         for (Iterator objectKeyIterator = tableObject.keySet().iterator(); objectKeyIterator.hasNext();) {
             String objectKey = (String) objectKeyIterator.next();
             Object object = tableObject.get(objectKey);
-            if (object instanceof List) {
-                jsonObject.put(objectKey, gatherJSONArrayFromTable((ArrayList<Object>) object));
-            } else if (object instanceof Map) {
-                jsonObject.put(objectKey, gatherJSONObjectFromTable((HashMap<String, Object>) object));
+            if (object instanceof List objectAsList) {
+                jsonObject.put(objectKey, gatherJSONArrayFromTable(objectAsList));
+            } else if (object instanceof HashMap objectAsHashMap) {
+                jsonObject.put(objectKey, gatherJSONObjectFromTable(objectAsHashMap));
             } else {
                 // Here we will put anything that would be generic data
                 jsonObject.put(objectKey, object);
@@ -316,19 +320,26 @@ public class MatchaDbTable {
 
         for (String fromQueryPortion : query.getFromQuery()) {
             if (selection instanceof List listSelection) {
-                int indexOfInterest = listSelection.indexOf(fromQueryPortion);
+                int indexOfInterest;
+
+                if (canBeInterpretedAsInteger(fromQueryPortion)) {
+                    indexOfInterest = Integer.parseInt(fromQueryPortion);
+                } else {
+                    indexOfInterest = listSelection.indexOf(fromQueryPortion);
+                }
+
                 if (indexOfInterest != INDEX_NONEXISTANT) {
                     selection = listSelection.get(indexOfInterest);
                 } else {
-                    // just saying if the tag didn't exist our single entry
-                    // is probably just an encapsulation of the list
-                    selection = ((HashMap) 
-                        listSelection.get(SINGLE_ENCAPSULATED_LIST_INDEX)).get(fromQueryPortion);
+                    // If this entry didn't exist, we'll just return an empty list
+                    return new ArrayList<>();
                 }
             } else if (selection instanceof HashMap hashmapSelection) {
                 if (hashmapSelection.containsKey(fromQueryPortion)) {
                     selection = hashmapSelection.get(fromQueryPortion);
-                } 
+                } else {
+                    return new ArrayList<>();
+                }
             } else {
                 // If we searched down too far, then we can't interpret the query. Return
                 // an empty list as a result.
@@ -378,14 +389,47 @@ public class MatchaDbTable {
      * @return A boolean describing a successful insert.
      */
     public boolean postData(MatchaQuery query) throws ParseException {
-        HashMap<String, Object> newItem = 
-            interpretJSONObject((JSONObject) this.parser.parse(query.getSelectQuery()[0][0]));
 
         try {
             // Here just make it so that the only means of inserting the element is by getting the
             // one HashMap that exists as the only element on the List - this will be fixed in the 
             // next bugfix (Bugfix for Gener-ifying MatchaDbTable's table Object).
-            ((List) ((HashMap)(((List)this.table).get(0))).get(query.getFromQuery()[0])).add(newItem);
+            Object selectionToInsertUpon = this.table;
+
+            for (int i = 0; i < query.getFromQuery().length; i++) {
+                if (selectionToInsertUpon instanceof HashMap tableAsHashMap) {
+                    selectionToInsertUpon = tableAsHashMap.get(query.getFromQuery()[i]);
+                } else if (selectionToInsertUpon instanceof List tableAsList) {
+                    int indexOfInterest;
+
+                    if (canBeInterpretedAsInteger(query.getFromQuery()[i])) {
+                        indexOfInterest = Integer.parseInt(query.getFromQuery()[i]);
+                    } else {
+                        indexOfInterest = tableAsList.indexOf(query.getFromQuery()[i]);
+                    }
+
+                    if (indexOfInterest != INDEX_NONEXISTANT) {
+                        selectionToInsertUpon = tableAsList.get(indexOfInterest);
+                    }
+                }
+
+                for (int j = 0; j < query.getSelectQuery()[i].length; j++) {
+                    HashMap<String, Object> newItem = 
+                        interpretJSONObject((JSONObject) this.parser.parse(query.getSelectQuery()[i][j]));
+                    if (selectionToInsertUpon instanceof HashMap selectionAsHashMap) {
+                        // Given that a value already exists at this position, this will overwrite the 
+                        // former value. I'm going to go under the assumption that this is expected, 
+                        // but an alternative would be to insert all of the new values onto the former
+                        // key, possibly.
+                        selectionAsHashMap.put(query.getFromQuery()[i], newItem); 
+                    } else if (selectionToInsertUpon instanceof List selectionAsList) {
+                        selectionAsList.add(newItem);
+                    }
+
+                }
+            }
+
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -433,7 +477,7 @@ public class MatchaDbTable {
      *
      * @return A boolean describing if our value meets our query requirements.
      */
-    public boolean meetsQueryRequirement(Object value, String[][] selectQueryContents) {
+    private boolean meetsQueryRequirement(Object value, String[][] selectQueryContents) {
         HashMap<String, Object> valueMap = new HashMap<>();
         List<Boolean> queryResults = new ArrayList<>();
 
@@ -472,6 +516,29 @@ public class MatchaDbTable {
             if (!queryResult) {
                 return false;
             }
+        }
+
+        return true;
+    }
+
+    /**
+     * A small helper method to determine if a String is in fact convertable to 
+     * an integer value.
+     *
+     * (If more "helper" methods accrue that could be used within multiple 
+     *  multiple services of the application, we will move this over to a Util
+     *  class/service.)
+     *
+     * @param stringToInterpret The string that will be interpreted if it is an 
+     *                          integer/can be turned into an integer.
+     *
+     * @return A boolean describing if the String could be an integer.
+     */
+    private boolean canBeInterpretedAsInteger(String stringToInterpret) {
+        try {
+            Integer.parseInt(stringToInterpret);
+        } catch (NumberFormatException nfe) {
+            return false;
         }
 
         return true;
