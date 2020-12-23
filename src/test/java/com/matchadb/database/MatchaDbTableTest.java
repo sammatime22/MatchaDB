@@ -354,11 +354,24 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testUpdateData() {
-        // Show the item is unmodified (get)
 
-        // Update item
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
 
-        // Search (get) and see that it is updated
+        try {
+            matchaDbTable.loadData(new FileReader(TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE), TEST_FILE_CLOTHES_WEBSITE_API);
+
+
+            // Show the item is unmodified (get)
+
+            // Update item
+
+            // Search (get) and see that it is updated
+
+        } catch (FileNotFoundException fnfe) {
+            // If a FileNotFoundException comes up, fail the test.
+            fnfe.printStackTrace();
+            Assert.fail();            
+        }
     }
 
     /**
