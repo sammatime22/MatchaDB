@@ -46,6 +46,12 @@ public class MatchaDbTableTest {
 
     private final String HAS_OPERATION = "has";
 
+    private final String LESS_THAN = "<";
+
+    private final String GREATER_THAN = ">";
+
+    private final String ALL_TABLES = "*";
+
     private final String SHIRTS_TABLE = "Shirts";
 
     private final String HATS_TABLE = "Hats";
@@ -235,10 +241,10 @@ public class MatchaDbTableTest {
         String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
 
         // We want to set up the MatchaQuery object for the following query
-        // Select * from * where Item Name contains 's' and Item Price < 30.00
+        // Select * from * where Item Name contains 's'
         // And the item is from the "Shoes" table
         List<HashMap<String, Object>> expectedObjects = 
-            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams("s", null, null, null, 30.00, SHIRTS_TABLE);
+            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams("s", null, null, null, null, SHIRTS_TABLE);
 
         MatchaQuery matchaQuery = new MatchaQuery(new String[]{SHIRTS_TABLE}, 
             new String[][]{{ITEM_NAME, HAS_OPERATION, "'s'"}});
@@ -355,17 +361,30 @@ public class MatchaDbTableTest {
     @Test
     public void testUpdateData() {
 
+        // Coincidentally, from the DB point of view we should be able to use the 
+        // same MatchaQuery object for all three queries (two get, one update).
+        MatchaQuery matchaQuery = new MatchaQuery(new String[]{ALL_TABLES}, 
+            new String[][]{{ITEM_PRICE, GREATER_THAN, "16.00"}, {ITEM_PRICE, LESS_THAN, "16.00"}});
+
         matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+
+        List<HashMap<String, Object>> expectedObjects = 
+            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams(null, null, null, 16.00, 20.00, null);
 
         try {
             matchaDbTable.loadData(new FileReader(TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE), TEST_FILE_CLOTHES_WEBSITE_API);
 
+            // Show the items are unmodified (get)
+            matchaDbTable.getData(matchaQuery);
 
-            // Show the item is unmodified (get)
-
-            // Update item
+            // Update items
+            // Let's say for all items with a price greater than $16.00 but less than $20.00, update
+            // their brand to "The Eighteen", and change their price to $18.91
+            matchaDbTable.updateData(matchaQuery);
 
             // Search (get) and see that it is updated
+            // This should be the Baseball Hat, Dad Hat, and Beanie
+            matchaDbTable.getData(matchaQuery);
 
         } catch (FileNotFoundException fnfe) {
             // If a FileNotFoundException comes up, fail the test.

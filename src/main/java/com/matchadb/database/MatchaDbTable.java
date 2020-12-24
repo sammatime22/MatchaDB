@@ -441,9 +441,11 @@ public class MatchaDbTable {
     /**
      * Updates the data into the appropriate position of the table.
      *
+     * @param query The query that will be used to update the DB table.
+     *
      * @return A boolean describing a successful update.
      */
-    public boolean updateData() {
+    public boolean updateData(MatchaQuery query) {
         return false;
     }
 
