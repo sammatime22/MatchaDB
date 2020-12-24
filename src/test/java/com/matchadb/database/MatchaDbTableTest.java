@@ -52,6 +52,8 @@ public class MatchaDbTableTest {
 
     private final String ALL_TABLES = "*";
 
+    private final String UPDATE = "Update";
+
     private final String SHIRTS_TABLE = "Shirts";
 
     private final String HATS_TABLE = "Hats";
@@ -360,11 +362,16 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testUpdateData() {
+        String newPrice = "18.91";
+        String newBrand = "The Eighteen";
 
-        // Coincidentally, from the DB point of view we should be able to use the 
-        // same MatchaQuery object for all three queries (two get, one update).
-        MatchaQuery matchaQuery = new MatchaQuery(new String[]{ALL_TABLES}, 
-            new String[][]{{ITEM_PRICE, GREATER_THAN, "16.00"}, {ITEM_PRICE, LESS_THAN, "16.00"}});
+        MatchaQuery matchaQueryGet = new MatchaQuery(new String[]{ALL_TABLES}, 
+            new String[][]{{ITEM_PRICE, GREATER_THAN, "16.00"}, {ITEM_PRICE, LESS_THAN, "20.00"}});
+        
+        MatchaQuery matchaQueryUpdate = new MatchaQuery(new String[]{ALL_TABLES}, 
+            new String[][]{{ITEM_PRICE, GREATER_THAN, "16.00"}, {ITEM_PRICE, LESS_THAN, "20.00"},
+                {UPDATE, ITEM_PRICE, newPrice}, {UPDATE, ITEM_BRAND, newBrand}
+            });
 
         matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
 
@@ -375,16 +382,65 @@ public class MatchaDbTableTest {
             matchaDbTable.loadData(new FileReader(TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE), TEST_FILE_CLOTHES_WEBSITE_API);
 
             // Show the items are unmodified (get)
-            matchaDbTable.getData(matchaQuery);
+            List<HashMap<String, Object>> actualObjects = 
+                (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQueryGet);
+            // Consider a means of consolidating this for loop and a for loop above in the testGetData test
+            for (HashMap expectedObject : expectedObjects) {
+                boolean success = false;
+                for (HashMap actualObject : actualObjects) {
+                    if (expectedObject.get(ITEM_NAME).equals(actualObject.get(ITEM_NAME))) {
+                        if (expectedObject.get(ITEM_PRICE).equals(actualObject.get(ITEM_PRICE)) &&
+                            expectedObject.get(ITEM_BRAND).equals(actualObject.get(ITEM_BRAND)) &&
+                            expectedObject.get(ITEM_DESCRIPTION).equals(actualObject.get(ITEM_DESCRIPTION))) {
+                            success = true;
+                            break;
+                        } else {
+                            // The object didn't have the right/original attributes for some reason
+                            Assert.fail();
+                        }
+                    }
+                }
+
+                // We didn't find the expected object
+                if (!success) {
+                    Assert.fail();
+                }
+            }
 
             // Update items
             // Let's say for all items with a price greater than $16.00 but less than $20.00, update
             // their brand to "The Eighteen", and change their price to $18.91
-            matchaDbTable.updateData(matchaQuery);
+            if (!matchaDbTable.updateData(matchaQueryUpdate)) {
+                // Just see that updates went okay
+                Assert.fail();
+            }
 
             // Search (get) and see that it is updated
             // This should be the Baseball Hat, Dad Hat, and Beanie
-            matchaDbTable.getData(matchaQuery);
+            matchaDbTable.getData(matchaQueryGet);
+            actualObjects = (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQueryGet);
+            // For loop, see that some comparisons fail and that new expected comparisons pass
+            for (HashMap expectedObject : expectedObjects) {
+                boolean success = false;
+                for (HashMap actualObject : actualObjects) {
+                    if (expectedObject.get(ITEM_NAME).equals(actualObject.get(ITEM_NAME))) {
+                        if (expectedObject.get(ITEM_PRICE).equals(newPrice) &&
+                            actualObject.get(ITEM_BRAND).equals(newBrand) &&
+                            expectedObject.get(ITEM_DESCRIPTION).equals(actualObject.get(ITEM_DESCRIPTION))) {
+                            success = true;
+                            break;
+                        } else {
+                            // The object didn't have the right/new attributes for some reason
+                            Assert.fail();
+                        }
+                    }
+                }
+
+                // We didn't find the expected object
+                if (!success) {
+                    Assert.fail();
+                }
+            }
 
         } catch (FileNotFoundException fnfe) {
             // If a FileNotFoundException comes up, fail the test.

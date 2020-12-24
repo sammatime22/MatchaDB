@@ -1,6 +1,6 @@
 **Project Name**: MatchaDB
 
-**Summary**: _A simple DB implementation that can take in a json doc and develop a DB/API from said JSON doc._
+**Summary**: _A simple DB implementation that can take in a json doc and develop an API from said JSON doc._
 
 **Status**: Incomplete
 
