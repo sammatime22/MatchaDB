@@ -186,54 +186,6 @@ public class MatchaDbTableTest {
     }
 
     /**
-     * Develops the test directory given a test path. If the directory does not
-     * exist, it will be created, and likewise, if it is full, will be cleaned.
-     * Will fail if an exception occurs.
-     *
-     * @param testDirectory The test directory to be used.
-     */
-    public void developTestDirectory(String testDirectory) {
-        File directory = new File(testDirectory);
-        try {
-            // Were we given a directory or a spot that could be If not, fail.
-            if (directory.isFile()) {
-                throw new Exception("Was given something other than a directory.");
-            }
-
-            // Does the directory exist? If not, make it.
-            if (!directory.exists()) {
-                directory.mkdir();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-    }
-
-    /**
-     * Deletes the test directory after the test is done.
-     *
-     * @param testDirectory The test directory to be used.
-     */
-    public void deleteTestDirectory(String testDirectory) {
-        File directory = new File(testDirectory);
-
-        try {
-            // Since this is just test code and we only expect there
-            // to be files, ie no other directories, just recursively 
-            // delete all files.
-            for (File fileInDirectory : directory.listFiles()) {
-                fileInDirectory.delete();
-            }
-
-            directory.delete();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-    }
-
-    /**
      * Tests the system to get data from a specific portion of 
      * memory.
      */
@@ -260,27 +212,7 @@ public class MatchaDbTableTest {
                 (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQuery);
 
             // Find the matching object from our mock data, and check to see that the contents match
-            for (HashMap expectedObject : expectedObjects) {
-                boolean success = false;
-                for (HashMap actualObject : actualObjects) {
-
-                    if (expectedObject.get(ITEM_NAME).equals(actualObject.get(ITEM_NAME))) {
-                        if (expectedObject.get(ITEM_BRAND).equals(actualObject.get(ITEM_BRAND))
-                            && expectedObject.get(ITEM_PRICE).equals(actualObject.get(ITEM_PRICE))
-                            && expectedObject.get(ITEM_DESCRIPTION).equals(actualObject.get(ITEM_DESCRIPTION))) {
-                            success = true;
-                            break;
-                        } else {
-                            Assert.fail();
-                        }
-                    }
-                }
-                
-                // If the object didn't come up, we should just fail the test.
-                if (!success) {
-                    Assert.fail();
-                }
-            }
+            expectedVersusActualClothingWebsiteAPICheck(expectedObjects, actualObjects);
         } catch (FileNotFoundException fnfe) {
             // If a FileNotFoundException comes up, fail the test.
             fnfe.printStackTrace();
@@ -384,28 +316,8 @@ public class MatchaDbTableTest {
             // Show the items are unmodified (get)
             List<HashMap<String, Object>> actualObjects = 
                 (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQueryGet);
-            // Consider a means of consolidating this for loop and a for loop above in the testGetData test
-            for (HashMap expectedObject : expectedObjects) {
-                boolean success = false;
-                for (HashMap actualObject : actualObjects) {
-                    if (expectedObject.get(ITEM_NAME).equals(actualObject.get(ITEM_NAME))) {
-                        if (expectedObject.get(ITEM_PRICE).equals(actualObject.get(ITEM_PRICE)) &&
-                            expectedObject.get(ITEM_BRAND).equals(actualObject.get(ITEM_BRAND)) &&
-                            expectedObject.get(ITEM_DESCRIPTION).equals(actualObject.get(ITEM_DESCRIPTION))) {
-                            success = true;
-                            break;
-                        } else {
-                            // The object didn't have the right/original attributes for some reason
-                            Assert.fail();
-                        }
-                    }
-                }
-
-                // We didn't find the expected object
-                if (!success) {
-                    Assert.fail();
-                }
-            }
+            // Find the matching object from our mock data, and check to see that the contents match    
+            expectedVersusActualClothingWebsiteAPICheck(expectedObjects, actualObjects);
 
             // Update items
             // Let's say for all items with a price greater than $16.00 but less than $20.00, update
@@ -460,5 +372,88 @@ public class MatchaDbTableTest {
         // Delete item
 
         // Seaarch and see that it is no longer there
+    }
+
+    /**
+     * Develops the test directory given a test path. If the directory does not
+     * exist, it will be created, and likewise, if it is full, will be cleaned.
+     * Will fail if an exception occurs.
+     *
+     * @param testDirectory The test directory to be used.
+     */
+    public void developTestDirectory(String testDirectory) {
+        File directory = new File(testDirectory);
+        try {
+            // Were we given a directory or a spot that could be If not, fail.
+            if (directory.isFile()) {
+                throw new Exception("Was given something other than a directory.");
+            }
+
+            // Does the directory exist? If not, make it.
+            if (!directory.exists()) {
+                directory.mkdir();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Deletes the test directory after the test is done.
+     *
+     * @param testDirectory The test directory to be used.
+     */
+    public void deleteTestDirectory(String testDirectory) {
+        File directory = new File(testDirectory);
+
+        try {
+            // Since this is just test code and we only expect there
+            // to be files, ie no other directories, just recursively 
+            // delete all files.
+            for (File fileInDirectory : directory.listFiles()) {
+                fileInDirectory.delete();
+            }
+
+            directory.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * A method that checks between an expected and actual list of Clothing Website
+     * API objects and fails if:
+     *
+     * A) An object in the expected list doesn't exist in the actual list
+     * B) The object doesn't have the expected attributes
+     *
+     * @param expectedObjects
+     * @param actualObjects
+     */
+    public void expectedVersusActualClothingWebsiteAPICheck(
+        List<HashMap<String, Object>> expectedObjects, List<HashMap<String, Object>> actualObjects) {
+            for (HashMap expectedObject : expectedObjects) {
+                boolean success = false;
+                for (HashMap actualObject : actualObjects) {
+                    if (expectedObject.get(ITEM_NAME).equals(actualObject.get(ITEM_NAME))) {
+                        if (expectedObject.get(ITEM_PRICE).equals(actualObject.get(ITEM_PRICE)) &&
+                            expectedObject.get(ITEM_BRAND).equals(actualObject.get(ITEM_BRAND)) &&
+                            expectedObject.get(ITEM_DESCRIPTION).equals(actualObject.get(ITEM_DESCRIPTION))) {
+                            success = true;
+                            break;
+                        } else {
+                            // The object didn't have the right/original attributes for some reason
+                            Assert.fail();
+                        }
+                    }
+                }
+
+                // We didn't find the expected object
+                if (!success) {
+                    Assert.fail();
+                }
+            }
     }
 }
