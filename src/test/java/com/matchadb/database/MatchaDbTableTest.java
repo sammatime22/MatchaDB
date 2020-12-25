@@ -429,8 +429,8 @@ public class MatchaDbTableTest {
      * A) An object in the expected list doesn't exist in the actual list
      * B) The object doesn't have the expected attributes
      *
-     * @param expectedObjects
-     * @param actualObjects
+     * @param expectedObjects The objects expected to be returned
+     * @param actualObjects The actual objects returned
      */
     public void expectedVersusActualClothingWebsiteAPICheck(
         List<HashMap<String, Object>> expectedObjects, List<HashMap<String, Object>> actualObjects) {
