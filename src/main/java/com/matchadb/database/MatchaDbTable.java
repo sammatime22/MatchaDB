@@ -79,6 +79,8 @@ public class MatchaDbTable {
     // The position of the key in the query subset.
     private final int QUERY_KEY_POSITION = 0;
 
+    private final int QUERY_CHECK_TYPE_POSITION = 1;
+
     // The position of the value in the query subset.
     private final int QUERY_VALUE_POSITION = 2;
 
@@ -87,6 +89,26 @@ public class MatchaDbTable {
 
     // The value of the index of an element within a single encapsulated list.
     private final int SINGLE_ENCAPSULATED_LIST_INDEX = 0;
+
+    // Provides inference that the given query expects the queried value should have the 
+    // character string provided within the query.
+    private final String HAS = "has";
+
+    // Provides inference that the given query expects the queried value should be a 1-to-1
+    // String equivalent to the provided string.
+    private final String IS = "is";
+
+    // Provides inference that the given query expects the queried value to be equal to
+    // the given value.
+    private final String EQUALS = "=";
+
+    // Provides inference that the given query expects the queried value to be greater than 
+    // the given value.
+    private final String GREATER_THAN = ">";
+
+    // Provides inference that the given query expects the queried value to be less than 
+    // the given value.
+    private final String LESS_THAN = "<";
 
     /**
      * Constructor for the DB Table.
@@ -480,7 +502,7 @@ public class MatchaDbTable {
      * @return A boolean describing if our value meets our query requirements.
      */
     private boolean meetsQueryRequirement(Object value, String[][] selectQueryContents) {
-        HashMap<String, Object> valueMap = new HashMap<>();
+        HashMap<String, Object> valueMap = ((HashMap) value);
         List<Boolean> queryResults = new ArrayList<>();
 
         // Run each subquery, and if all match, finish the method by returning true.
@@ -489,10 +511,9 @@ public class MatchaDbTable {
             // has query
             if (selectQuery[QUERY_VALUE_POSITION].startsWith(SINGLE_QUOTE) 
                 && selectQuery[QUERY_VALUE_POSITION].endsWith(SINGLE_QUOTE)) {
-                if (!((String) (((HashMap) value).get(selectQuery[QUERY_KEY_POSITION]))).contains(
+                if (!((String) (valueMap.get(selectQuery[QUERY_KEY_POSITION]))).contains(
                     selectQuery[QUERY_VALUE_POSITION].substring(1, selectQuery[QUERY_VALUE_POSITION].length() - 1)
-                )) { // Get rid of magic numbers
-                    // Our regex failed
+                )) { 
                     queryResults.add(false);
                 } else {
                     queryResults.add(true);
@@ -508,7 +529,30 @@ public class MatchaDbTable {
                 } else {
                     queryResults.add(true);
                 }
-            } else {
+            } 
+            // Greater than query
+            else if (GREATER_THAN.equals(selectQuery[QUERY_CHECK_TYPE_POSITION]) 
+                && canBeInterpretedAsInteger(selectQuery[QUERY_VALUE_POSITION])
+                && canBeInterpretedAsInteger(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
+                if (Integer.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) > 
+                    Integer.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
+                    queryResults.add(true);
+                } else {
+                    queryResults.add(false);
+                }
+            }
+            // Less than
+            else if (LESS_THAN.equals(selectQuery[QUERY_CHECK_TYPE_POSITION]) 
+                && canBeInterpretedAsInteger(selectQuery[QUERY_VALUE_POSITION])
+                && canBeInterpretedAsInteger(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
+                if (Integer.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) < 
+                    Integer.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
+                    queryResults.add(true);
+                } else {
+                    queryResults.add(false);
+                }
+            }
+            else {
                 // For whatever the reason, the query returned no expected results
                 queryResults.add(false);
             }
