@@ -297,10 +297,10 @@ public class MatchaDbTableTest {
         String newPrice = "18.91";
         String newBrand = "The Eighteen";
 
-        MatchaQuery matchaQueryGet = new MatchaQuery(new String[]{ALL_TABLES}, 
+        MatchaQuery matchaQueryGet = new MatchaQuery(new String[]{HATS_TABLE}, 
             new String[][]{{ITEM_PRICE, GREATER_THAN, "16.00"}, {ITEM_PRICE, LESS_THAN, "20.00"}});
         
-        MatchaQuery matchaQueryUpdate = new MatchaQuery(new String[]{ALL_TABLES}, 
+        MatchaQuery matchaQueryUpdate = new MatchaQuery(new String[]{HATS_TABLE}, 
             new String[][]{{ITEM_PRICE, GREATER_THAN, "16.00"}, {ITEM_PRICE, LESS_THAN, "20.00"},
                 {UPDATE, ITEM_PRICE, newPrice}, {UPDATE, ITEM_BRAND, newBrand}
             });
@@ -308,7 +308,7 @@ public class MatchaDbTableTest {
         matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
 
         List<HashMap<String, Object>> expectedObjects = 
-            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams(null, null, null, 16.00, 20.00, null);
+            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams(null, null, null, 16.00, 20.00, "Hats");
 
         try {
             matchaDbTable.loadData(new FileReader(TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE), TEST_FILE_CLOTHES_WEBSITE_API);
@@ -316,6 +316,7 @@ public class MatchaDbTableTest {
             // Show the items are unmodified (get)
             List<HashMap<String, Object>> actualObjects = 
                 (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQueryGet);
+            System.out.println("Size: " + actualObjects.size());
             // Find the matching object from our mock data, and check to see that the contents match    
             expectedVersusActualClothingWebsiteAPICheck(expectedObjects, actualObjects);
 
@@ -327,16 +328,19 @@ public class MatchaDbTableTest {
                 Assert.fail();
             }
 
+            System.out.println("Actually here");
+
             // Search (get) and see that it is updated
             // This should be the Baseball Hat, Dad Hat, and Beanie
-            matchaDbTable.getData(matchaQueryGet);
             actualObjects = (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQueryGet);
+
+            System.out.println("Size: " + actualObjects.size());
             // For loop, see that some comparisons fail and that new expected comparisons pass
             for (HashMap expectedObject : expectedObjects) {
                 boolean success = false;
                 for (HashMap actualObject : actualObjects) {
                     if (expectedObject.get(ITEM_NAME).equals(actualObject.get(ITEM_NAME))) {
-                        if (expectedObject.get(ITEM_PRICE).equals(newPrice) &&
+                        if (actualObject.get(ITEM_PRICE).equals(newPrice) &&
                             actualObject.get(ITEM_BRAND).equals(newBrand) &&
                             expectedObject.get(ITEM_DESCRIPTION).equals(actualObject.get(ITEM_DESCRIPTION))) {
                             success = true;

@@ -468,7 +468,14 @@ public class MatchaDbTable {
      * @return A boolean describing a successful update.
      */
     public boolean updateData(MatchaQuery query) {
-        return false;
+        // Search for data
+
+        // In the data given
+            // If it meets the query requirements
+                // update it
+
+        // If all ended well, return true indicating that all updates could be made
+        return true;
     }
 
     /**
@@ -509,8 +516,7 @@ public class MatchaDbTable {
         // Otherwise, return false promptly.
         for (String[] selectQuery : selectQueryContents) {
             // has query
-            if (selectQuery[QUERY_VALUE_POSITION].startsWith(SINGLE_QUOTE) 
-                && selectQuery[QUERY_VALUE_POSITION].endsWith(SINGLE_QUOTE)) {
+            if (HAS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
                 if (!((String) (valueMap.get(selectQuery[QUERY_KEY_POSITION]))).contains(
                     selectQuery[QUERY_VALUE_POSITION].substring(1, selectQuery[QUERY_VALUE_POSITION].length() - 1)
                 )) { 
@@ -520,8 +526,7 @@ public class MatchaDbTable {
                 }
             } 
             // equals query
-            else if (!(selectQuery[QUERY_VALUE_POSITION].startsWith(SINGLE_QUOTE) 
-                || selectQuery[QUERY_VALUE_POSITION].endsWith(SINGLE_QUOTE))) {
+            else if (EQUALS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
                 // Run a numerical check on the params
                 if (valueMap.get(selectQuery[QUERY_KEY_POSITION]) 
                         != Integer.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
