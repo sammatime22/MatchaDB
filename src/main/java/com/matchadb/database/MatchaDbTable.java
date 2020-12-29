@@ -85,6 +85,10 @@ public class MatchaDbTable {
     // The position of the value in the query subset.
     private final int QUERY_VALUE_POSITION = 2;
 
+    private final int QUERY_UPDATED_KEY_POSITION = 1;
+
+    private final int QUERY_UPDATED_VALUE_POSITION = 2;
+
     // The value returned if the index does not exist.
     private final int INDEX_NONEXISTANT = -1;
 
@@ -507,12 +511,41 @@ public class MatchaDbTable {
             }
         }
 
+/**
+ does this list have a value between x and y?
+
+ Does that make sense?
+
+
+ so like ["a", "b", "c"] as our table and then a query stating
+   - update all letters not c to c
+   
+ */
+
         // Next, perform the subset query
         try {
             if (selection instanceof List finalListselection) {
                 for (Object value : finalListselection.toArray()) { 
                     if (meetsQueryRequirement(value, query.getSelectQuery())) {
-                        // not sure
+                        for (String[] update : query.getUpdateQuery()) {
+                            if (value instanceof HashMap valueAsHashMap) {
+                                valueAsHashMap.put(update[QUERY_UPDATED_KEY_POSITION], update[QUERY_UPDATED_VALUE_POSITION]);
+                            } else if (value instanceof ArrayList valueAsArrayList) {
+                                if (canBeInterpretedAsInteger(update[QUERY_UPDATED_KEY_POSITION])) {
+                                    valueAsArrayList.set(Integer.valueOf(update[QUERY_UPDATED_KEY_POSITION]), update[QUERY_UPDATED_VALUE_POSITION]);
+                                } else {
+                                    valueAsArrayList.set(
+                                        valueAsArrayList.indexOf(update[QUERY_UPDATED_KEY_POSITION]), 
+                                        update[QUERY_UPDATED_VALUE_POSITION]
+                                    );
+                                }
+                            }
+                            else {
+                                // For all other instances, I think we are just literally seting "value" to 
+                                // a new value that's coming in the 2nd slot of the updateQuery.
+                                value = update[QUERY_UPDATED_VALUE_POSITION];
+                            }
+                        }
                     }
                 }     
             } else if (selection instanceof HashMap finalHashmapSelection) {
@@ -521,12 +554,48 @@ public class MatchaDbTable {
                     String key = (String) finalHashmapSelectionIterator.next();
                     Object value = finalHashmapSelection.get(key);
                     if (meetsQueryRequirement(value, query.getSelectQuery())) {
-                        // Not sure
+                        for (String[] update : query.getUpdateQuery()) {
+                            if (value instanceof HashMap valueAsHashMap) {
+                                valueAsHashMap.put(update[QUERY_UPDATED_KEY_POSITION], update[QUERY_UPDATED_VALUE_POSITION]);
+                            } else if (value instanceof ArrayList valueAsArrayList) {
+                                if (canBeInterpretedAsInteger(update[QUERY_UPDATED_KEY_POSITION])) {
+                                    valueAsArrayList.set(Integer.valueOf(update[QUERY_UPDATED_KEY_POSITION]), update[QUERY_UPDATED_VALUE_POSITION]);
+                                } else {
+                                    valueAsArrayList.set(
+                                        valueAsArrayList.indexOf(update[QUERY_UPDATED_KEY_POSITION]), 
+                                        update[QUERY_UPDATED_VALUE_POSITION]
+                                    );
+                                }
+                            }
+                            else {
+                                // For all other instances, I think we are just literally seting "value" to 
+                                // a new value that's coming in the 2nd slot of the updateQuery.
+                                value = update[QUERY_UPDATED_VALUE_POSITION];
+                            }
+                        }
                     }
                 }
             } else {
                 if (meetsQueryRequirement(selection, query.getSelectQuery())) {
-                    // Not sure
+                    for (String[] update : query.getUpdateQuery()) {
+                        if (selection instanceof HashMap selectionAsHashMap) {
+                            selectionAsHashMap.put(update[QUERY_UPDATED_KEY_POSITION], update[QUERY_UPDATED_VALUE_POSITION]);
+                        } else if (selection instanceof ArrayList selectionAsArrayList) {
+                            if (canBeInterpretedAsInteger(update[QUERY_UPDATED_KEY_POSITION])) {
+                                selectionAsArrayList.set(Integer.valueOf(update[QUERY_UPDATED_KEY_POSITION]), update[QUERY_UPDATED_VALUE_POSITION]);
+                            } else {
+                                selectionAsArrayList.set(
+                                    selectionAsArrayList.indexOf(update[QUERY_UPDATED_KEY_POSITION]), 
+                                    update[QUERY_UPDATED_VALUE_POSITION]
+                                );
+                            }
+                        }
+                        else {
+                            // For all other instances, I think we are just literally seting "value" to 
+                            // a new value that's coming in the 2nd slot of the updateQuery.
+                            selection = update[QUERY_UPDATED_VALUE_POSITION];
+                        }
+                    }
                 }
             }   
         } catch (Exception e) {

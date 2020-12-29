@@ -6,8 +6,6 @@
 
 **Recent Updates**:
 
-2020/10/29 - Fixed the table builder methods in MatchaDBTable
-
 2020/11/07 - saveData method implemented, Some other changes to test data
 
 2020/11/29 - getData, meetsQueryRequirements methods implemented, implementations 
@@ -16,6 +14,8 @@ for data generation code
 2020/12/13 - postData implemented, travis-ci implemented
 
 2020/12/21 - Fixed the table object, making it more generic
+
+2020/12/29 - Implemented updateData, as well as new portions of meetsQueryRequirements
 
 **System Requirements**
 
