@@ -470,14 +470,6 @@ public class MatchaDbTable {
      * @return A boolean describing a successful update.
      */
     public boolean updateData(MatchaUpdateQuery query) {
-        // Search for data
-
-        // In the data given
-            // If it meets the query requirements
-                // update it
-
-        // If all ended well, return true indicating that all updates could be made
-
         Object selection = this.table;
 
 
@@ -510,17 +502,6 @@ public class MatchaDbTable {
                 return false;
             }
         }
-
-/**
- does this list have a value between x and y?
-
- Does that make sense?
-
-
- so like ["a", "b", "c"] as our table and then a query stating
-   - update all letters not c to c
-   
- */
 
         // Next, perform the subset query
         try {
