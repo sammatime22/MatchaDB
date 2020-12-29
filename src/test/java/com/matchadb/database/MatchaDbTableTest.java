@@ -4,6 +4,7 @@ import com.matchadb.generate.MatchaDbGenerateData;
 
 import com.matchadb.models.MatchaDbCommandResult;
 import com.matchadb.models.MatchaQuery;
+import com.matchadb.models.MatchaUpdateQuery;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -300,10 +301,9 @@ public class MatchaDbTableTest {
         MatchaQuery matchaQueryGet = new MatchaQuery(new String[]{HATS_TABLE}, 
             new String[][]{{ITEM_PRICE, GREATER_THAN, "16.00"}, {ITEM_PRICE, LESS_THAN, "20.00"}});
         
-        MatchaQuery matchaQueryUpdate = new MatchaQuery(new String[]{HATS_TABLE}, 
-            new String[][]{{ITEM_PRICE, GREATER_THAN, "16.00"}, {ITEM_PRICE, LESS_THAN, "20.00"},
-                {UPDATE, ITEM_PRICE, newPrice}, {UPDATE, ITEM_BRAND, newBrand}
-            });
+        MatchaUpdateQuery matchaQueryUpdate = new MatchaUpdateQuery(new String[]{HATS_TABLE}, 
+            new String[][]{{ITEM_PRICE, GREATER_THAN, "16.00"}, {ITEM_PRICE, LESS_THAN, "20.00"}},
+            new String[][]{{UPDATE, ITEM_PRICE, newPrice}, {UPDATE, ITEM_BRAND, newBrand}});
 
         matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
 
@@ -316,7 +316,7 @@ public class MatchaDbTableTest {
             // Show the items are unmodified (get)
             List<HashMap<String, Object>> actualObjects = 
                 (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQueryGet);
-            System.out.println("Size: " + actualObjects.size());
+
             // Find the matching object from our mock data, and check to see that the contents match    
             expectedVersusActualClothingWebsiteAPICheck(expectedObjects, actualObjects);
 
@@ -328,13 +328,10 @@ public class MatchaDbTableTest {
                 Assert.fail();
             }
 
-            System.out.println("Actually here");
-
             // Search (get) and see that it is updated
             // This should be the Baseball Hat, Dad Hat, and Beanie
             actualObjects = (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQueryGet);
 
-            System.out.println("Size: " + actualObjects.size());
             // For loop, see that some comparisons fail and that new expected comparisons pass
             for (HashMap expectedObject : expectedObjects) {
                 boolean success = false;

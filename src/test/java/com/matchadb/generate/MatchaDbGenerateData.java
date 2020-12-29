@@ -131,7 +131,7 @@ public class MatchaDbGenerateData {
         );
         HashMap<String, Object> beanie = buildClothesObject(
             "Beanie", "zxcvb", "So warm...",
-            19.00
+            19.01
         );
 
         hats.add(dadHat);

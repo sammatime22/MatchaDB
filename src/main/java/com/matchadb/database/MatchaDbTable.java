@@ -6,6 +6,7 @@ import com.matchadb.models.MatchaData;
 import com.matchadb.models.MatchaDbRequestObject;
 import com.matchadb.models.MatchaDbCommandResult;
 import com.matchadb.models.MatchaQuery;
+import com.matchadb.models.MatchaUpdateQuery;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -329,7 +330,6 @@ public class MatchaDbTable {
     }
 
     /**
-     * // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
      * Returns data depending on where the pointer is.
      *
      * @param MatchaQuery The query provided to gather the data.
@@ -403,7 +403,6 @@ public class MatchaDbTable {
     }
 
     /**
-     * // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
      * Inserts the data into the appropriate position of the table.
      *
      * @param query The query to insert data.
@@ -413,11 +412,10 @@ public class MatchaDbTable {
     public boolean postData(MatchaQuery query) throws ParseException {
 
         try {
-            // Here just make it so that the only means of inserting the element is by getting the
-            // one HashMap that exists as the only element on the List - this will be fixed in the 
-            // next bugfix (Bugfix for Gener-ifying MatchaDbTable's table Object).
             Object selectionToInsertUpon = this.table;
 
+            // If we are ever reimplementing the "searchForData" method, I'm thinking that this
+            // version of the "search" method should be used (comparing with get, update Data 12.28).
             for (int i = 0; i < query.getFromQuery().length; i++) {
                 if (selectionToInsertUpon instanceof HashMap tableAsHashMap) {
                     selectionToInsertUpon = tableAsHashMap.get(query.getFromQuery()[i]);
@@ -467,7 +465,7 @@ public class MatchaDbTable {
      *
      * @return A boolean describing a successful update.
      */
-    public boolean updateData(MatchaQuery query) {
+    public boolean updateData(MatchaUpdateQuery query) {
         // Search for data
 
         // In the data given
@@ -475,6 +473,67 @@ public class MatchaDbTable {
                 // update it
 
         // If all ended well, return true indicating that all updates could be made
+
+        Object selection = this.table;
+
+
+        for (String fromQueryPortion : query.getFromQuery()) {
+            if (selection instanceof List listSelection) {
+                int indexOfInterest;
+
+                if (canBeInterpretedAsInteger(fromQueryPortion)) {
+                    indexOfInterest = Integer.parseInt(fromQueryPortion);
+                } else {
+                    indexOfInterest = listSelection.indexOf(fromQueryPortion);
+                }
+
+                if (indexOfInterest != INDEX_NONEXISTANT) {
+                    selection = listSelection.get(indexOfInterest);
+                } else {
+                    // If this entry didn't exist, we'll return false.
+                    return false;
+                }
+            } else if (selection instanceof HashMap hashmapSelection) {
+                if (hashmapSelection.containsKey(fromQueryPortion)) {
+                    selection = hashmapSelection.get(fromQueryPortion);
+                } else {
+                    // If this entry didn't exist, we'll return false.
+                    return false;
+                }
+            } else {
+                // If we searched down too far, then we can't interpret the query. Return
+                // false as the result.
+                return false;
+            }
+        }
+
+        // Next, perform the subset query
+        try {
+            if (selection instanceof List finalListselection) {
+                for (Object value : finalListselection.toArray()) { 
+                    if (meetsQueryRequirement(value, query.getSelectQuery())) {
+                        // not sure
+                    }
+                }     
+            } else if (selection instanceof HashMap finalHashmapSelection) {
+                for (Iterator finalHashmapSelectionIterator = finalHashmapSelection.keySet().iterator(); 
+                    finalHashmapSelectionIterator.hasNext();) {
+                    String key = (String) finalHashmapSelectionIterator.next();
+                    Object value = finalHashmapSelection.get(key);
+                    if (meetsQueryRequirement(value, query.getSelectQuery())) {
+                        // Not sure
+                    }
+                }
+            } else {
+                if (meetsQueryRequirement(selection, query.getSelectQuery())) {
+                    // Not sure
+                }
+            }   
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        
         return true;
     }
 
@@ -537,10 +596,10 @@ public class MatchaDbTable {
             } 
             // Greater than query
             else if (GREATER_THAN.equals(selectQuery[QUERY_CHECK_TYPE_POSITION]) 
-                && canBeInterpretedAsInteger(selectQuery[QUERY_VALUE_POSITION])
-                && canBeInterpretedAsInteger(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
-                if (Integer.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) > 
-                    Integer.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
+                && canBeInterpretedAsDouble(selectQuery[QUERY_VALUE_POSITION])
+                && canBeInterpretedAsDouble(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
+                if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) > 
+                    Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
                     queryResults.add(true);
                 } else {
                     queryResults.add(false);
@@ -548,10 +607,10 @@ public class MatchaDbTable {
             }
             // Less than
             else if (LESS_THAN.equals(selectQuery[QUERY_CHECK_TYPE_POSITION]) 
-                && canBeInterpretedAsInteger(selectQuery[QUERY_VALUE_POSITION])
-                && canBeInterpretedAsInteger(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
-                if (Integer.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) < 
-                    Integer.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
+                && canBeInterpretedAsDouble(selectQuery[QUERY_VALUE_POSITION])
+                && canBeInterpretedAsDouble(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
+                if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) < 
+                    Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
                     queryResults.add(true);
                 } else {
                     queryResults.add(false);
@@ -580,6 +639,8 @@ public class MatchaDbTable {
      *  multiple services of the application, we will move this over to a Util
      *  class/service.)
      *
+     * TODO: Move to helper functions class
+     *
      * @param stringToInterpret The string that will be interpreted if it is an 
      *                          integer/can be turned into an integer.
      *
@@ -589,6 +650,29 @@ public class MatchaDbTable {
         try {
             Integer.parseInt(stringToInterpret);
         } catch (NumberFormatException nfe) {
+            nfe.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * A small helper method to determine if a String is in fact convertable to 
+     * a double value.
+     *
+     * TODO: Move to helper functions class
+     *
+     * @param stringToInterpret The string that will be interpreted if it is an 
+     *                          integer/can be turned into an integer.
+     *
+     * @return A boolean describing if the String could be an integer.
+     */
+    private boolean canBeInterpretedAsDouble(String stringToInterpret) {
+        try {
+            Double.parseDouble(stringToInterpret);
+        } catch (NumberFormatException nfe) {
+            nfe.printStackTrace();
             return false;
         }
 
