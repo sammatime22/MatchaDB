@@ -1,15 +1,10 @@
 **Project Name**: MatchaDB
 
-**Summary**: _A simple DB implementation that can take in a json doc and develop a DB/API from said JSON doc._
+**Summary**: _A simple DB implementation that can take in a json doc and develop an API from said JSON doc._
 
 **Status**: Incomplete
 
 **Recent Updates**:
-
-2020/10/16 - First work done with Tests, Loading in DB info for MatchaDbTable
-class
-
-2020/10/29 - Fixed the table builder methods in MatchaDBTable
 
 2020/11/07 - saveData method implemented, Some other changes to test data
 
@@ -17,6 +12,10 @@ class
 for data generation code
 
 2020/12/13 - postData implemented, travis-ci implemented
+
+2020/12/21 - Fixed the table object, making it more generic
+
+2020/12/29 - Implemented updateData, as well as new portions of meetsQueryRequirements
 
 **System Requirements**
 

@@ -6,6 +6,7 @@ import com.matchadb.models.MatchaData;
 import com.matchadb.models.MatchaDbRequestObject;
 import com.matchadb.models.MatchaDbCommandResult;
 import com.matchadb.models.MatchaQuery;
+import com.matchadb.models.MatchaUpdateQuery;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -79,14 +80,40 @@ public class MatchaDbTable {
     // The position of the key in the query subset.
     private final int QUERY_KEY_POSITION = 0;
 
+    private final int QUERY_CHECK_TYPE_POSITION = 1;
+
     // The position of the value in the query subset.
     private final int QUERY_VALUE_POSITION = 2;
+
+    private final int QUERY_UPDATED_KEY_POSITION = 1;
+
+    private final int QUERY_UPDATED_VALUE_POSITION = 2;
 
     // The value returned if the index does not exist.
     private final int INDEX_NONEXISTANT = -1;
 
     // The value of the index of an element within a single encapsulated list.
     private final int SINGLE_ENCAPSULATED_LIST_INDEX = 0;
+
+    // Provides inference that the given query expects the queried value should have the 
+    // character string provided within the query.
+    private final String HAS = "has";
+
+    // Provides inference that the given query expects the queried value should be a 1-to-1
+    // String equivalent to the provided string.
+    private final String IS = "is";
+
+    // Provides inference that the given query expects the queried value to be equal to
+    // the given value.
+    private final String EQUALS = "=";
+
+    // Provides inference that the given query expects the queried value to be greater than 
+    // the given value.
+    private final String GREATER_THAN = ">";
+
+    // Provides inference that the given query expects the queried value to be less than 
+    // the given value.
+    private final String LESS_THAN = "<";
 
     /**
      * Constructor for the DB Table.
@@ -307,7 +334,6 @@ public class MatchaDbTable {
     }
 
     /**
-     * // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
      * Returns data depending on where the pointer is.
      *
      * @param MatchaQuery The query provided to gather the data.
@@ -381,7 +407,6 @@ public class MatchaDbTable {
     }
 
     /**
-     * // TODO - (Bugfix for Gener-ifying MatchaDbTable's table Object)
      * Inserts the data into the appropriate position of the table.
      *
      * @param query The query to insert data.
@@ -391,11 +416,10 @@ public class MatchaDbTable {
     public boolean postData(MatchaQuery query) throws ParseException {
 
         try {
-            // Here just make it so that the only means of inserting the element is by getting the
-            // one HashMap that exists as the only element on the List - this will be fixed in the 
-            // next bugfix (Bugfix for Gener-ifying MatchaDbTable's table Object).
             Object selectionToInsertUpon = this.table;
 
+            // If we are ever reimplementing the "searchForData" method, I'm thinking that this
+            // version of the "search" method should be used (comparing with get, update Data 12.28).
             for (int i = 0; i < query.getFromQuery().length; i++) {
                 if (selectionToInsertUpon instanceof HashMap tableAsHashMap) {
                     selectionToInsertUpon = tableAsHashMap.get(query.getFromQuery()[i]);
@@ -441,10 +465,126 @@ public class MatchaDbTable {
     /**
      * Updates the data into the appropriate position of the table.
      *
+     * @param query The query that will be used to update the DB table.
+     *
      * @return A boolean describing a successful update.
      */
-    public boolean updateData() {
-        return false;
+    public boolean updateData(MatchaUpdateQuery query) {
+        Object selection = this.table;
+
+
+        for (String fromQueryPortion : query.getFromQuery()) {
+            if (selection instanceof List listSelection) {
+                int indexOfInterest;
+
+                if (canBeInterpretedAsInteger(fromQueryPortion)) {
+                    indexOfInterest = Integer.parseInt(fromQueryPortion);
+                } else {
+                    indexOfInterest = listSelection.indexOf(fromQueryPortion);
+                }
+
+                if (indexOfInterest != INDEX_NONEXISTANT) {
+                    selection = listSelection.get(indexOfInterest);
+                } else {
+                    // If this entry didn't exist, we'll return false.
+                    return false;
+                }
+            } else if (selection instanceof HashMap hashmapSelection) {
+                if (hashmapSelection.containsKey(fromQueryPortion)) {
+                    selection = hashmapSelection.get(fromQueryPortion);
+                } else {
+                    // If this entry didn't exist, we'll return false.
+                    return false;
+                }
+            } else {
+                // If we searched down too far, then we can't interpret the query. Return
+                // false as the result.
+                return false;
+            }
+        }
+
+        // Next, perform the subset query
+        try {
+            if (selection instanceof List finalListselection) {
+                for (Object value : finalListselection.toArray()) { 
+                    if (meetsQueryRequirement(value, query.getSelectQuery())) {
+                        for (String[] update : query.getUpdateQuery()) {
+                            if (value instanceof HashMap valueAsHashMap) {
+                                valueAsHashMap.put(update[QUERY_UPDATED_KEY_POSITION], update[QUERY_UPDATED_VALUE_POSITION]);
+                            } else if (value instanceof ArrayList valueAsArrayList) {
+                                if (canBeInterpretedAsInteger(update[QUERY_UPDATED_KEY_POSITION])) {
+                                    valueAsArrayList.set(Integer.valueOf(update[QUERY_UPDATED_KEY_POSITION]), update[QUERY_UPDATED_VALUE_POSITION]);
+                                } else {
+                                    valueAsArrayList.set(
+                                        valueAsArrayList.indexOf(update[QUERY_UPDATED_KEY_POSITION]), 
+                                        update[QUERY_UPDATED_VALUE_POSITION]
+                                    );
+                                }
+                            }
+                            else {
+                                // For all other instances, I think we are just literally seting "value" to 
+                                // a new value that's coming in the 2nd slot of the updateQuery.
+                                value = update[QUERY_UPDATED_VALUE_POSITION];
+                            }
+                        }
+                    }
+                }     
+            } else if (selection instanceof HashMap finalHashmapSelection) {
+                for (Iterator finalHashmapSelectionIterator = finalHashmapSelection.keySet().iterator(); 
+                    finalHashmapSelectionIterator.hasNext();) {
+                    String key = (String) finalHashmapSelectionIterator.next();
+                    Object value = finalHashmapSelection.get(key);
+                    if (meetsQueryRequirement(value, query.getSelectQuery())) {
+                        for (String[] update : query.getUpdateQuery()) {
+                            if (value instanceof HashMap valueAsHashMap) {
+                                valueAsHashMap.put(update[QUERY_UPDATED_KEY_POSITION], update[QUERY_UPDATED_VALUE_POSITION]);
+                            } else if (value instanceof ArrayList valueAsArrayList) {
+                                if (canBeInterpretedAsInteger(update[QUERY_UPDATED_KEY_POSITION])) {
+                                    valueAsArrayList.set(Integer.valueOf(update[QUERY_UPDATED_KEY_POSITION]), update[QUERY_UPDATED_VALUE_POSITION]);
+                                } else {
+                                    valueAsArrayList.set(
+                                        valueAsArrayList.indexOf(update[QUERY_UPDATED_KEY_POSITION]), 
+                                        update[QUERY_UPDATED_VALUE_POSITION]
+                                    );
+                                }
+                            }
+                            else {
+                                // For all other instances, I think we are just literally seting "value" to 
+                                // a new value that's coming in the 2nd slot of the updateQuery.
+                                value = update[QUERY_UPDATED_VALUE_POSITION];
+                            }
+                        }
+                    }
+                }
+            } else {
+                if (meetsQueryRequirement(selection, query.getSelectQuery())) {
+                    for (String[] update : query.getUpdateQuery()) {
+                        if (selection instanceof HashMap selectionAsHashMap) {
+                            selectionAsHashMap.put(update[QUERY_UPDATED_KEY_POSITION], update[QUERY_UPDATED_VALUE_POSITION]);
+                        } else if (selection instanceof ArrayList selectionAsArrayList) {
+                            if (canBeInterpretedAsInteger(update[QUERY_UPDATED_KEY_POSITION])) {
+                                selectionAsArrayList.set(Integer.valueOf(update[QUERY_UPDATED_KEY_POSITION]), update[QUERY_UPDATED_VALUE_POSITION]);
+                            } else {
+                                selectionAsArrayList.set(
+                                    selectionAsArrayList.indexOf(update[QUERY_UPDATED_KEY_POSITION]), 
+                                    update[QUERY_UPDATED_VALUE_POSITION]
+                                );
+                            }
+                        }
+                        else {
+                            // For all other instances, I think we are just literally seting "value" to 
+                            // a new value that's coming in the 2nd slot of the updateQuery.
+                            selection = update[QUERY_UPDATED_VALUE_POSITION];
+                        }
+                    }
+                }
+            }   
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        
+        return true;
     }
 
     /**
@@ -478,27 +618,24 @@ public class MatchaDbTable {
      * @return A boolean describing if our value meets our query requirements.
      */
     private boolean meetsQueryRequirement(Object value, String[][] selectQueryContents) {
-        HashMap<String, Object> valueMap = new HashMap<>();
+        HashMap<String, Object> valueMap = ((HashMap) value);
         List<Boolean> queryResults = new ArrayList<>();
 
         // Run each subquery, and if all match, finish the method by returning true.
         // Otherwise, return false promptly.
         for (String[] selectQuery : selectQueryContents) {
             // has query
-            if (selectQuery[QUERY_VALUE_POSITION].startsWith(SINGLE_QUOTE) 
-                && selectQuery[QUERY_VALUE_POSITION].endsWith(SINGLE_QUOTE)) {
-                if (!((String) (((HashMap) value).get(selectQuery[QUERY_KEY_POSITION]))).contains(
+            if (HAS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
+                if (!((String) (valueMap.get(selectQuery[QUERY_KEY_POSITION]))).contains(
                     selectQuery[QUERY_VALUE_POSITION].substring(1, selectQuery[QUERY_VALUE_POSITION].length() - 1)
-                )) { // Get rid of magic numbers
-                    // Our regex failed
+                )) { 
                     queryResults.add(false);
                 } else {
                     queryResults.add(true);
                 }
             } 
             // equals query
-            else if (!(selectQuery[QUERY_VALUE_POSITION].startsWith(SINGLE_QUOTE) 
-                || selectQuery[QUERY_VALUE_POSITION].endsWith(SINGLE_QUOTE))) {
+            else if (EQUALS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
                 // Run a numerical check on the params
                 if (valueMap.get(selectQuery[QUERY_KEY_POSITION]) 
                         != Integer.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
@@ -506,7 +643,30 @@ public class MatchaDbTable {
                 } else {
                     queryResults.add(true);
                 }
-            } else {
+            } 
+            // Greater than query
+            else if (GREATER_THAN.equals(selectQuery[QUERY_CHECK_TYPE_POSITION]) 
+                && canBeInterpretedAsDouble(selectQuery[QUERY_VALUE_POSITION])
+                && canBeInterpretedAsDouble(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
+                if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) > 
+                    Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
+                    queryResults.add(true);
+                } else {
+                    queryResults.add(false);
+                }
+            }
+            // Less than
+            else if (LESS_THAN.equals(selectQuery[QUERY_CHECK_TYPE_POSITION]) 
+                && canBeInterpretedAsDouble(selectQuery[QUERY_VALUE_POSITION])
+                && canBeInterpretedAsDouble(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
+                if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) < 
+                    Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
+                    queryResults.add(true);
+                } else {
+                    queryResults.add(false);
+                }
+            }
+            else {
                 // For whatever the reason, the query returned no expected results
                 queryResults.add(false);
             }
@@ -529,6 +689,8 @@ public class MatchaDbTable {
      *  multiple services of the application, we will move this over to a Util
      *  class/service.)
      *
+     * TODO: Move to helper functions class
+     *
      * @param stringToInterpret The string that will be interpreted if it is an 
      *                          integer/can be turned into an integer.
      *
@@ -538,6 +700,29 @@ public class MatchaDbTable {
         try {
             Integer.parseInt(stringToInterpret);
         } catch (NumberFormatException nfe) {
+            nfe.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * A small helper method to determine if a String is in fact convertable to 
+     * a double value.
+     *
+     * TODO: Move to helper functions class
+     *
+     * @param stringToInterpret The string that will be interpreted if it is an 
+     *                          integer/can be turned into an integer.
+     *
+     * @return A boolean describing if the String could be an integer.
+     */
+    private boolean canBeInterpretedAsDouble(String stringToInterpret) {
+        try {
+            Double.parseDouble(stringToInterpret);
+        } catch (NumberFormatException nfe) {
+            nfe.printStackTrace();
             return false;
         }
 
