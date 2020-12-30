@@ -4,9 +4,10 @@ import com.matchadb.instrumentation.MatchaDbInstrumentationTool;
 
 import com.matchadb.models.MatchaData;
 import com.matchadb.models.MatchaDbRequestObject;
-import com.matchadb.models.MatchaDbCommandResult;
-import com.matchadb.models.MatchaQuery;
-import com.matchadb.models.MatchaUpdateQuery;
+import com.matchadb.models.query.MatchaGetQuery;
+import com.matchadb.models.query.MatchaPostQuery;
+import com.matchadb.models.query.MatchaUpdateQuery;
+import com.matchadb.models.query.MatchaDeleteQuery;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -340,7 +341,7 @@ public class MatchaDbTable {
      *
      * @return The data encapsulated in a MatchaData object.
      */
-    public Object getData(MatchaQuery query) {
+    public Object getData(MatchaGetQuery query) {
         Object selection = this.table;
 
 
@@ -413,7 +414,7 @@ public class MatchaDbTable {
      *
      * @return A boolean describing a successful insert.
      */
-    public boolean postData(MatchaQuery query) throws ParseException {
+    public boolean postData(MatchaPostQuery query) throws ParseException {
 
         try {
             Object selectionToInsertUpon = this.table;
@@ -437,9 +438,9 @@ public class MatchaDbTable {
                     }
                 }
 
-                for (int j = 0; j < query.getSelectQuery()[i].length; j++) {
+                for (int j = 0; j < query.getInsertQuery()[i].length; j++) {
                     HashMap<String, Object> newItem = 
-                        interpretJSONObject((JSONObject) this.parser.parse(query.getSelectQuery()[i][j]));
+                        interpretJSONObject((JSONObject) this.parser.parse(query.getInsertQuery()[i][j]));
                     if (selectionToInsertUpon instanceof HashMap selectionAsHashMap) {
                         // Given that a value already exists at this position, this will overwrite the 
                         // former value. I'm going to go under the assumption that this is expected, 
@@ -590,9 +591,11 @@ public class MatchaDbTable {
     /**
      * Deletes the data into the appropriate position of the table.
      *
+     * @param query The delete query to be used on the system.
+     *
      * @return A boolean describing a successful insert.
      */
-    public boolean deleteData() {
+    public boolean deleteData(MatchaDeleteQuery query) {
         return false;
     }
 
@@ -736,21 +739,14 @@ public class MatchaDbTable {
      *
      * @return The metadata associated with the database.
      */
-    public MatchaDbCommandResult retrieveDbMetadata() {
-        MatchaDbCommandResult metadata = new MatchaDbCommandResult();
-
-        metadataTitles = new String[]{"Upload Time", "Last Update Time",
-                                      "Filled", "Corrupted", "Table Name"};
-        metadataObjects = new Object[]{uploadTimeInMillis, 
-                                       lastUpdateTimeInMillis, databaseFilled,
-                                       databaseCorrupted, databaseTableName};
-
-
-        for (int i = 0; i < metadataTitles.length; i++) {
-            metadata.put(metadataTitles[i], metadataObjects[i]);
-        }
-
-        return metadata;
+    public HashMap retrieveDbMetadata() {
+        return new HashMap<>(){{
+            put("Upload Time", uploadTimeInMillis);
+            put("Last Update Time", lastUpdateTimeInMillis);
+            put("Filled", databaseFilled);
+            put("Corrupted", databaseCorrupted);
+            put("Table Name", databaseTableName);
+        }};
     }
 
     /**

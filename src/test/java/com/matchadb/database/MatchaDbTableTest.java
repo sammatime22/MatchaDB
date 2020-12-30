@@ -2,9 +2,9 @@ package com.matchadb.database;
 
 import com.matchadb.generate.MatchaDbGenerateData;
 
-import com.matchadb.models.MatchaDbCommandResult;
-import com.matchadb.models.MatchaQuery;
-import com.matchadb.models.MatchaUpdateQuery;
+import com.matchadb.models.query.MatchaGetQuery;
+import com.matchadb.models.query.MatchaPostQuery;
+import com.matchadb.models.query.MatchaUpdateQuery;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -87,8 +87,7 @@ public class MatchaDbTableTest {
             matchaDbTable.loadData(new FileReader(filename), tableName);
 
             // Check to see that the metadata is appropriate
-            MatchaDbCommandResult metadata = matchaDbTable.retrieveDbMetadata();
-            HashMap<String, Object> metadataContents = metadata.getContents();
+            HashMap<String, Object> metadataContents = matchaDbTable.retrieveDbMetadata();
 
             // Check on Timestamps
             Assert.assertTrue(timeBeforeDBLoadAndLastUpdate <= (long) metadataContents.get("Upload Time"));
@@ -201,7 +200,7 @@ public class MatchaDbTableTest {
         List<HashMap<String, Object>> expectedObjects = 
             MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams("s", null, null, null, null, SHIRTS_TABLE);
 
-        MatchaQuery matchaQuery = new MatchaQuery(new String[]{SHIRTS_TABLE}, 
+        MatchaGetQuery matchaQuery = new MatchaGetQuery(new String[]{SHIRTS_TABLE}, 
             new String[][]{{ITEM_NAME, HAS_OPERATION, "'s'"}});
 
         matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
@@ -230,7 +229,7 @@ public class MatchaDbTableTest {
         String fancyHatToAddAsJSON = MatchaDbGenerateData.newClothesItemToInsert();
 
         // Query to get item
-        MatchaQuery matchaQueryGetFancyHat = new MatchaQuery(new String[] {HATS_TABLE},
+        MatchaGetQuery matchaQueryGetFancyHat = new MatchaGetQuery(new String[] {HATS_TABLE},
             new String[][] {{ITEM_NAME, HAS_OPERATION, "'Trendy Hat'"}}
         );
 
@@ -238,8 +237,9 @@ public class MatchaDbTableTest {
         // "Place": "To Hats", 
         // "Insert": ""{ \"Item Name\": \"Trendy Hat\", \"Item Brand\": \"qwertu\"," +
         //        "\"Item Description\": \"A hat with a feather for a feather.\", \"Item Price\": 9000000.95 }""
-        MatchaQuery matchaQueryInsertFancyHat = new MatchaQuery(new String[] {HATS_TABLE},
-            new String[][] {{ fancyHatToAddAsJSON }}
+        MatchaPostQuery matchaQueryInsertFancyHat = new MatchaPostQuery(new String[] {HATS_TABLE},
+            new String[][] {{}},
+            new String[][] {{fancyHatToAddAsJSON}}
         );
         matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
         String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
@@ -298,7 +298,7 @@ public class MatchaDbTableTest {
         String newPrice = "18.91";
         String newBrand = "The Eighteen";
 
-        MatchaQuery matchaQueryGet = new MatchaQuery(new String[]{HATS_TABLE}, 
+        MatchaGetQuery matchaQueryGet = new MatchaGetQuery(new String[]{HATS_TABLE}, 
             new String[][]{{ITEM_PRICE, GREATER_THAN, "16.00"}, {ITEM_PRICE, LESS_THAN, "20.00"}});
         
         MatchaUpdateQuery matchaQueryUpdate = new MatchaUpdateQuery(new String[]{HATS_TABLE}, 

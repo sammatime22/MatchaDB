@@ -1,4 +1,4 @@
-package com.matchadb.models;
+package com.matchadb.models.query;
 
 /**
  * A class which holds the actual query to be used on the system.

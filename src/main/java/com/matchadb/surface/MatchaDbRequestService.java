@@ -1,6 +1,5 @@
 package com.matchadb.surface;
 
-import com.matchadb.models.MatchaDbCommandResult;
 import com.matchadb.models.MatchaDbRequestObject;
 import com.matchadb.models.MatchaDbResponseObject;
 
@@ -37,7 +36,7 @@ public class MatchaDbRequestService {
      *
      * @return A string defining the result of the command.
      */
-    public String interpretGetResult(MatchaDbCommandResult result) {
+    public String interpretGetResult(Object result) {
         return null;
     }
 
@@ -49,7 +48,7 @@ public class MatchaDbRequestService {
      *
      * @return A string defining the result of the command.
      */
-    public String interpretPostResult(MatchaDbCommandResult result) {
+    public String interpretPostResult(boolean result) {
         return null;
     }
 
@@ -61,7 +60,7 @@ public class MatchaDbRequestService {
      *
      * @return A string defining the result of the command.
      */
-    public String interpretUpdateResult(MatchaDbCommandResult result) {
+    public String interpretUpdateResult(boolean result) {
         return null;
     }
 
@@ -73,7 +72,7 @@ public class MatchaDbRequestService {
      *
      * @return A string defining the result of the command.
      */
-    public String interpretDeleteResult(MatchaDbCommandResult result) {
+    public String interpretDeleteResult(boolean result) {
         return null;
     }
 }
