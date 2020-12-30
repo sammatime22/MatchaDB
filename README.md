@@ -17,6 +17,8 @@ for data generation code
 
 2020/12/29 - Implemented updateData, as well as new portions of meetsQueryRequirements
 
+2020/12/30 - Created new query types for each request opertion type
+
 **System Requirements**
 
 Java: 
