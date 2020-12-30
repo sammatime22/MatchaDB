@@ -1,4 +1,4 @@
-package com.matchadb.models;
+package com.matchadb.models.query;
 
 /**
  * A class which holds the actual update query to be used on the system.
@@ -6,7 +6,7 @@ package com.matchadb.models;
 public class MatchaUpdateQuery extends MatchaQuery {
 
     /**
-     * Describes the conditions on which a set of data should be selected.
+     * Describes the updates that will be applied to the database.
      */
     private String[][] updateQuery; 
 
