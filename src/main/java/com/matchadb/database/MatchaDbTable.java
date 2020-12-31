@@ -600,6 +600,31 @@ public class MatchaDbTable {
     }
 
     /**
+     * A shared method among the Get, Post, Update, and Delete Data methods, that allows
+     * us to search for the appropriate portion of the table to retrieve data from.
+     *
+     * @param fromQuery The From Query, defining where in the table the data is coming from.
+     * @param selection The selection of the table to be searched upon.
+     *
+     * @return The portion of data to have the action conducted upon.
+     */
+    private Object searchForData(String[] fromQuery, Object selection) {
+        for (String fromQueryPortion : fromQuery) {
+            // if the query portion is *
+                // if the table portion is a list
+                    // Try to get all subsequent items within said list
+                // Else
+                    // Just return the object or data point
+            // if the table portion queried is a list
+                // run commands on it asif it were so
+            // For HashMaps or data
+                // Just return it as is
+        }
+
+        return null;
+    }
+
+    /**
      * Allows for the select query contents to take action on a potential candidate
      * for action, whether this candidate matches some regex pattern, has a value
      * within some pattern, or likewise.
@@ -608,9 +633,9 @@ public class MatchaDbTable {
      *     has - Does the object "have" the specific character in their field?
      *     equals - Does the value in the query equal the value in the queried field?
      *              (This relating to numerical based queries only)
-     * To Implement:
      *     less than - Is the value less than what was expected?
      *     greater than - Is the value greater than what was expected?
+     * To Implement:
      *     is - Is the object a 1-to-1 string match?
      *
      *
