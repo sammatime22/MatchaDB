@@ -78,6 +78,9 @@ public class MatchaDbTable {
     // A space.
     private final String SPACE = " ";
 
+    // An asterik, a character that defines "select all" in the search for data.
+    private final String SELECT_ALL = "*";
+
     // The position of the key in the query subset.
     private final int QUERY_KEY_POSITION = 0;
 
@@ -419,8 +422,6 @@ public class MatchaDbTable {
         try {
             Object selectionToInsertUpon = this.table;
 
-            // If we are ever reimplementing the "searchForData" method, I'm thinking that this
-            // version of the "search" method should be used (comparing with get, update Data 12.28).
             for (int i = 0; i < query.getFromQuery().length; i++) {
                 if (selectionToInsertUpon instanceof HashMap tableAsHashMap) {
                     selectionToInsertUpon = tableAsHashMap.get(query.getFromQuery()[i]);
@@ -442,10 +443,6 @@ public class MatchaDbTable {
                     HashMap<String, Object> newItem = 
                         interpretJSONObject((JSONObject) this.parser.parse(query.getInsertQuery()[i][j]));
                     if (selectionToInsertUpon instanceof HashMap selectionAsHashMap) {
-                        // Given that a value already exists at this position, this will overwrite the 
-                        // former value. I'm going to go under the assumption that this is expected, 
-                        // but an alternative would be to insert all of the new values onto the former
-                        // key, possibly.
                         selectionAsHashMap.put(query.getFromQuery()[i], newItem); 
                     } else if (selectionToInsertUpon instanceof List selectionAsList) {
                         selectionAsList.add(newItem);
@@ -609,19 +606,58 @@ public class MatchaDbTable {
      * @return The portion of data to have the action conducted upon.
      */
     private Object searchForData(String[] fromQuery, Object selection) {
+        Object returnedSelection = null;
+
         for (String fromQueryPortion : fromQuery) {
-            // if the query portion is *
-                // if the table portion is a list
-                    // Try to get all subsequent items within said list
-                // Else
-                    // Just return the object or data point
-            // if the table portion queried is a list
-                // run commands on it asif it were so
-            // For HashMaps or data
-                // Just return it as is
+            if (SELECT_ALL.equals(fromQueryPortion)) {
+                if (selection instanceof List selectionAsList) {
+                    returnedSelection = new ArrayList<>();
+                    for (Object selectionAsListPortion : selectionAsList) {
+                        ((List) returnedSelection).add(
+                            searchForData(
+                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectionAsListPortion));
+                    }
+                    // We queried the remaining of the "From Query" on the selection portions.
+                    // All data has been recursively collected and we no longer need to do any queries.
+                    break;
+                } else {
+                    returnedSelection = selection;
+                }
+            } else {
+                if (selection instanceof List listSelection) {
+                    int indexOfInterest;
+
+                    if (canBeInterpretedAsInteger(fromQueryPortion)) {
+                        indexOfInterest = Integer.parseInt(fromQueryPortion);
+                    } else {
+                        indexOfInterest = listSelection.indexOf(fromQueryPortion);
+                    }
+
+                    if (indexOfInterest != INDEX_NONEXISTANT) {
+                        selection = listSelection.get(indexOfInterest);
+                    } else {
+                        // If this entry didn't exist, we'll just return an empty list
+                        return new ArrayList<>();
+                    }
+                } else if (selection instanceof HashMap hashmapSelection) {
+                    if (hashmapSelection.containsKey(fromQueryPortion)) {
+                        selection = hashmapSelection.get(fromQueryPortion);
+                    } else {
+                        return new ArrayList<>();
+                    }
+                } else {
+                    // If we searched down too far, then we can't interpret the query. Return
+                    // an empty list as a result.
+                    return new ArrayList<>();
+                }
+            }
         }
 
-        return null;
+        if (returnedSelection != null) {
+            return returnedSelection;
+        } else {
+            return null;
+        }
     }
 
     /**
