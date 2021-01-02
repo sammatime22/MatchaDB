@@ -93,6 +93,8 @@ public class MatchaDbTable {
 
     private final int QUERY_UPDATED_VALUE_POSITION = 2;
 
+    private final int OBJECT_TO_INSERT_INDEX = 0;
+
     // The value returned if the index does not exist.
     private final int INDEX_NONEXISTANT = -1;
 
@@ -345,37 +347,7 @@ public class MatchaDbTable {
      * @return The data encapsulated in a MatchaData object.
      */
     public Object getData(MatchaGetQuery query) {
-        Object selection = this.table;
-
-
-        for (String fromQueryPortion : query.getFromQuery()) {
-            if (selection instanceof List listSelection) {
-                int indexOfInterest;
-
-                if (canBeInterpretedAsInteger(fromQueryPortion)) {
-                    indexOfInterest = Integer.parseInt(fromQueryPortion);
-                } else {
-                    indexOfInterest = listSelection.indexOf(fromQueryPortion);
-                }
-
-                if (indexOfInterest != INDEX_NONEXISTANT) {
-                    selection = listSelection.get(indexOfInterest);
-                } else {
-                    // If this entry didn't exist, we'll just return an empty list
-                    return new ArrayList<>();
-                }
-            } else if (selection instanceof HashMap hashmapSelection) {
-                if (hashmapSelection.containsKey(fromQueryPortion)) {
-                    selection = hashmapSelection.get(fromQueryPortion);
-                } else {
-                    return new ArrayList<>();
-                }
-            } else {
-                // If we searched down too far, then we can't interpret the query. Return
-                // an empty list as a result.
-                return new ArrayList<>();
-            }
-        }
+        Object selection = searchForData(query.getFromQuery(), this.table);
 
 
         // We should make sure the values to return are in a generic object.
@@ -420,37 +392,18 @@ public class MatchaDbTable {
     public boolean postData(MatchaPostQuery query) throws ParseException {
 
         try {
-            Object selectionToInsertUpon = this.table;
+            Object selectionToInsertUpon = searchForData(query.getFromQuery(), this.table);
 
-            for (int i = 0; i < query.getFromQuery().length; i++) {
-                if (selectionToInsertUpon instanceof HashMap tableAsHashMap) {
-                    selectionToInsertUpon = tableAsHashMap.get(query.getFromQuery()[i]);
-                } else if (selectionToInsertUpon instanceof List tableAsList) {
-                    int indexOfInterest;
-
-                    if (canBeInterpretedAsInteger(query.getFromQuery()[i])) {
-                        indexOfInterest = Integer.parseInt(query.getFromQuery()[i]);
-                    } else {
-                        indexOfInterest = tableAsList.indexOf(query.getFromQuery()[i]);
-                    }
-
-                    if (indexOfInterest != INDEX_NONEXISTANT) {
-                        selectionToInsertUpon = tableAsList.get(indexOfInterest);
-                    }
+            for (String[] insertQuery : query.getInsertQuery()) {
+                HashMap<String, Object> newItem = 
+                    interpretJSONObject((JSONObject) this.parser.parse(insertQuery[OBJECT_TO_INSERT_INDEX]));
+                if (selectionToInsertUpon instanceof HashMap selectionAsHashMap) {
+                    selectionAsHashMap.put(query.getFromQuery()[query.getFromQuery().length - 1], newItem); 
+                } else if (selectionToInsertUpon instanceof List selectionAsList) {
+                    selectionAsList.add(newItem);
                 }
 
-                for (int j = 0; j < query.getInsertQuery()[i].length; j++) {
-                    HashMap<String, Object> newItem = 
-                        interpretJSONObject((JSONObject) this.parser.parse(query.getInsertQuery()[i][j]));
-                    if (selectionToInsertUpon instanceof HashMap selectionAsHashMap) {
-                        selectionAsHashMap.put(query.getFromQuery()[i], newItem); 
-                    } else if (selectionToInsertUpon instanceof List selectionAsList) {
-                        selectionAsList.add(newItem);
-                    }
-
-                }
             }
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -468,38 +421,7 @@ public class MatchaDbTable {
      * @return A boolean describing a successful update.
      */
     public boolean updateData(MatchaUpdateQuery query) {
-        Object selection = this.table;
-
-
-        for (String fromQueryPortion : query.getFromQuery()) {
-            if (selection instanceof List listSelection) {
-                int indexOfInterest;
-
-                if (canBeInterpretedAsInteger(fromQueryPortion)) {
-                    indexOfInterest = Integer.parseInt(fromQueryPortion);
-                } else {
-                    indexOfInterest = listSelection.indexOf(fromQueryPortion);
-                }
-
-                if (indexOfInterest != INDEX_NONEXISTANT) {
-                    selection = listSelection.get(indexOfInterest);
-                } else {
-                    // If this entry didn't exist, we'll return false.
-                    return false;
-                }
-            } else if (selection instanceof HashMap hashmapSelection) {
-                if (hashmapSelection.containsKey(fromQueryPortion)) {
-                    selection = hashmapSelection.get(fromQueryPortion);
-                } else {
-                    // If this entry didn't exist, we'll return false.
-                    return false;
-                }
-            } else {
-                // If we searched down too far, then we can't interpret the query. Return
-                // false as the result.
-                return false;
-            }
-        }
+        Object selection = searchForData(query.getFromQuery(), this.table);
 
         // Next, perform the subset query
         try {
@@ -606,11 +528,11 @@ public class MatchaDbTable {
      * @return The portion of data to have the action conducted upon.
      */
     private Object searchForData(String[] fromQuery, Object selection) {
-        Object returnedSelection = null;
+        Object returnedSelection = selection;
 
         for (String fromQueryPortion : fromQuery) {
             if (SELECT_ALL.equals(fromQueryPortion)) {
-                if (selection instanceof List selectionAsList) {
+                if (returnedSelection instanceof List selectionAsList) {
                     returnedSelection = new ArrayList<>();
                     for (Object selectionAsListPortion : selectionAsList) {
                         ((List) returnedSelection).add(
@@ -620,11 +542,9 @@ public class MatchaDbTable {
                     // We queried the remaining of the "From Query" on the selection portions.
                     // All data has been recursively collected and we no longer need to do any queries.
                     break;
-                } else {
-                    returnedSelection = selection;
-                }
+                } // else, don't search further down
             } else {
-                if (selection instanceof List listSelection) {
+                if (returnedSelection instanceof List listSelection) {
                     int indexOfInterest;
 
                     if (canBeInterpretedAsInteger(fromQueryPortion)) {
@@ -634,14 +554,14 @@ public class MatchaDbTable {
                     }
 
                     if (indexOfInterest != INDEX_NONEXISTANT) {
-                        selection = listSelection.get(indexOfInterest);
+                        returnedSelection = listSelection.get(indexOfInterest);
                     } else {
                         // If this entry didn't exist, we'll just return an empty list
                         return new ArrayList<>();
                     }
-                } else if (selection instanceof HashMap hashmapSelection) {
+                } else if (returnedSelection instanceof HashMap hashmapSelection) {
                     if (hashmapSelection.containsKey(fromQueryPortion)) {
-                        selection = hashmapSelection.get(fromQueryPortion);
+                        returnedSelection = hashmapSelection.get(fromQueryPortion);
                     } else {
                         return new ArrayList<>();
                     }
