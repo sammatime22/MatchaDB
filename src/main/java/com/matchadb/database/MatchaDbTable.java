@@ -541,8 +541,19 @@ public class MatchaDbTable {
                     }
                     // We queried the remaining of the "From Query" on the selection portions.
                     // All data has been recursively collected and we no longer need to do any queries.
-                    break;
-                } // else, don't search further down
+                } else if (returnedSelection instanceof HashMap selectionAsHashMap) {
+                    returnedSelection = new ArrayList<>();
+
+                    for (Iterator keyIterator = selectionAsHashMap.keySet().iterator(); keyIterator.hasNext();) {
+                        String key = (String) keyIterator.next(); 
+                        for (Object selectableObjects : Arrays.asList(searchForData(Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectionAsHashMap.get(key)))) {
+                            System.out.println(selectableObjects);
+                        }
+                    }
+                    
+
+                } // else, just return the entire selection
+                break;
             } else {
                 if (returnedSelection instanceof List listSelection) {
                     int indexOfInterest;

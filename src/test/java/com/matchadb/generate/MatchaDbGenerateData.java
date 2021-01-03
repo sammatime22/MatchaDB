@@ -208,7 +208,7 @@ public class MatchaDbGenerateData {
 
         for (Object tableKey : ((HashMap)currentTableItemsWithTableHeads).keySet().toArray()) {
             String tableKeyAsString = (String) tableKey;
-            if (tableKeyAsString.equals(subtableKey)) {
+            if (tableKeyAsString.equals(subtableKey) || subtableKey == null) {
                 Object subTable = ((HashMap)currentTableItemsWithTableHeads).get(tableKeyAsString);
                 for (Object item : (List) subTable) {
                     HashMap<String, Object> itemAsMap = ((HashMap) item);
