@@ -547,6 +547,7 @@ public class MatchaDbTable {
                     for (Iterator keyIterator = selectionAsHashMap.keySet().iterator(); keyIterator.hasNext();) {
                         String key = (String) keyIterator.next(); 
                         for (Object selectableObjects : Arrays.asList(searchForData(Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectionAsHashMap.get(key)))) {
+                            if (List)
                             System.out.println(selectableObjects);
                         }
                     }

@@ -295,12 +295,6 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testUpdateData() {
-        /**
-            TODO!!!!!
-            Update this test to update ALL products with prices between $16 and $20 to 
-            the new pricing and brand.
-        
-         */
         String newPrice = "18.91";
         String newBrand = "The Eighteen";
 
