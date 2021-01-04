@@ -299,16 +299,16 @@ public class MatchaDbTableTest {
         String newBrand = "The Eighteen";
 
         MatchaGetQuery matchaQueryGet = new MatchaGetQuery(new String[]{ALL_TABLES}, 
-            new String[][]{{ITEM_PRICE, GREATER_THAN, "16.00"}, {ITEM_PRICE, LESS_THAN, "20.00"}});
+            new String[][]{{ITEM_PRICE, GREATER_THAN, "15.00"}, {ITEM_PRICE, LESS_THAN, "20.00"}});
         
         MatchaUpdateQuery matchaQueryUpdate = new MatchaUpdateQuery(new String[]{ALL_TABLES}, 
-            new String[][]{{ITEM_PRICE, GREATER_THAN, "16.00"}, {ITEM_PRICE, LESS_THAN, "20.00"}},
+            new String[][]{{ITEM_PRICE, GREATER_THAN, "15.00"}, {ITEM_PRICE, LESS_THAN, "20.00"}},
             new String[][]{{UPDATE, ITEM_PRICE, newPrice}, {UPDATE, ITEM_BRAND, newBrand}});
 
         matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
 
         List<HashMap<String, Object>> expectedObjects = 
-            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams(null, null, null, 16.00, 20.00, null);
+            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams(null, null, null, 15.00, 20.00, null);
 
         try {
             matchaDbTable.loadData(new FileReader(TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE), TEST_FILE_CLOTHES_WEBSITE_API);
@@ -340,6 +340,7 @@ public class MatchaDbTableTest {
                         if (actualObject.get(ITEM_PRICE).equals(newPrice) &&
                             actualObject.get(ITEM_BRAND).equals(newBrand) &&
                             expectedObject.get(ITEM_DESCRIPTION).equals(actualObject.get(ITEM_DESCRIPTION))) {
+                            System.out.println(actualObject);
                             success = true;
                             break;
                         } else {
@@ -453,6 +454,7 @@ public class MatchaDbTableTest {
 
                 // We didn't find the expected object
                 if (!success) {
+                    System.out.println("Failed on: " + expectedObject.get(ITEM_NAME));
                     Assert.fail();
                 }
             }

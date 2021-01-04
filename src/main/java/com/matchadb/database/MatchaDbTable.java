@@ -547,8 +547,13 @@ public class MatchaDbTable {
                     for (Iterator keyIterator = selectionAsHashMap.keySet().iterator(); keyIterator.hasNext();) {
                         String key = (String) keyIterator.next(); 
                         for (Object selectableObjects : Arrays.asList(searchForData(Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectionAsHashMap.get(key)))) {
-                            if (List)
-                            System.out.println(selectableObjects);
+                            if (selectableObjects instanceof List selectableObjectsAsList) {
+                                for (Object selectableObject : selectableObjectsAsList) {
+                                    ((List) returnedSelection).add(selectableObject);
+                                }
+                            } else {
+                                ((List) returnedSelection).add(selectableObjects);
+                            }
                         }
                     }
                     
@@ -585,11 +590,7 @@ public class MatchaDbTable {
             }
         }
 
-        if (returnedSelection != null) {
-            return returnedSelection;
-        } else {
-            return null;
-        }
+        return returnedSelection;
     }
 
     /**

@@ -36,7 +36,7 @@ public class MatchaDbGenerateData {
         shirts.add(greenT);
 
         HashMap<String, Object> artT = buildClothesObject(
-            "T-Shirt w/Artwork", "zxcvb", "Show off your favorite painting",
+            "T-Shirt with Artwork", "zxcvb", "Show off your favorite painting",
             15.99
         );
         HashMap<String, Object> sleevelessT = buildClothesObject(
