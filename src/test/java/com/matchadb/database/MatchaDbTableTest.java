@@ -340,7 +340,6 @@ public class MatchaDbTableTest {
                         if (actualObject.get(ITEM_PRICE).equals(newPrice) &&
                             actualObject.get(ITEM_BRAND).equals(newBrand) &&
                             expectedObject.get(ITEM_DESCRIPTION).equals(actualObject.get(ITEM_DESCRIPTION))) {
-                            System.out.println(actualObject);
                             success = true;
                             break;
                         } else {
@@ -454,7 +453,6 @@ public class MatchaDbTableTest {
 
                 // We didn't find the expected object
                 if (!success) {
-                    System.out.println("Failed on: " + expectedObject.get(ITEM_NAME));
                     Assert.fail();
                 }
             }
