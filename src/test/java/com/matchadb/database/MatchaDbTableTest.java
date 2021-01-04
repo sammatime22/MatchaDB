@@ -298,17 +298,17 @@ public class MatchaDbTableTest {
         String newPrice = "18.91";
         String newBrand = "The Eighteen";
 
-        MatchaGetQuery matchaQueryGet = new MatchaGetQuery(new String[]{HATS_TABLE}, 
-            new String[][]{{ITEM_PRICE, GREATER_THAN, "16.00"}, {ITEM_PRICE, LESS_THAN, "20.00"}});
+        MatchaGetQuery matchaQueryGet = new MatchaGetQuery(new String[]{ALL_TABLES}, 
+            new String[][]{{ITEM_PRICE, GREATER_THAN, "15.00"}, {ITEM_PRICE, LESS_THAN, "20.00"}});
         
-        MatchaUpdateQuery matchaQueryUpdate = new MatchaUpdateQuery(new String[]{HATS_TABLE}, 
-            new String[][]{{ITEM_PRICE, GREATER_THAN, "16.00"}, {ITEM_PRICE, LESS_THAN, "20.00"}},
+        MatchaUpdateQuery matchaQueryUpdate = new MatchaUpdateQuery(new String[]{ALL_TABLES}, 
+            new String[][]{{ITEM_PRICE, GREATER_THAN, "15.00"}, {ITEM_PRICE, LESS_THAN, "20.00"}},
             new String[][]{{UPDATE, ITEM_PRICE, newPrice}, {UPDATE, ITEM_BRAND, newBrand}});
 
         matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
 
         List<HashMap<String, Object>> expectedObjects = 
-            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams(null, null, null, 16.00, 20.00, "Hats");
+            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams(null, null, null, 15.00, 20.00, null);
 
         try {
             matchaDbTable.loadData(new FileReader(TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE), TEST_FILE_CLOTHES_WEBSITE_API);
