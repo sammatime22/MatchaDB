@@ -85,7 +85,7 @@ public class MatchaDbGenerateData {
 
         HashMap<String, Object> dressShoes = buildClothesObject(
             "Dress Shoes", "ghjkl", "To go with those work pants",
-            89.70
+            89.79
         );
         HashMap<String, Object> highTops = buildClothesObject(
             "High Tops", "ghjkl", "Going back to high school?",

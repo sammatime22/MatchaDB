@@ -5,6 +5,7 @@ import com.matchadb.generate.MatchaDbGenerateData;
 import com.matchadb.models.query.MatchaGetQuery;
 import com.matchadb.models.query.MatchaPostQuery;
 import com.matchadb.models.query.MatchaUpdateQuery;
+import com.matchadb.models.query.MatchaDeleteQuery;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -368,11 +369,66 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testDeleteData() {
-        // Show the item is there (get)
+        /**
+         * We are going to test deleting all items of the brand ghjkl from the database.
+         */
+        MatchaGetQuery matchaQueryGetAll = new MatchaGetQuery(
+            new String[] {ALL_TABLES},
+            new String[][] {{ITEM_PRICE, GREATER_THAN, "1.00"}}
+        );
 
-        // Delete item
+        MatchaDeleteQuery matchaDeleteQuery = new MatchaDeleteQuery(
+            new String[] {ALL_TABLES},
+            new String[][] {{ITEM_BRAND, HAS_OPERATION, "zxcvb"}} // Change this to equals operation
+        );
+        
+        List<HashMap<String, Object>> allItems = 
+            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams(null, null, null, null, null, null);
 
-        // Seaarch and see that it is no longer there
+        List<HashMap<String, Object>> allItemsFromzxcvb = 
+            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams(null, "zxcvb", null, null, null, null);        
+
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+
+        try {   
+            // Show all items are in the table
+            matchaDbTable.loadData(new FileReader(TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            // Show the items are unmodified (get)
+            List<HashMap<String, Object>> actualObjects = 
+                (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQueryGetAll);
+
+            // Find the matching object from our mock data, and check to see that the contents match    
+            expectedVersusActualClothingWebsiteAPICheck(allItems, actualObjects);            
+
+            // Delete all items of the brand "zxcvb"
+            if (!matchaDbTable.deleteData(matchaDeleteQuery)) {
+                // Something happened when attempting to use our delete query.
+                Assert.fail();
+            }
+
+            // Seaarch and see that no more "zxcvb" brand items are in the table
+            List<HashMap<String, Object>> actualObjectsNozxcvbBrand = 
+                (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQueryGetAll);            
+
+
+            // For each object returned, was this an object we shouldn't have gotten?
+            for (HashMap actualObject : actualObjectsNozxcvbBrand) {
+                for (HashMap itemFromzxcvb : allItemsFromzxcvb) {
+                    if (actualObject.get(ITEM_NAME).equals(itemFromzxcvb.get(ITEM_NAME)) ||
+                        actualObject.get(ITEM_BRAND).equals(itemFromzxcvb.get(ITEM_BRAND)) ||
+                        actualObject.get(ITEM_DESCRIPTION).equals(itemFromzxcvb.get(ITEM_DESCRIPTION)) ||
+                        actualObject.get(ITEM_PRICE).equals(itemFromzxcvb.get(ITEM_PRICE))) {
+                        Assert.fail();
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+
     }
 
     /**
@@ -445,6 +501,7 @@ public class MatchaDbTableTest {
                             success = true;
                             break;
                         } else {
+                            System.out.println(expectedObject.get(ITEM_NAME));
                             // The object didn't have the right/original attributes for some reason
                             Assert.fail();
                         }
