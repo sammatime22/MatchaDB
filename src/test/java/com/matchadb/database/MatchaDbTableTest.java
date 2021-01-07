@@ -48,6 +48,8 @@ public class MatchaDbTableTest {
 
     private final String HAS_OPERATION = "has";
 
+    private final String IS_OPERATION = "is";
+
     private final String LESS_THAN = "<";
 
     private final String GREATER_THAN = ">";
@@ -379,7 +381,7 @@ public class MatchaDbTableTest {
 
         MatchaDeleteQuery matchaDeleteQuery = new MatchaDeleteQuery(
             new String[] {ALL_TABLES},
-            new String[][] {{ITEM_BRAND, HAS_OPERATION, "zxcvb"}} // Change this to equals operation
+            new String[][] {{ITEM_BRAND, IS_OPERATION, "zxcvb"}} // Change this to equals operation
         );
         
         List<HashMap<String, Object>> allItems = 

@@ -515,7 +515,17 @@ public class MatchaDbTable {
      * @return A boolean describing a successful insert.
      */
     public boolean deleteData(MatchaDeleteQuery query) {
-        return false;
+        Object selection = searchForData(query.getFromQuery(), this.table);
+
+        try {
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        
+        return true;
     }
 
     /**
@@ -631,6 +641,14 @@ public class MatchaDbTable {
                     queryResults.add(true);
                 }
             } 
+            // is query
+            else if (IS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
+                if (!((String) valueMap.get(selectQuery[QUERY_KEY_POSITION])).equals(selectQuery[QUERY_VALUE_POSITION])) {
+                    queryResults.add(false);
+                } else {
+                    queryResults.add(true);
+                }
+            }
             // equals query
             else if (EQUALS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
                 // Run a numerical check on the params
