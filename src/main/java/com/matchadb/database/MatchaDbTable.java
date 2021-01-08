@@ -504,6 +504,8 @@ public class MatchaDbTable {
             return false;
         }
         
+        System.out.println(this.table);
+
         return true;
     }
 
@@ -517,15 +519,53 @@ public class MatchaDbTable {
     public boolean deleteData(MatchaDeleteQuery query) {
         Object selection = searchForData(query.getFromQuery(), this.table);
 
+            // within the selection
+            // if list
+                // go through list and delete on failing criteria
+            // if hashmap
+                // check if hashmap has criteria and delete if necessary
+            // if value
+                // do the same thing as we would do given a hashmap
+
         try {
-
-
+            if (selection instanceof List finalListselection) {
+                for (Object value : finalListselection.toArray()) { 
+                    if (meetsQueryRequirement(value, query.getSelectQuery())) {
+                        deleteDataFromDbTable(query.getFromQuery(), value, this.table);
+                    }
+                }     
+            } else if (selection instanceof HashMap finalHashmapSelection) {
+                // for iterator (to look at all potential objects in the object)
+                    // if we can hit the reqs then delete
+            } else {
+                // if we hit the reqs then delete
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
         
+        // System.out.println(selection);
+        System.out.println(this.table);
+
         return true;
+    }
+
+    /**
+     * A helper method that deletes data from the class level "table" object by removing it's reference
+     * in the table object itself.
+     *
+     * @param fromQuery The from query used to gather the object.
+     * @param object The object that will be removed from the table.
+     * @param tablePortion The table portion to which the data will be removed from.
+     */
+    private void deleteDataFromDbTable(String[] fromQuery, Object object, Object tablePortion) {
+        for (String fromQueryPortion : fromQuery) {
+            if (SELECT_ALL.equals(fromQueryPortion)) {
+                // Implement search on select all query.
+            }
+            // Implement search if otherwise.
+        }
     }
 
     /**

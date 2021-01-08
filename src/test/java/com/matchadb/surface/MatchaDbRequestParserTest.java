@@ -14,6 +14,7 @@ public class MatchaDbRequestParserTest {
      * Tests the ingestion of a Raw Request and it's transform into a Request
      * object used by the system.
      */
+    @Test
     public void testIngestRequest() {
 
     }
@@ -22,6 +23,7 @@ public class MatchaDbRequestParserTest {
      * Tests that the convertRawRequest method calls the appropriate methods to 
      * convert a Raw Request into one that is usable by the system.
      */
+    @Test
     public void testConvertRawRequest() {
 
     }
@@ -29,6 +31,7 @@ public class MatchaDbRequestParserTest {
     /**
      * Tests that we can gather the request type.
      */
+    @Test
     public void testGetRequestType() {
 
     }
@@ -36,6 +39,7 @@ public class MatchaDbRequestParserTest {
     /**
      * Tests that we can gather and parse the Request contests.
      */
+    @Test
     public void testGetRequestContents() {
 
     }
@@ -44,6 +48,7 @@ public class MatchaDbRequestParserTest {
      * Tests that we can appropriately conduct the request and retrieve a 
      * Response.
      */
+    @Test
     public void testMakeRequest() {
 
     }
