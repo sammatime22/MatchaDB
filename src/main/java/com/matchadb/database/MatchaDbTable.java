@@ -503,8 +503,6 @@ public class MatchaDbTable {
             e.printStackTrace();
             return false;
         }
-        
-        System.out.println(this.table);
 
         return true;
     }
@@ -517,35 +515,13 @@ public class MatchaDbTable {
      * @return A boolean describing a successful insert.
      */
     public boolean deleteData(MatchaDeleteQuery query) {
-        Object selection = searchForData(query.getFromQuery(), this.table);
-
-            // within the selection
-            // if list
-                // go through list and delete on failing criteria
-            // if hashmap
-                // check if hashmap has criteria and delete if necessary
-            // if value
-                // do the same thing as we would do given a hashmap
 
         try {
-            if (selection instanceof List finalListselection) {
-                for (Object value : finalListselection.toArray()) { 
-                    if (meetsQueryRequirement(value, query.getSelectQuery())) {
-                        deleteDataFromDbTable(query.getFromQuery(), value, this.table);
-                    }
-                }     
-            } else if (selection instanceof HashMap finalHashmapSelection) {
-                // for iterator (to look at all potential objects in the object)
-                    // if we can hit the reqs then delete
-            } else {
-                // if we hit the reqs then delete
-            }
+            deleteDataFromDbTable(query.getFromQuery(), query.getSelectQuery(), this.table);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
-        
-        // System.out.println(selection);
         System.out.println(this.table);
 
         return true;
@@ -556,15 +532,40 @@ public class MatchaDbTable {
      * in the table object itself.
      *
      * @param fromQuery The from query used to gather the object.
-     * @param object The object that will be removed from the table.
+     * @param selectQuery The select query that will be used to determine if the object is to be deleted.
      * @param tablePortion The table portion to which the data will be removed from.
      */
-    private void deleteDataFromDbTable(String[] fromQuery, Object object, Object tablePortion) {
-        for (String fromQueryPortion : fromQuery) {
-            if (SELECT_ALL.equals(fromQueryPortion)) {
-                // Implement search on select all query.
+    private void deleteDataFromDbTable(String[] fromQuery, String[][] selectQuery, Object tablePortion) {
+        if (fromQuery.length > 0) {
+            for (String fromQueryPortion : fromQuery) {
+                if (SELECT_ALL.equals(fromQueryPortion)) {
+                    if (tablePortion instanceof List tablePortionAsList) {
+                        for (Object tablePortionAsListPortion : tablePortionAsList) {
+                            deleteDataFromDbTable(
+                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery, tablePortionAsListPortion
+                            );
+                        }
+                    } else if (tablePortion instanceof HashMap tablePortionAsHashMap) {
+                        for (Iterator keyIterator = tablePortionAsHashMap.keySet().iterator(); keyIterator.hasNext();) {
+                            String key = (String) keyIterator.next();
+                            System.out.println("In here boi! " + tablePortionAsHashMap.get(key));
+                            deleteDataFromDbTable(
+                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery, tablePortionAsHashMap.get(key)
+                            );
+                        }
+                    }
+                }
             }
-            // Implement search if otherwise.
+        } else {
+            if (tablePortion instanceof List tablePortionAsList) {
+                for (Object object : tablePortionAsList) {
+                    System.out.println(object);
+                    if (meetsQueryRequirement(object, selectQuery)) {
+                        System.out.println("dudly? " + object);
+                        tablePortionAsList.remove(tablePortionAsList.indexOf(object));
+                    }
+                }
+            }
         }
     }
 
