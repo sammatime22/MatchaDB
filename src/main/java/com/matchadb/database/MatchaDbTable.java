@@ -503,7 +503,7 @@ public class MatchaDbTable {
             e.printStackTrace();
             return false;
         }
-        
+
         return true;
     }
 
@@ -515,7 +515,64 @@ public class MatchaDbTable {
      * @return A boolean describing a successful insert.
      */
     public boolean deleteData(MatchaDeleteQuery query) {
-        return false;
+
+        try {
+            deleteDataFromDbTable(query.getFromQuery(), query.getSelectQuery(), this.table);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * A helper method that deletes data from the class level "table" object by removing it's reference
+     * in the table object itself.
+     *
+     * @param fromQuery The from query used to gather the object.
+     * @param selectQuery The select query that will be used to determine if the object is to be deleted.
+     * @param tablePortion The table portion to which the data will be removed from.
+     */
+    private void deleteDataFromDbTable(String[] fromQuery, String[][] selectQuery, Object tablePortion) {
+        if (fromQuery.length > 0) {
+            for (String fromQueryPortion : fromQuery) {
+                if (SELECT_ALL.equals(fromQueryPortion)) {
+                    if (tablePortion instanceof List tablePortionAsList) {
+                        for (Object tablePortionAsListPortion : tablePortionAsList) {
+                            deleteDataFromDbTable(
+                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery, tablePortionAsListPortion
+                            );
+                        }
+                    } else if (tablePortion instanceof HashMap tablePortionAsHashMap) {
+                        for (Iterator keyIterator = tablePortionAsHashMap.keySet().iterator(); keyIterator.hasNext();) {
+                            String key = (String) keyIterator.next();
+                            deleteDataFromDbTable(
+                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery, tablePortionAsHashMap.get(key)
+                            );
+                        }
+                    }
+                }
+            }
+        } else {
+            if (tablePortion instanceof List tablePortionAsList) {
+                for (Iterator tablePortionAsListIterator = tablePortionAsList.iterator(); 
+                    tablePortionAsListIterator.hasNext();) {
+                    Object object = tablePortionAsListIterator.next();
+                    if (meetsQueryRequirement(object, selectQuery)) {
+                        tablePortionAsListIterator.remove();
+                    }
+                }
+            } else if (tablePortion instanceof HashMap tablePortionAsHashMap) {
+                for (Iterator tablePortionAsHashMapIterator = tablePortionAsHashMap.keySet().iterator();
+                    tablePortionAsHashMapIterator.hasNext();) {
+                    String key = (String) tablePortionAsHashMapIterator.next();
+                    if (meetsQueryRequirement(tablePortionAsHashMap.get(key), selectQuery)) {
+                        tablePortionAsHashMapIterator.remove();
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -631,6 +688,14 @@ public class MatchaDbTable {
                     queryResults.add(true);
                 }
             } 
+            // is query
+            else if (IS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
+                if (!((String) valueMap.get(selectQuery[QUERY_KEY_POSITION])).equals(selectQuery[QUERY_VALUE_POSITION])) {
+                    queryResults.add(false);
+                } else {
+                    queryResults.add(true);
+                }
+            }
             // equals query
             else if (EQUALS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
                 // Run a numerical check on the params
