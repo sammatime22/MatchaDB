@@ -417,10 +417,11 @@ public class MatchaDbTableTest {
             // For each object returned, was this an object we shouldn't have gotten?
             for (HashMap actualObject : actualObjectsNozxcvbBrand) {
                 for (HashMap itemFromzxcvb : allItemsFromzxcvb) {
-                    if (actualObject.get(ITEM_NAME).equals(itemFromzxcvb.get(ITEM_NAME)) ||
-                        actualObject.get(ITEM_BRAND).equals(itemFromzxcvb.get(ITEM_BRAND)) ||
-                        actualObject.get(ITEM_DESCRIPTION).equals(itemFromzxcvb.get(ITEM_DESCRIPTION)) ||
+                    if (actualObject.get(ITEM_NAME).equals(itemFromzxcvb.get(ITEM_NAME)) &&
+                        actualObject.get(ITEM_BRAND).equals(itemFromzxcvb.get(ITEM_BRAND)) &&
+                        actualObject.get(ITEM_DESCRIPTION).equals(itemFromzxcvb.get(ITEM_DESCRIPTION)) &&
                         actualObject.get(ITEM_PRICE).equals(itemFromzxcvb.get(ITEM_PRICE))) {
+                        System.out.println(actualObject.get(ITEM_NAME) + " : " + itemFromzxcvb.get(ITEM_NAME));
                         Assert.fail();
                     }
                 }

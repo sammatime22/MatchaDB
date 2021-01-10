@@ -548,7 +548,6 @@ public class MatchaDbTable {
                     } else if (tablePortion instanceof HashMap tablePortionAsHashMap) {
                         for (Iterator keyIterator = tablePortionAsHashMap.keySet().iterator(); keyIterator.hasNext();) {
                             String key = (String) keyIterator.next();
-                            System.out.println("In here boi! " + tablePortionAsHashMap.get(key));
                             deleteDataFromDbTable(
                                 Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery, tablePortionAsHashMap.get(key)
                             );
@@ -558,11 +557,19 @@ public class MatchaDbTable {
             }
         } else {
             if (tablePortion instanceof List tablePortionAsList) {
-                for (Object object : tablePortionAsList) {
-                    System.out.println(object);
+                for (Iterator tablePortionAsListIterator = tablePortionAsList.iterator(); 
+                    tablePortionAsListIterator.hasNext();) {
+                    Object object = tablePortionAsListIterator.next();
                     if (meetsQueryRequirement(object, selectQuery)) {
-                        System.out.println("dudly? " + object);
-                        tablePortionAsList.remove(tablePortionAsList.indexOf(object));
+                        tablePortionAsListIterator.remove();
+                    }
+                }
+            } else if (tablePortion instanceof HashMap tablePortionAsHashMap) {
+                for (Iterator tablePortionAsHashMapIterator = tablePortionAsHashMap.keySet().iterator();
+                    tablePortionAsHashMapIterator.hasNext();) {
+                    String key = (String) tablePortionAsHashMapIterator.next();
+                    if (meetsQueryRequirement(tablePortionAsHashMap.get(key), selectQuery)) {
+                        tablePortionAsHashMapIterator.remove();
                     }
                 }
             }
