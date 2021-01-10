@@ -421,7 +421,6 @@ public class MatchaDbTableTest {
                         actualObject.get(ITEM_BRAND).equals(itemFromzxcvb.get(ITEM_BRAND)) &&
                         actualObject.get(ITEM_DESCRIPTION).equals(itemFromzxcvb.get(ITEM_DESCRIPTION)) &&
                         actualObject.get(ITEM_PRICE).equals(itemFromzxcvb.get(ITEM_PRICE))) {
-                        System.out.println(actualObject.get(ITEM_NAME) + " : " + itemFromzxcvb.get(ITEM_NAME));
                         Assert.fail();
                     }
                 }
@@ -504,7 +503,6 @@ public class MatchaDbTableTest {
                             success = true;
                             break;
                         } else {
-                            System.out.println(expectedObject.get(ITEM_NAME));
                             // The object didn't have the right/original attributes for some reason
                             Assert.fail();
                         }

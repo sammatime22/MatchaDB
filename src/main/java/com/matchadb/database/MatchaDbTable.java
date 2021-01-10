@@ -522,7 +522,6 @@ public class MatchaDbTable {
             e.printStackTrace();
             return false;
         }
-        System.out.println(this.table);
 
         return true;
     }
