@@ -37,16 +37,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class MatchaDbTable {
 
-    // The name of the database.
-    private String databaseName;
+    // The databases table name.
+    private String databaseTableName;
+
+    // The JSONParser object used to parse through provided JSON file data.
+    private JSONParser parser;
 
     // The path to where data is to be dropped off.
     private String dropoffPath;
 
     // The actual table which is to have operations run upon it.
     private Object table;
-
-    private JSONParser parser;
 
     // A Unix timestamp of the time the data was uploaded into the db.
     private long uploadTimeInMillis = 0l;
@@ -59,9 +60,6 @@ public class MatchaDbTable {
 
     // A boolean describing if the database is corrupted somehow.
     private boolean databaseCorrupted = false;
-
-    // The databases table name.
-    private String databaseTableName;
 
     // An array of all of the titles of relevant metadata.
     private String[] metadataTitles;
@@ -84,15 +82,20 @@ public class MatchaDbTable {
     // The position of the key in the query subset.
     private final int QUERY_KEY_POSITION = 0;
 
+    // The position in the select query defining what boolean operation should be performed against
+    // the queried data.
     private final int QUERY_CHECK_TYPE_POSITION = 1;
 
     // The position of the value in the query subset.
     private final int QUERY_VALUE_POSITION = 2;
 
+    // The position of the Key that should be updated.
     private final int QUERY_UPDATED_KEY_POSITION = 1;
 
+    // The postion of the Value to be updated.
     private final int QUERY_UPDATED_VALUE_POSITION = 2;
 
+    // The position of the object that will be inserted into the table.
     private final int OBJECT_TO_INSERT_INDEX = 0;
 
     // The value returned if the index does not exist.
@@ -123,6 +126,9 @@ public class MatchaDbTable {
 
     /**
      * Constructor for the DB Table.
+     *
+     * @param dropoffPath The dropoff path for the database data in JSON format when the saveData
+     *                    method is called.
      */
     public MatchaDbTable (String dropoffPath) {
         this.dropoffPath = dropoffPath;
@@ -137,8 +143,6 @@ public class MatchaDbTable {
      */
     public void loadData(FileReader file, String databaseTableName) {
         this.databaseTableName = databaseTableName;
-
-        table = new ArrayList<Object>();
 
         try {
             // Parse the incoming FileReader for Data
@@ -173,45 +177,6 @@ public class MatchaDbTable {
         } else if (tableData instanceof JSONArray tableDataAsJSONArray) {
             this.table = interpretJSONArray(tableDataAsJSONArray);
         }
-    }
-
-    /**
-     * A recursive helper method that properly constructs HashMaps to repersent JSON Objects.
-     * 
-     * @param jsonObject The JSON object to interpret.
-     *
-     * @return A hashmap representing the interpreted JSON object.
-     */
-    private HashMap<String, Object> interpretJSONObject(JSONObject jsonObject) {
-        HashMap<String, Object> jsonObjectTableComponent = new HashMap<String, Object>();
-
-        for (Iterator keyIterator = jsonObject.keySet().iterator(); 
-                keyIterator.hasNext();) {
-            String key = (String) keyIterator.next();
-            if (jsonObject.get(key) instanceof JSONObject jsonObjectsValueAsJsonObject) {
-                jsonObjectTableComponent.put(key, interpretJSONObject(jsonObjectsValueAsJsonObject));
-            } else if (jsonObject.get(key) instanceof JSONArray jsonObjectsValueAsJsonArray) {
-                jsonObjectTableComponent.put(key, interpretJSONArray(jsonObjectsValueAsJsonArray));
-            } else {
-                // If the data wasn't of type JSONObject or JSONArray, let's interpret
-                // it in the following branching statements
-                if (jsonObject.get(key) instanceof Boolean jsonObjectsValueAsBoolean) { 
-                    jsonObjectTableComponent.put(key, jsonObjectsValueAsBoolean);
-                } else if (jsonObject.get(key) instanceof Integer jsonObjectsValueAsInteger) {
-                    jsonObjectTableComponent.put(key, jsonObjectsValueAsInteger);
-                } else if (jsonObject.get(key) instanceof Double jsonObjectsValueAsDouble) {
-                    jsonObjectTableComponent.put(key, jsonObjectsValueAsDouble);
-                } else if (jsonObject.get(key) instanceof String jsonObjectsValueAsString) {
-                    jsonObjectTableComponent.put(key, jsonObjectsValueAsString);
-                } else {
-                    // If we couldn't figure out the type, we will just turn the object into
-                    // a string.
-                    jsonObjectTableComponent.put(key, jsonObject.get(key).toString());
-                }
-            }
-        }
-
-        return jsonObjectTableComponent;
     }
 
     /**
@@ -254,6 +219,45 @@ public class MatchaDbTable {
     }
 
     /**
+     * A recursive helper method that properly constructs HashMaps to repersent JSON Objects.
+     * 
+     * @param jsonObject The JSON object to interpret.
+     *
+     * @return A hashmap representing the interpreted JSON object.
+     */
+    private HashMap<String, Object> interpretJSONObject(JSONObject jsonObject) {
+        HashMap<String, Object> jsonObjectTableComponent = new HashMap<String, Object>();
+
+        for (Iterator keyIterator = jsonObject.keySet().iterator(); 
+                keyIterator.hasNext();) {
+            String key = (String) keyIterator.next();
+            if (jsonObject.get(key) instanceof JSONObject jsonObjectsValueAsJsonObject) {
+                jsonObjectTableComponent.put(key, interpretJSONObject(jsonObjectsValueAsJsonObject));
+            } else if (jsonObject.get(key) instanceof JSONArray jsonObjectsValueAsJsonArray) {
+                jsonObjectTableComponent.put(key, interpretJSONArray(jsonObjectsValueAsJsonArray));
+            } else {
+                // If the data wasn't of type JSONObject or JSONArray, let's interpret
+                // it in the following branching statements
+                if (jsonObject.get(key) instanceof Boolean jsonObjectsValueAsBoolean) { 
+                    jsonObjectTableComponent.put(key, jsonObjectsValueAsBoolean);
+                } else if (jsonObject.get(key) instanceof Integer jsonObjectsValueAsInteger) {
+                    jsonObjectTableComponent.put(key, jsonObjectsValueAsInteger);
+                } else if (jsonObject.get(key) instanceof Double jsonObjectsValueAsDouble) {
+                    jsonObjectTableComponent.put(key, jsonObjectsValueAsDouble);
+                } else if (jsonObject.get(key) instanceof String jsonObjectsValueAsString) {
+                    jsonObjectTableComponent.put(key, jsonObjectsValueAsString);
+                } else {
+                    // If we couldn't figure out the type, we will just turn the object into
+                    // a string.
+                    jsonObjectTableComponent.put(key, jsonObject.get(key).toString());
+                }
+            }
+        }
+
+        return jsonObjectTableComponent;
+    }
+
+    /**
      * Converts the object back to a JSON file and saves it on the system. 
      */
     public void saveData() {
@@ -284,7 +288,7 @@ public class MatchaDbTable {
      */
     private String getSaveDataFilename() {
         return this.dropoffPath + String.valueOf(System.currentTimeMillis()) 
-            + this.databaseName + JSON_EXTENSION;
+            + this.databaseTableName + JSON_EXTENSION;
     }
 
     /**
