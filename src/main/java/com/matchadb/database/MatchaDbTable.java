@@ -61,24 +61,24 @@ public class MatchaDbTable {
     // A boolean describing if the database is corrupted somehow.
     private boolean databaseCorrupted = false;
 
-    // An array of all of the titles of relevant metadata.
-    private String[] metadataTitles;
-
-    // An array of objects associated with the relevant metadata.
-    private Object[] metadataObjects;
-
     // The extension to a JSON file.
     private final String JSON_EXTENSION = ".json";
 
-    // A single quotation mark.
-    private final String SINGLE_QUOTE = "'";
+    // The position of the object that will be inserted into the table.
+    private final int OBJECT_TO_INSERT_INDEX = 0;
 
-    // A space.
-    private final String SPACE = " ";
+    // The position of the Key that should be updated.
+    private final int QUERY_UPDATED_KEY_POSITION = 1;
+
+    // The postion of the Value to be updated.
+    private final int QUERY_UPDATED_VALUE_POSITION = 2;
 
     // An asterik, a character that defines "select all" in the search for data.
     private final String SELECT_ALL = "*";
 
+    // The value returned if the index does not exist.
+    private final int INDEX_NONEXISTANT = -1;
+    
     // The position of the key in the query subset.
     private final int QUERY_KEY_POSITION = 0;
 
@@ -88,21 +88,6 @@ public class MatchaDbTable {
 
     // The position of the value in the query subset.
     private final int QUERY_VALUE_POSITION = 2;
-
-    // The position of the Key that should be updated.
-    private final int QUERY_UPDATED_KEY_POSITION = 1;
-
-    // The postion of the Value to be updated.
-    private final int QUERY_UPDATED_VALUE_POSITION = 2;
-
-    // The position of the object that will be inserted into the table.
-    private final int OBJECT_TO_INSERT_INDEX = 0;
-
-    // The value returned if the index does not exist.
-    private final int INDEX_NONEXISTANT = -1;
-
-    // The value of the index of an element within a single encapsulated list.
-    private final int SINGLE_ENCAPSULATED_LIST_INDEX = 0;
 
     // Provides inference that the given query expects the queried value should have the 
     // character string provided within the query.
@@ -414,6 +399,7 @@ public class MatchaDbTable {
             return false;
         }
 
+        this.lastUpdateTimeInMillis = System.currentTimeMillis();
         return true;
     }
 
@@ -508,6 +494,7 @@ public class MatchaDbTable {
             return false;
         }
 
+        this.lastUpdateTimeInMillis = System.currentTimeMillis();
         return true;
     }
 
@@ -527,6 +514,7 @@ public class MatchaDbTable {
             return false;
         }
 
+        this.lastUpdateTimeInMillis = System.currentTimeMillis();
         return true;
     }
 
