@@ -78,7 +78,7 @@ public class MatchaDbTable {
 
     // The value returned if the index does not exist.
     private final int INDEX_NONEXISTANT = -1;
-    
+
     // The position of the key in the query subset.
     private final int QUERY_KEY_POSITION = 0;
 
@@ -217,7 +217,8 @@ public class MatchaDbTable {
                 keyIterator.hasNext();) {
             String key = (String) keyIterator.next();
             if (jsonObject.get(key) instanceof JSONObject jsonObjectsValueAsJsonObject) {
-                jsonObjectTableComponent.put(key, interpretJSONObject(jsonObjectsValueAsJsonObject));
+                jsonObjectTableComponent.put(key, 
+                    interpretJSONObject(jsonObjectsValueAsJsonObject));
             } else if (jsonObject.get(key) instanceof JSONArray jsonObjectsValueAsJsonArray) {
                 jsonObjectTableComponent.put(key, interpretJSONArray(jsonObjectsValueAsJsonArray));
             } else {
@@ -272,13 +273,13 @@ public class MatchaDbTable {
      * @return A filename that can be used by the saveData method.
      */
     private String getSaveDataFilename() {
-        return this.dropoffPath + String.valueOf(System.currentTimeMillis()) 
-            + this.databaseTableName + JSON_EXTENSION;
+        return this.dropoffPath + String.valueOf(System.currentTimeMillis()) + 
+            this.databaseTableName + JSON_EXTENSION;
     }
 
     /**
-     * This method is a helper method that is used to revert the current table
-     * into a JSON Array, particularly to save the database back to a json file.
+     * This method is a helper method that is used to revert the current table into a JSON Array,
+     * particularly to save the database back to a json file.
      *
      * @param listObject The table to be transformed into a JSON Object.
      *
@@ -302,8 +303,8 @@ public class MatchaDbTable {
     }
 
     /**
-     * This method is a helper method that is used to revert the current table
-     * into a JSON Array, particularly to save the database back to a json file.
+     * This method is a helper method that is used to revert the current table into a JSON Array,
+     * particularly to save the database back to a json file.
      *
      * @param listObject The table to be transformed into a JSON Object.
      *
@@ -312,7 +313,8 @@ public class MatchaDbTable {
     private JSONObject gatherJSONObjectFromTable(HashMap tableObject) {
         JSONObject jsonObject = new JSONObject();
 
-        for (Iterator objectKeyIterator = tableObject.keySet().iterator(); objectKeyIterator.hasNext();) {
+        for (Iterator objectKeyIterator = tableObject.keySet().iterator(); 
+            objectKeyIterator.hasNext();) {
             String objectKey = (String) objectKeyIterator.next();
             Object object = tableObject.get(objectKey);
             if (object instanceof List objectAsList) {
@@ -336,12 +338,7 @@ public class MatchaDbTable {
      * @return The data encapsulated in a MatchaData object.
      */
     public Object getData(MatchaGetQuery query) {
-        Object selection = searchForData(query.getFromQuery(), this.table);
 
-
-        // We should make sure the values to return are in a generic object.
-        // We don't know what the User had asked for, and we want to be as
-        // dynamic as possible.
         Object valuesToReturn = null;
 
         // Next, perform the subset query
@@ -385,9 +382,13 @@ public class MatchaDbTable {
 
             for (String[] insertQuery : query.getInsertQuery()) {
                 HashMap<String, Object> newItem = 
-                    interpretJSONObject((JSONObject) this.parser.parse(insertQuery[OBJECT_TO_INSERT_INDEX]));
+                    interpretJSONObject(
+                        (JSONObject) this.parser.parse(insertQuery[OBJECT_TO_INSERT_INDEX])
+                    );
                 if (selectionToInsertUpon instanceof HashMap selectionAsHashMap) {
-                    selectionAsHashMap.put(query.getFromQuery()[query.getFromQuery().length - 1], newItem); 
+                    selectionAsHashMap.put(
+                        query.getFromQuery()[query.getFromQuery().length - 1], newItem
+                    ); 
                 } else if (selectionToInsertUpon instanceof List selectionAsList) {
                     selectionAsList.add(newItem);
                 }
@@ -420,10 +421,16 @@ public class MatchaDbTable {
                     if (meetsQueryRequirement(value, query.getSelectQuery())) {
                         for (String[] update : query.getUpdateQuery()) {
                             if (value instanceof HashMap valueAsHashMap) {
-                                valueAsHashMap.put(update[QUERY_UPDATED_KEY_POSITION], update[QUERY_UPDATED_VALUE_POSITION]);
+                                valueAsHashMap.put(
+                                    update[QUERY_UPDATED_KEY_POSITION], 
+                                    update[QUERY_UPDATED_VALUE_POSITION]
+                                );
                             } else if (value instanceof ArrayList valueAsArrayList) {
                                 if (canBeInterpretedAsInteger(update[QUERY_UPDATED_KEY_POSITION])) {
-                                    valueAsArrayList.set(Integer.valueOf(update[QUERY_UPDATED_KEY_POSITION]), update[QUERY_UPDATED_VALUE_POSITION]);
+                                    valueAsArrayList.set(
+                                        Integer.valueOf(update[QUERY_UPDATED_KEY_POSITION]), 
+                                        update[QUERY_UPDATED_VALUE_POSITION]
+                                    );
                                 } else {
                                     valueAsArrayList.set(
                                         valueAsArrayList.indexOf(update[QUERY_UPDATED_KEY_POSITION]), 
@@ -432,25 +439,34 @@ public class MatchaDbTable {
                                 }
                             }
                             else {
-                                // For all other instances, I think we are just literally seting "value" to 
-                                // a new value that's coming in the 2nd slot of the updateQuery.
+                                // For all other instances, I think we are just literally seting 
+                                //"value" to  a new value that's coming in the 2nd slot of the 
+                                // updateQuery.
                                 value = update[QUERY_UPDATED_VALUE_POSITION];
                             }
                         }
                     }
                 }     
             } else if (selection instanceof HashMap finalHashmapSelection) {
-                for (Iterator finalHashmapSelectionIterator = finalHashmapSelection.keySet().iterator(); 
+                for (Iterator finalHashmapSelectionIterator = 
+                    finalHashmapSelection.keySet().iterator(); 
                     finalHashmapSelectionIterator.hasNext();) {
+
                     String key = (String) finalHashmapSelectionIterator.next();
                     Object value = finalHashmapSelection.get(key);
                     if (meetsQueryRequirement(value, query.getSelectQuery())) {
                         for (String[] update : query.getUpdateQuery()) {
                             if (value instanceof HashMap valueAsHashMap) {
-                                valueAsHashMap.put(update[QUERY_UPDATED_KEY_POSITION], update[QUERY_UPDATED_VALUE_POSITION]);
+                                valueAsHashMap.put(
+                                    update[QUERY_UPDATED_KEY_POSITION], 
+                                    update[QUERY_UPDATED_VALUE_POSITION]
+                                );
                             } else if (value instanceof ArrayList valueAsArrayList) {
                                 if (canBeInterpretedAsInteger(update[QUERY_UPDATED_KEY_POSITION])) {
-                                    valueAsArrayList.set(Integer.valueOf(update[QUERY_UPDATED_KEY_POSITION]), update[QUERY_UPDATED_VALUE_POSITION]);
+                                    valueAsArrayList.set(
+                                        Integer.valueOf(update[QUERY_UPDATED_KEY_POSITION]), 
+                                        update[QUERY_UPDATED_VALUE_POSITION]
+                                    );
                                 } else {
                                     valueAsArrayList.set(
                                         valueAsArrayList.indexOf(update[QUERY_UPDATED_KEY_POSITION]), 
@@ -459,8 +475,9 @@ public class MatchaDbTable {
                                 }
                             }
                             else {
-                                // For all other instances, I think we are just literally seting "value" to 
-                                // a new value that's coming in the 2nd slot of the updateQuery.
+                                // For all other instances, I think we are just literally seting 
+                                // "value" to a new value that's coming in the 2nd slot of the 
+                                // updateQuery.
                                 value = update[QUERY_UPDATED_VALUE_POSITION];
                             }
                         }
@@ -470,10 +487,16 @@ public class MatchaDbTable {
                 if (meetsQueryRequirement(selection, query.getSelectQuery())) {
                     for (String[] update : query.getUpdateQuery()) {
                         if (selection instanceof HashMap selectionAsHashMap) {
-                            selectionAsHashMap.put(update[QUERY_UPDATED_KEY_POSITION], update[QUERY_UPDATED_VALUE_POSITION]);
+                            selectionAsHashMap.put(
+                                update[QUERY_UPDATED_KEY_POSITION], 
+                                update[QUERY_UPDATED_VALUE_POSITION]
+                            );
                         } else if (selection instanceof ArrayList selectionAsArrayList) {
                             if (canBeInterpretedAsInteger(update[QUERY_UPDATED_KEY_POSITION])) {
-                                selectionAsArrayList.set(Integer.valueOf(update[QUERY_UPDATED_KEY_POSITION]), update[QUERY_UPDATED_VALUE_POSITION]);
+                                selectionAsArrayList.set(
+                                    Integer.valueOf(update[QUERY_UPDATED_KEY_POSITION]), 
+                                    update[QUERY_UPDATED_VALUE_POSITION]
+                                );
                             } else {
                                 selectionAsArrayList.set(
                                     selectionAsArrayList.indexOf(update[QUERY_UPDATED_KEY_POSITION]), 
@@ -482,8 +505,8 @@ public class MatchaDbTable {
                             }
                         }
                         else {
-                            // For all other instances, I think we are just literally seting "value" to 
-                            // a new value that's coming in the 2nd slot of the updateQuery.
+                            // For all other instances, I think we are just literally seting "value"
+                            // to a new value that's coming in the 2nd slot of the updateQuery.
                             selection = update[QUERY_UPDATED_VALUE_POSITION];
                         }
                     }
@@ -519,11 +542,12 @@ public class MatchaDbTable {
     }
 
     /**
-     * A helper method that deletes data from the class level "table" object by removing it's reference
-     * in the table object itself.
+     * A helper method that deletes data from the class level "table" object by removing it's 
+     * reference in the table object itself.
      *
      * @param fromQuery The from query used to gather the object.
-     * @param selectQuery The select query that will be used to determine if the object is to be deleted.
+     * @param selectQuery The select query that will be used to determine if the object is to be 
+     *                    deleted.
      * @param tablePortion The table portion to which the data will be removed from.
      */
     private void deleteDataFromDbTable(String[] fromQuery, String[][] selectQuery, Object tablePortion) {
@@ -533,14 +557,17 @@ public class MatchaDbTable {
                     if (tablePortion instanceof List tablePortionAsList) {
                         for (Object tablePortionAsListPortion : tablePortionAsList) {
                             deleteDataFromDbTable(
-                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery, tablePortionAsListPortion
+                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery, 
+                                tablePortionAsListPortion
                             );
                         }
                     } else if (tablePortion instanceof HashMap tablePortionAsHashMap) {
-                        for (Iterator keyIterator = tablePortionAsHashMap.keySet().iterator(); keyIterator.hasNext();) {
+                        for (Iterator keyIterator = tablePortionAsHashMap.keySet().iterator(); 
+                            keyIterator.hasNext();) {
                             String key = (String) keyIterator.next();
                             deleteDataFromDbTable(
-                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery, tablePortionAsHashMap.get(key)
+                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery,
+                                tablePortionAsHashMap.get(key)
                             );
                         }
                     }
@@ -556,8 +583,10 @@ public class MatchaDbTable {
                     }
                 }
             } else if (tablePortion instanceof HashMap tablePortionAsHashMap) {
-                for (Iterator tablePortionAsHashMapIterator = tablePortionAsHashMap.keySet().iterator();
+                for (Iterator tablePortionAsHashMapIterator = 
+                    tablePortionAsHashMap.keySet().iterator();
                     tablePortionAsHashMapIterator.hasNext();) {
+
                     String key = (String) tablePortionAsHashMapIterator.next();
                     if (meetsQueryRequirement(tablePortionAsHashMap.get(key), selectQuery)) {
                         tablePortionAsHashMapIterator.remove();
