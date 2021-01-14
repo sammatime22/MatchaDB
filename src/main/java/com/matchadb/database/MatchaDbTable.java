@@ -351,7 +351,8 @@ public class MatchaDbTable {
             }     
         } else if (selection instanceof HashMap finalHashmapSelection) {
             valuesToReturn = new HashMap<>();
-            for (Iterator finalHashmapSelectionIterator = finalHashmapSelection.keySet().iterator(); 
+            for (Iterator finalHashmapSelectionIterator 
+                    = finalHashmapSelection.keySet().iterator(); 
                 finalHashmapSelectionIterator.hasNext();) {
                 String key = (String) finalHashmapSelectionIterator.next();
                 Object value = finalHashmapSelection.get(key);
@@ -499,14 +500,16 @@ public class MatchaDbTable {
                                 );
                             } else {
                                 selectionAsArrayList.set(
-                                    selectionAsArrayList.indexOf(update[QUERY_UPDATED_KEY_POSITION]), 
+                                    selectionAsArrayList.indexOf(
+                                    update[QUERY_UPDATED_KEY_POSITION]), 
                                     update[QUERY_UPDATED_VALUE_POSITION]
                                 );
                             }
                         }
                         else {
-                            // For all other instances, I think we are just literally seting "value"
-                            // to a new value that's coming in the 2nd slot of the updateQuery.
+                            // For all other instances, I think we are just literally seting 
+                            // "value"to a new value that's coming in the 2nd slot of the 
+                            // updateQuery.
                             selection = update[QUERY_UPDATED_VALUE_POSITION];
                         }
                     }
@@ -550,7 +553,8 @@ public class MatchaDbTable {
      *                    deleted.
      * @param tablePortion The table portion to which the data will be removed from.
      */
-    private void deleteDataFromDbTable(String[] fromQuery, String[][] selectQuery, Object tablePortion) {
+    private void deleteDataFromDbTable(String[] fromQuery, String[][] selectQuery, 
+                                       Object tablePortion) {
         if (fromQuery.length > 0) {
             for (String fromQueryPortion : fromQuery) {
                 if (SELECT_ALL.equals(fromQueryPortion)) {
@@ -615,16 +619,23 @@ public class MatchaDbTable {
                     for (Object selectionAsListPortion : selectionAsList) {
                         ((List) returnedSelection).add(
                             searchForData(
-                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectionAsListPortion));
+                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), 
+                                selectionAsListPortion)
+                            );
                     }
                     // We queried the remaining of the "From Query" on the selection portions.
-                    // All data has been recursively collected and we no longer need to do any queries.
+                    // All data has been recursively collected and we no longer need to do any 
+                    // queries.
                 } else if (returnedSelection instanceof HashMap selectionAsHashMap) {
                     returnedSelection = new ArrayList<>();
 
-                    for (Iterator keyIterator = selectionAsHashMap.keySet().iterator(); keyIterator.hasNext();) {
+                    for (Iterator keyIterator = selectionAsHashMap.keySet().iterator(); 
+                        keyIterator.hasNext();) {
                         String key = (String) keyIterator.next(); 
-                        for (Object selectableObjects : Arrays.asList(searchForData(Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectionAsHashMap.get(key)))) {
+                        for (Object selectableObjects : Arrays.asList(
+                            searchForData(
+                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), 
+                                selectionAsHashMap.get(key)))) {
                             if (selectableObjects instanceof List selectableObjectsAsList) {
                                 for (Object selectableObject : selectableObjectsAsList) {
                                     ((List) returnedSelection).add(selectableObject);
@@ -672,19 +683,17 @@ public class MatchaDbTable {
     }
 
     /**
-     * Allows for the select query contents to take action on a potential candidate
-     * for action, whether this candidate matches some regex pattern, has a value
-     * within some pattern, or likewise.
+     * Allows for the select query contents to take action on a potential candidate for action, 
+     * whether this candidate matches some regex pattern, has a valuewithin some pattern, or 
+     * likewise.
      *
      * Current Query Implementations:
      *     has - Does the object "have" the specific character in their field?
+     *     is - Is the object a 1-to-1 string match?
      *     equals - Does the value in the query equal the value in the queried field?
      *              (This relating to numerical based queries only)
      *     less than - Is the value less than what was expected?
      *     greater than - Is the value greater than what was expected?
-     * To Implement:
-     *     is - Is the object a 1-to-1 string match?
-     *
      *
      * @param value The value or Object to be identified or have queries enacted 
      *        upon it.
@@ -702,7 +711,8 @@ public class MatchaDbTable {
             // has query
             if (HAS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
                 if (!((String) (valueMap.get(selectQuery[QUERY_KEY_POSITION]))).contains(
-                    selectQuery[QUERY_VALUE_POSITION].substring(1, selectQuery[QUERY_VALUE_POSITION].length() - 1)
+                    selectQuery[QUERY_VALUE_POSITION]
+                    .substring(1, selectQuery[QUERY_VALUE_POSITION].length() - 1)
                 )) { 
                     queryResults.add(false);
                 } else {
@@ -711,7 +721,8 @@ public class MatchaDbTable {
             } 
             // is query
             else if (IS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
-                if (!((String) valueMap.get(selectQuery[QUERY_KEY_POSITION])).equals(selectQuery[QUERY_VALUE_POSITION])) {
+                if (!((String) valueMap.get(selectQuery[QUERY_KEY_POSITION]))
+                                            .equals(selectQuery[QUERY_VALUE_POSITION])) {
                     queryResults.add(false);
                 } else {
                     queryResults.add(true);
@@ -774,8 +785,8 @@ public class MatchaDbTable {
      *
      * TODO: Move to helper functions class
      *
-     * @param stringToInterpret The string that will be interpreted if it is an 
-     *                          integer/can be turned into an integer.
+     * @param stringToInterpret The string that will be interpreted if it is an integer/can be 
+     *                          turned into an integer.
      *
      * @return A boolean describing if the String could be an integer.
      */
@@ -791,15 +802,14 @@ public class MatchaDbTable {
     }
 
     /**
-     * A small helper method to determine if a String is in fact convertable to 
-     * a double value.
+     * A small helper method to determine if a String is in fact convertable to a double value.
      *
      * TODO: Move to helper functions class
      *
-     * @param stringToInterpret The string that will be interpreted if it is an 
-     *                          integer/can be turned into an integer.
+     * @param stringToInterpret The string that will be interpreted if it is an double/can be 
+     *                          turned into an double.
      *
-     * @return A boolean describing if the String could be an integer.
+     * @return A boolean describing if the String could be an double.
      */
     private boolean canBeInterpretedAsDouble(String stringToInterpret) {
         try {
