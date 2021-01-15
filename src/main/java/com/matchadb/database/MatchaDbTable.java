@@ -273,8 +273,8 @@ public class MatchaDbTable {
      * @return A filename that can be used by the saveData method.
      */
     private String getSaveDataFilename() {
-        return this.dropoffPath + String.valueOf(System.currentTimeMillis()) + 
-            this.databaseTableName + JSON_EXTENSION;
+        return this.dropoffPath + String.valueOf(System.currentTimeMillis()) 
+            + this.databaseTableName + JSON_EXTENSION;
     }
 
     /**
@@ -587,8 +587,8 @@ public class MatchaDbTable {
                     }
                 }
             } else if (tablePortion instanceof HashMap tablePortionAsHashMap) {
-                for (Iterator tablePortionAsHashMapIterator = 
-                    tablePortionAsHashMap.keySet().iterator();
+                for (Iterator tablePortionAsHashMapIterator 
+                    = tablePortionAsHashMap.keySet().iterator();
                     tablePortionAsHashMapIterator.hasNext();) {
 
                     String key = (String) tablePortionAsHashMapIterator.next();
@@ -629,13 +629,19 @@ public class MatchaDbTable {
                 } else if (returnedSelection instanceof HashMap selectionAsHashMap) {
                     returnedSelection = new ArrayList<>();
 
+                    // For all of the keys in the Hashmap
                     for (Iterator keyIterator = selectionAsHashMap.keySet().iterator(); 
                         keyIterator.hasNext();) {
                         String key = (String) keyIterator.next(); 
+
+                        // Interpolate objects
                         for (Object selectableObjects : Arrays.asList(
                             searchForData(
                                 Arrays.copyOfRange(fromQuery, 1, fromQuery.length), 
                                 selectionAsHashMap.get(key)))) {
+
+                            // Add all of the objects, if it comes back as a List. Otherwise, just
+                            // add the one single object to the returned selection.
                             if (selectableObjects instanceof List selectableObjectsAsList) {
                                 for (Object selectableObject : selectableObjectsAsList) {
                                     ((List) returnedSelection).add(selectableObject);
@@ -645,9 +651,8 @@ public class MatchaDbTable {
                             }
                         }
                     }
-                    
-
-                } // else, just return the entire selection
+                }
+                // else, just return the entire selection
                 break;
             } else {
                 if (returnedSelection instanceof List listSelection) {
@@ -708,10 +713,13 @@ public class MatchaDbTable {
         // Run each subquery, and if all match, finish the method by returning true.
         // Otherwise, return false promptly.
         for (String[] selectQuery : selectQueryContents) {
-            // has query
+
+            // Has query is to be used
             if (HAS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
-                if (!((String) (valueMap.get(selectQuery[QUERY_KEY_POSITION]))).contains(
-                    selectQuery[QUERY_VALUE_POSITION]
+
+                // Check to see if the queried value has the substring provided in the query
+                if (!((String) (valueMap.get(selectQuery[QUERY_KEY_POSITION])))
+                    .contains(selectQuery[QUERY_VALUE_POSITION]
                     .substring(1, selectQuery[QUERY_VALUE_POSITION].length() - 1)
                 )) { 
                     queryResults.add(false);
@@ -719,42 +727,55 @@ public class MatchaDbTable {
                     queryResults.add(true);
                 }
             } 
-            // is query
+
+            // An "Is" query is to be used
             else if (IS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
+
+                // Check to see if the provided string is a one-to-one match
                 if (!((String) valueMap.get(selectQuery[QUERY_KEY_POSITION]))
-                                            .equals(selectQuery[QUERY_VALUE_POSITION])) {
+                    .equals(selectQuery[QUERY_VALUE_POSITION])) {
                     queryResults.add(false);
                 } else {
                     queryResults.add(true);
                 }
             }
-            // equals query
+
+            // Equals query is to be used
             else if (EQUALS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
-                // Run a numerical check on the params
+
+                // Check to see if the two values are equal
                 if (valueMap.get(selectQuery[QUERY_KEY_POSITION]) 
-                        != Integer.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
+                    != Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
                     queryResults.add(false);
                 } else {
                     queryResults.add(true);
                 }
             } 
-            // Greater than query
+
+            // Greater than query is to be used
             else if (GREATER_THAN.equals(selectQuery[QUERY_CHECK_TYPE_POSITION]) 
                 && canBeInterpretedAsDouble(selectQuery[QUERY_VALUE_POSITION])
-                && canBeInterpretedAsDouble(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
-                if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) > 
-                    Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
+                && canBeInterpretedAsDouble(
+                    valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
+
+                // Check to see if the table value is larger than the provided value
+                if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) 
+                    > Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
                     queryResults.add(true);
                 } else {
                     queryResults.add(false);
                 }
             }
-            // Less than
+
+            // Less than query is to be used 
             else if (LESS_THAN.equals(selectQuery[QUERY_CHECK_TYPE_POSITION]) 
                 && canBeInterpretedAsDouble(selectQuery[QUERY_VALUE_POSITION])
-                && canBeInterpretedAsDouble(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
-                if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) < 
-                    Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
+                && canBeInterpretedAsDouble(
+                    valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
+
+                // Check to see if the table value is smaller than the provided value
+                if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) 
+                    < Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
                     queryResults.add(true);
                 } else {
                     queryResults.add(false);
