@@ -338,7 +338,7 @@ public class MatchaDbTable {
      * @return The data encapsulated in a MatchaData object.
      */
     public Object getData(MatchaGetQuery query) {
-
+        Object selection = searchForData(query.getFromQuery(), this.table);
         Object valuesToReturn = null;
 
         // Next, perform the subset query
