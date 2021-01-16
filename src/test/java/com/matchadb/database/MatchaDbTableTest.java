@@ -69,7 +69,8 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testLoadDataTestFileClothesWebsiteAPI() {
-        HashMap<String, Object> expectedTable = MatchaDbGenerateData.generateClothesWebsiteAPITable();
+        HashMap<String, Object> expectedTable 
+            = MatchaDbGenerateData.generateClothesWebsiteAPITable();
         String tableName = TEST_FILE_CLOTHES_WEBSITE_API;
 
         // Location of the test file used
@@ -93,8 +94,10 @@ public class MatchaDbTableTest {
             HashMap<String, Object> metadataContents = matchaDbTable.retrieveDbMetadata();
 
             // Check on Timestamps
-            Assert.assertTrue(timeBeforeDBLoadAndLastUpdate <= (long) metadataContents.get("Upload Time"));
-            Assert.assertTrue(timeBeforeDBLoadAndLastUpdate <= (long) metadataContents.get("Last Update Time"));
+            Assert.assertTrue(timeBeforeDBLoadAndLastUpdate 
+                <= (long) metadataContents.get("Upload Time"));
+            Assert.assertTrue(timeBeforeDBLoadAndLastUpdate 
+                <= (long) metadataContents.get("Last Update Time"));
 
             // Check Flags
             Assert.assertTrue((boolean) metadataContents.get("Filled"));
@@ -141,10 +144,13 @@ public class MatchaDbTableTest {
             // Save the data and check that the data within the file is as expected.
             matchaDbTable.saveData();
 
-            // With the exception of tabs, spaces, or returns, check that each character in the file matches
+            // With the exception of tabs, spaces, or returns, check that each character in the 
+            // file matches.
             File testFile = new File(testDirectoryFileObject.list()[testFileLocation]);
-            try (FileReader testFileReader = new FileReader(testDirectory + testFile); FileReader templateFileReader = new FileReader(
-                new File(TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE))) {
+            try (FileReader testFileReader = new FileReader(testDirectory + testFile); 
+                FileReader templateFileReader 
+                    = new FileReader(new File(TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE))) {
+
                 int place = 0;
                 while (true) {
                     int templateCharacterValue = templateFileReader.read();
@@ -157,14 +163,19 @@ public class MatchaDbTableTest {
                     while (generatedFileCharacterValue == 10 || generatedFileCharacterValue == 32) {
                         generatedFileCharacterValue = testFileReader.read();
                     }
-                    if (templateCharacterValue == endOfFile && generatedFileCharacterValue == endOfFile) {
+                    if (templateCharacterValue == endOfFile 
+                        && generatedFileCharacterValue == endOfFile) {
                         break; // Done comparing the two files!
                     }
-                    if ((templateCharacterValue != endOfFile && generatedFileCharacterValue == endOfFile) ||
-                        (templateCharacterValue == endOfFile && generatedFileCharacterValue != endOfFile) ||
-                        (templateCharacterValue != generatedFileCharacterValue)) {
-                        // Either one of the files is larger than the other, or the characters do not match.
-                        System.out.println("Failed in comparison for " + templateCharacterValue + " and " + generatedFileCharacterValue + " @" + place);
+                    if ((templateCharacterValue != endOfFile 
+                            && generatedFileCharacterValue == endOfFile)
+                        || (templateCharacterValue == endOfFile 
+                            && generatedFileCharacterValue != endOfFile) 
+                        || (templateCharacterValue != generatedFileCharacterValue)) {
+                        // Either one of the files is larger than the other, or the characters do 
+                        // not match.
+                        System.out.println("Failed in comparison for " + templateCharacterValue
+                            + " and " + generatedFileCharacterValue + " @" + place);
                         failed = true;
                         break;
                     }
@@ -200,8 +211,9 @@ public class MatchaDbTableTest {
         // We want to set up the MatchaQuery object for the following query
         // Select * from * where Item Name contains 's'
         // And the item is from the "Shoes" table
-        List<HashMap<String, Object>> expectedObjects = 
-            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams("s", null, null, null, null, SHIRTS_TABLE);
+        List<HashMap<String, Object>> expectedObjects 
+            = MatchaDbGenerateData
+                .getClothesWebsiteItemsViaQueryParams("s", null, null, null, null, SHIRTS_TABLE);
 
         MatchaGetQuery matchaQuery = new MatchaGetQuery(new String[]{SHIRTS_TABLE}, 
             new String[][]{{ITEM_NAME, HAS_OPERATION, "'s'"}});
@@ -214,7 +226,8 @@ public class MatchaDbTableTest {
             List<HashMap<String, Object>> actualObjects = 
                 (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQuery);
 
-            // Find the matching object from our mock data, and check to see that the contents match
+            // Find the matching object from our mock data, and check to see that the contents 
+            // match.
             expectedVersusActualClothingWebsiteAPICheck(expectedObjects, actualObjects);
         } catch (FileNotFoundException fnfe) {
             // If a FileNotFoundException comes up, fail the test.
@@ -239,7 +252,8 @@ public class MatchaDbTableTest {
         // Query to insert item, which in JSON might come in as...
         // "Place": "To Hats", 
         // "Insert": ""{ \"Item Name\": \"Trendy Hat\", \"Item Brand\": \"qwertu\"," +
-        //        "\"Item Description\": \"A hat with a feather for a feather.\", \"Item Price\": 9000000.95 }""
+        //        "\"Item Description\": \"A hat with a feather for a feather.\", 
+        // \"Item Price\": 9000000.95 }""
         MatchaPostQuery matchaQueryInsertFancyHat = new MatchaPostQuery(new String[] {HATS_TABLE},
             new String[][] {{}},
             new String[][] {{fancyHatToAddAsJSON}}
@@ -311,21 +325,26 @@ public class MatchaDbTableTest {
         matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
 
         List<HashMap<String, Object>> expectedObjects = 
-            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams(null, null, null, 15.00, 20.00, null);
+            MatchaDbGenerateData
+                .getClothesWebsiteItemsViaQueryParams(null, null, null, 15.00, 20.00, null);
 
         try {
-            matchaDbTable.loadData(new FileReader(TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE), TEST_FILE_CLOTHES_WEBSITE_API);
+            matchaDbTable.loadData(
+                    new FileReader(TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE), 
+                    TEST_FILE_CLOTHES_WEBSITE_API
+                );
 
             // Show the items are unmodified (get)
             List<HashMap<String, Object>> actualObjects = 
                 (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQueryGet);
 
-            // Find the matching object from our mock data, and check to see that the contents match    
+            // Find the matching object from our mock data, and check to see that the contents 
+            // match.
             expectedVersusActualClothingWebsiteAPICheck(expectedObjects, actualObjects);
 
             // Update items
-            // Let's say for all items with a price greater than $16.00 but less than $20.00, update
-            // their brand to "The Eighteen", and change their price to $18.91
+            // Let's say for all items with a price greater than $16.00 but less than $20.00, 
+            // update their brand to "The Eighteen", and change their price to $18.91
             if (!matchaDbTable.updateData(matchaQueryUpdate)) {
                 // Just see that updates went okay
                 Assert.fail();
@@ -340,9 +359,10 @@ public class MatchaDbTableTest {
                 boolean success = false;
                 for (HashMap actualObject : actualObjects) {
                     if (expectedObject.get(ITEM_NAME).equals(actualObject.get(ITEM_NAME))) {
-                        if (actualObject.get(ITEM_PRICE).equals(newPrice) &&
-                            actualObject.get(ITEM_BRAND).equals(newBrand) &&
-                            expectedObject.get(ITEM_DESCRIPTION).equals(actualObject.get(ITEM_DESCRIPTION))) {
+                        if (actualObject.get(ITEM_PRICE).equals(newPrice) 
+                            && actualObject.get(ITEM_BRAND).equals(newBrand) 
+                            && expectedObject.get(ITEM_DESCRIPTION)
+                                .equals(actualObject.get(ITEM_DESCRIPTION))) {
                             success = true;
                             break;
                         } else {
@@ -384,23 +404,30 @@ public class MatchaDbTableTest {
             new String[][] {{ITEM_BRAND, IS_OPERATION, "zxcvb"}} // Change this to equals operation
         );
         
-        List<HashMap<String, Object>> allItems = 
-            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams(null, null, null, null, null, null);
+        List<HashMap<String, Object>> allItems 
+            = MatchaDbGenerateData
+                .getClothesWebsiteItemsViaQueryParams(null, null, null, null, null, null);
 
-        List<HashMap<String, Object>> allItemsFromzxcvb = 
-            MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams(null, "zxcvb", null, null, null, null);        
+        List<HashMap<String, Object>> allItemsFromzxcvb 
+            = MatchaDbGenerateData
+                .getClothesWebsiteItemsViaQueryParams(null, "zxcvb", null, null, null, null);        
 
         matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
 
         try {   
             // Show all items are in the table
-            matchaDbTable.loadData(new FileReader(TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE), TEST_FILE_CLOTHES_WEBSITE_API);
+            matchaDbTable
+                .loadData(
+                    new FileReader(TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE), 
+                    TEST_FILE_CLOTHES_WEBSITE_API
+                );
 
             // Show the items are unmodified (get)
             List<HashMap<String, Object>> actualObjects = 
                 (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQueryGetAll);
 
-            // Find the matching object from our mock data, and check to see that the contents match    
+            // Find the matching object from our mock data, and check to see that the contents 
+            // match.  
             expectedVersusActualClothingWebsiteAPICheck(allItems, actualObjects);            
 
             // Delete all items of the brand "zxcvb"
@@ -419,7 +446,8 @@ public class MatchaDbTableTest {
                 for (HashMap itemFromzxcvb : allItemsFromzxcvb) {
                     if (actualObject.get(ITEM_NAME).equals(itemFromzxcvb.get(ITEM_NAME)) &&
                         actualObject.get(ITEM_BRAND).equals(itemFromzxcvb.get(ITEM_BRAND)) &&
-                        actualObject.get(ITEM_DESCRIPTION).equals(itemFromzxcvb.get(ITEM_DESCRIPTION)) &&
+                        actualObject.get(ITEM_DESCRIPTION)
+                            .equals(itemFromzxcvb.get(ITEM_DESCRIPTION)) &&
                         actualObject.get(ITEM_PRICE).equals(itemFromzxcvb.get(ITEM_PRICE))) {
                         Assert.fail();
                     }
@@ -492,14 +520,16 @@ public class MatchaDbTableTest {
      * @param actualObjects The actual objects returned
      */
     public void expectedVersusActualClothingWebsiteAPICheck(
-        List<HashMap<String, Object>> expectedObjects, List<HashMap<String, Object>> actualObjects) {
+        List<HashMap<String, Object>> expectedObjects, 
+        List<HashMap<String, Object>> actualObjects) {
             for (HashMap expectedObject : expectedObjects) {
                 boolean success = false;
                 for (HashMap actualObject : actualObjects) {
                     if (expectedObject.get(ITEM_NAME).equals(actualObject.get(ITEM_NAME))) {
                         if (expectedObject.get(ITEM_PRICE).equals(actualObject.get(ITEM_PRICE)) &&
                             expectedObject.get(ITEM_BRAND).equals(actualObject.get(ITEM_BRAND)) &&
-                            expectedObject.get(ITEM_DESCRIPTION).equals(actualObject.get(ITEM_DESCRIPTION))) {
+                            expectedObject.get(ITEM_DESCRIPTION)
+                                .equals(actualObject.get(ITEM_DESCRIPTION))) {
                             success = true;
                             break;
                         } else {
