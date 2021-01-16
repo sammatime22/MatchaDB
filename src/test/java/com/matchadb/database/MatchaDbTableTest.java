@@ -30,14 +30,17 @@ import mockit.Mocked;
  */
 public class MatchaDbTableTest {
 
-    // Just some constants that seem to be used in all of the tests.
+    // The name of the Clothes website API.
     private final String TEST_FILE_CLOTHES_WEBSITE_API = "TestFileClothesWebsiteAPI";
 
-    private final String TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE =
-        "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
+    // The relative filepath to the Clothes website API JSON file.
+    private final String TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE 
+        = "src/test/java/com/matchadb/resources/TestFileClothesWebsiteAPI.json";
 
+    // An empty dropoff path - Used when we won't be using the "saveData" method.
     private final String EMPTY_DROPOFF_PATH = "";
 
+    // Keys for all of the objects in the Clothes website API table
     private final String ITEM_NAME = "Item Name";
 
     private final String ITEM_BRAND = "Item Brand";
@@ -46,6 +49,12 @@ public class MatchaDbTableTest {
 
     private final String ITEM_DESCRIPTION = "Item Description";
 
+    // Table names within the Clothing website API.
+    private final String SHIRTS_TABLE = "Shirts";
+
+    private final String HATS_TABLE = "Hats";
+
+    // Different table operators.
     private final String HAS_OPERATION = "has";
 
     private final String IS_OPERATION = "is";
@@ -56,11 +65,8 @@ public class MatchaDbTableTest {
 
     private final String ALL_TABLES = "*";
 
+    // Different queries usable on the table.
     private final String UPDATE = "Update";
-
-    private final String SHIRTS_TABLE = "Shirts";
-
-    private final String HATS_TABLE = "Hats";
 
     @Tested MatchaDbTable matchaDbTable;
 
@@ -101,7 +107,7 @@ public class MatchaDbTableTest {
 
             // Check Flags
             Assert.assertTrue((boolean) metadataContents.get("Filled"));
-            Assert.assertTrue(! (boolean) metadataContents.get("Corrupted"));
+            Assert.assertTrue(!(boolean) metadataContents.get("Corrupted"));
             
             // Check that the table name was properly set.
             Assert.assertTrue(tableName.equals((String) metadataContents.get("Table Name")));
@@ -526,9 +532,9 @@ public class MatchaDbTableTest {
                 boolean success = false;
                 for (HashMap actualObject : actualObjects) {
                     if (expectedObject.get(ITEM_NAME).equals(actualObject.get(ITEM_NAME))) {
-                        if (expectedObject.get(ITEM_PRICE).equals(actualObject.get(ITEM_PRICE)) &&
-                            expectedObject.get(ITEM_BRAND).equals(actualObject.get(ITEM_BRAND)) &&
-                            expectedObject.get(ITEM_DESCRIPTION)
+                        if (expectedObject.get(ITEM_PRICE).equals(actualObject.get(ITEM_PRICE)) 
+                            && expectedObject.get(ITEM_BRAND).equals(actualObject.get(ITEM_BRAND))
+                            && expectedObject.get(ITEM_DESCRIPTION)
                                 .equals(actualObject.get(ITEM_DESCRIPTION))) {
                             success = true;
                             break;
