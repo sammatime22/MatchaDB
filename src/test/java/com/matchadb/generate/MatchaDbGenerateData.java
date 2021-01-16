@@ -148,8 +148,9 @@ public class MatchaDbGenerateData {
      * @return a clothes items to insert in the form of a JSON Object.
      */
     public static String newClothesItemToInsert() {
-        String newClothingItem = "{ \"Item Name\": \"Trendy Hat\", \"Item Brand\": \"qwertu\"," +
-            "\"Item Description\": \"A hat with a feather for a feather.\", \"Item Price\": 9000000.95 }";
+        String newClothingItem = "{ \"Item Name\": \"Trendy Hat\", \"Item Brand\": \"qwertu\","
+            + "\"Item Description\": \"A hat with a feather for a feather.\"," 
+            + "\"Item Price\": 9000000.95 }";
         
 
         // newClothingItems.add(buildClothesObject("Trendy Hat", "qwertu", 
@@ -200,8 +201,9 @@ public class MatchaDbGenerateData {
      *         given the parameters provided by the user.
      */
     public static List<HashMap<String,Object>> getClothesWebsiteItemsViaQueryParams(
-        CharSequence nameContainsChar, CharSequence brandContainsChar, CharSequence descriptionContainsChar,
-        Double priceGreaterThanOrEqualTo, Double priceLessThan, String subtableKey) {
+        CharSequence nameContainsChar, CharSequence brandContainsChar, 
+        CharSequence descriptionContainsChar, Double priceGreaterThanOrEqualTo, 
+        Double priceLessThan, String subtableKey) {
         
         List<HashMap<String, Object>> quaryParamViableClothesWebsiteItems = new ArrayList<>();
         HashMap<String, Object> currentTableItemsWithTableHeads = generateClothesWebsiteAPITable();
@@ -213,23 +215,30 @@ public class MatchaDbGenerateData {
                 for (Object item : (List) subTable) {
                     HashMap<String, Object> itemAsMap = ((HashMap) item);
                     // check name contains
-                    if (nameContainsChar != null && !((String) itemAsMap.get("Item Name")).contains(nameContainsChar)) {
+                    if (nameContainsChar != null 
+                        && !((String) itemAsMap.get("Item Name")).contains(nameContainsChar)) {
                         continue;
                     }
                     // check brand contains
-                    if (brandContainsChar != null && !((String) itemAsMap.get("Item Brand")).contains(brandContainsChar)) {
+                    if (brandContainsChar != null 
+                        && !((String) itemAsMap.get("Item Brand")).contains(brandContainsChar)) {
                         continue;
                     }
                     // check description contains
-                    if (descriptionContainsChar != null && !((String) itemAsMap.get("Item Description")).contains(descriptionContainsChar)) {
+                    if (descriptionContainsChar != null 
+                        && !((String) itemAsMap.get("Item Description"))
+                                                .contains(descriptionContainsChar)) {
                         continue;
                     }
                     // check price greater than or equal to
-                    if (priceGreaterThanOrEqualTo != null && !(((Double) itemAsMap.get("Item Price")) >= priceGreaterThanOrEqualTo)) {
+                    if (priceGreaterThanOrEqualTo != null 
+                        && !(((Double) itemAsMap.get("Item Price"))
+                                         >= priceGreaterThanOrEqualTo)) {
                         continue;
                     }
                     // check price less than
-                    if (priceLessThan != null && !(((Double) itemAsMap.get("Item Price")) < priceLessThan)) {
+                    if (priceLessThan != null 
+                        && !(((Double) itemAsMap.get("Item Price")) < priceLessThan)) {
                         continue;
                     }
                     // If we met all query parameters, add the item

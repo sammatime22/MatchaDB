@@ -37,16 +37,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class MatchaDbTable {
 
-    // The name of the database.
-    private String databaseName;
+    // The databases table name.
+    private String databaseTableName;
+
+    // The JSONParser object used to parse through provided JSON file data.
+    private JSONParser parser;
 
     // The path to where data is to be dropped off.
     private String dropoffPath;
 
     // The actual table which is to have operations run upon it.
     private Object table;
-
-    private JSONParser parser;
 
     // A Unix timestamp of the time the data was uploaded into the db.
     private long uploadTimeInMillis = 0l;
@@ -60,46 +61,33 @@ public class MatchaDbTable {
     // A boolean describing if the database is corrupted somehow.
     private boolean databaseCorrupted = false;
 
-    // The databases table name.
-    private String databaseTableName;
-
-    // An array of all of the titles of relevant metadata.
-    private String[] metadataTitles;
-
-    // An array of objects associated with the relevant metadata.
-    private Object[] metadataObjects;
-
     // The extension to a JSON file.
     private final String JSON_EXTENSION = ".json";
 
-    // A single quotation mark.
-    private final String SINGLE_QUOTE = "'";
+    // The position of the object that will be inserted into the table.
+    private final int OBJECT_TO_INSERT_INDEX = 0;
 
-    // A space.
-    private final String SPACE = " ";
+    // The position of the Key that should be updated.
+    private final int QUERY_UPDATED_KEY_POSITION = 1;
+
+    // The postion of the Value to be updated.
+    private final int QUERY_UPDATED_VALUE_POSITION = 2;
 
     // An asterik, a character that defines "select all" in the search for data.
     private final String SELECT_ALL = "*";
 
+    // The value returned if the index does not exist.
+    private final int INDEX_NONEXISTANT = -1;
+
     // The position of the key in the query subset.
     private final int QUERY_KEY_POSITION = 0;
 
+    // The position in the select query defining what boolean operation should be performed against
+    // the queried data.
     private final int QUERY_CHECK_TYPE_POSITION = 1;
 
     // The position of the value in the query subset.
     private final int QUERY_VALUE_POSITION = 2;
-
-    private final int QUERY_UPDATED_KEY_POSITION = 1;
-
-    private final int QUERY_UPDATED_VALUE_POSITION = 2;
-
-    private final int OBJECT_TO_INSERT_INDEX = 0;
-
-    // The value returned if the index does not exist.
-    private final int INDEX_NONEXISTANT = -1;
-
-    // The value of the index of an element within a single encapsulated list.
-    private final int SINGLE_ENCAPSULATED_LIST_INDEX = 0;
 
     // Provides inference that the given query expects the queried value should have the 
     // character string provided within the query.
@@ -123,6 +111,9 @@ public class MatchaDbTable {
 
     /**
      * Constructor for the DB Table.
+     *
+     * @param dropoffPath The dropoff path for the database data in JSON format when the saveData
+     *                    method is called.
      */
     public MatchaDbTable (String dropoffPath) {
         this.dropoffPath = dropoffPath;
@@ -137,8 +128,6 @@ public class MatchaDbTable {
      */
     public void loadData(FileReader file, String databaseTableName) {
         this.databaseTableName = databaseTableName;
-
-        table = new ArrayList<Object>();
 
         try {
             // Parse the incoming FileReader for Data
@@ -173,45 +162,6 @@ public class MatchaDbTable {
         } else if (tableData instanceof JSONArray tableDataAsJSONArray) {
             this.table = interpretJSONArray(tableDataAsJSONArray);
         }
-    }
-
-    /**
-     * A recursive helper method that properly constructs HashMaps to repersent JSON Objects.
-     * 
-     * @param jsonObject The JSON object to interpret.
-     *
-     * @return A hashmap representing the interpreted JSON object.
-     */
-    private HashMap<String, Object> interpretJSONObject(JSONObject jsonObject) {
-        HashMap<String, Object> jsonObjectTableComponent = new HashMap<String, Object>();
-
-        for (Iterator keyIterator = jsonObject.keySet().iterator(); 
-                keyIterator.hasNext();) {
-            String key = (String) keyIterator.next();
-            if (jsonObject.get(key) instanceof JSONObject jsonObjectsValueAsJsonObject) {
-                jsonObjectTableComponent.put(key, interpretJSONObject(jsonObjectsValueAsJsonObject));
-            } else if (jsonObject.get(key) instanceof JSONArray jsonObjectsValueAsJsonArray) {
-                jsonObjectTableComponent.put(key, interpretJSONArray(jsonObjectsValueAsJsonArray));
-            } else {
-                // If the data wasn't of type JSONObject or JSONArray, let's interpret
-                // it in the following branching statements
-                if (jsonObject.get(key) instanceof Boolean jsonObjectsValueAsBoolean) { 
-                    jsonObjectTableComponent.put(key, jsonObjectsValueAsBoolean);
-                } else if (jsonObject.get(key) instanceof Integer jsonObjectsValueAsInteger) {
-                    jsonObjectTableComponent.put(key, jsonObjectsValueAsInteger);
-                } else if (jsonObject.get(key) instanceof Double jsonObjectsValueAsDouble) {
-                    jsonObjectTableComponent.put(key, jsonObjectsValueAsDouble);
-                } else if (jsonObject.get(key) instanceof String jsonObjectsValueAsString) {
-                    jsonObjectTableComponent.put(key, jsonObjectsValueAsString);
-                } else {
-                    // If we couldn't figure out the type, we will just turn the object into
-                    // a string.
-                    jsonObjectTableComponent.put(key, jsonObject.get(key).toString());
-                }
-            }
-        }
-
-        return jsonObjectTableComponent;
     }
 
     /**
@@ -254,6 +204,46 @@ public class MatchaDbTable {
     }
 
     /**
+     * A recursive helper method that properly constructs HashMaps to repersent JSON Objects.
+     * 
+     * @param jsonObject The JSON object to interpret.
+     *
+     * @return A hashmap representing the interpreted JSON object.
+     */
+    private HashMap<String, Object> interpretJSONObject(JSONObject jsonObject) {
+        HashMap<String, Object> jsonObjectTableComponent = new HashMap<String, Object>();
+
+        for (Iterator keyIterator = jsonObject.keySet().iterator(); 
+                keyIterator.hasNext();) {
+            String key = (String) keyIterator.next();
+            if (jsonObject.get(key) instanceof JSONObject jsonObjectsValueAsJsonObject) {
+                jsonObjectTableComponent.put(key, 
+                    interpretJSONObject(jsonObjectsValueAsJsonObject));
+            } else if (jsonObject.get(key) instanceof JSONArray jsonObjectsValueAsJsonArray) {
+                jsonObjectTableComponent.put(key, interpretJSONArray(jsonObjectsValueAsJsonArray));
+            } else {
+                // If the data wasn't of type JSONObject or JSONArray, let's interpret
+                // it in the following branching statements
+                if (jsonObject.get(key) instanceof Boolean jsonObjectsValueAsBoolean) { 
+                    jsonObjectTableComponent.put(key, jsonObjectsValueAsBoolean);
+                } else if (jsonObject.get(key) instanceof Integer jsonObjectsValueAsInteger) {
+                    jsonObjectTableComponent.put(key, jsonObjectsValueAsInteger);
+                } else if (jsonObject.get(key) instanceof Double jsonObjectsValueAsDouble) {
+                    jsonObjectTableComponent.put(key, jsonObjectsValueAsDouble);
+                } else if (jsonObject.get(key) instanceof String jsonObjectsValueAsString) {
+                    jsonObjectTableComponent.put(key, jsonObjectsValueAsString);
+                } else {
+                    // If we couldn't figure out the type, we will just turn the object into
+                    // a string.
+                    jsonObjectTableComponent.put(key, jsonObject.get(key).toString());
+                }
+            }
+        }
+
+        return jsonObjectTableComponent;
+    }
+
+    /**
      * Converts the object back to a JSON file and saves it on the system. 
      */
     public void saveData() {
@@ -284,12 +274,12 @@ public class MatchaDbTable {
      */
     private String getSaveDataFilename() {
         return this.dropoffPath + String.valueOf(System.currentTimeMillis()) 
-            + this.databaseName + JSON_EXTENSION;
+            + this.databaseTableName + JSON_EXTENSION;
     }
 
     /**
-     * This method is a helper method that is used to revert the current table
-     * into a JSON Array, particularly to save the database back to a json file.
+     * This method is a helper method that is used to revert the current table into a JSON Array,
+     * particularly to save the database back to a json file.
      *
      * @param listObject The table to be transformed into a JSON Object.
      *
@@ -313,8 +303,8 @@ public class MatchaDbTable {
     }
 
     /**
-     * This method is a helper method that is used to revert the current table
-     * into a JSON Array, particularly to save the database back to a json file.
+     * This method is a helper method that is used to revert the current table into a JSON Array,
+     * particularly to save the database back to a json file.
      *
      * @param listObject The table to be transformed into a JSON Object.
      *
@@ -323,7 +313,8 @@ public class MatchaDbTable {
     private JSONObject gatherJSONObjectFromTable(HashMap tableObject) {
         JSONObject jsonObject = new JSONObject();
 
-        for (Iterator objectKeyIterator = tableObject.keySet().iterator(); objectKeyIterator.hasNext();) {
+        for (Iterator objectKeyIterator = tableObject.keySet().iterator(); 
+            objectKeyIterator.hasNext();) {
             String objectKey = (String) objectKeyIterator.next();
             Object object = tableObject.get(objectKey);
             if (object instanceof List objectAsList) {
@@ -348,11 +339,6 @@ public class MatchaDbTable {
      */
     public Object getData(MatchaGetQuery query) {
         Object selection = searchForData(query.getFromQuery(), this.table);
-
-
-        // We should make sure the values to return are in a generic object.
-        // We don't know what the User had asked for, and we want to be as
-        // dynamic as possible.
         Object valuesToReturn = null;
 
         // Next, perform the subset query
@@ -365,7 +351,8 @@ public class MatchaDbTable {
             }     
         } else if (selection instanceof HashMap finalHashmapSelection) {
             valuesToReturn = new HashMap<>();
-            for (Iterator finalHashmapSelectionIterator = finalHashmapSelection.keySet().iterator(); 
+            for (Iterator finalHashmapSelectionIterator 
+                    = finalHashmapSelection.keySet().iterator(); 
                 finalHashmapSelectionIterator.hasNext();) {
                 String key = (String) finalHashmapSelectionIterator.next();
                 Object value = finalHashmapSelection.get(key);
@@ -396,9 +383,13 @@ public class MatchaDbTable {
 
             for (String[] insertQuery : query.getInsertQuery()) {
                 HashMap<String, Object> newItem = 
-                    interpretJSONObject((JSONObject) this.parser.parse(insertQuery[OBJECT_TO_INSERT_INDEX]));
+                    interpretJSONObject(
+                        (JSONObject) this.parser.parse(insertQuery[OBJECT_TO_INSERT_INDEX])
+                    );
                 if (selectionToInsertUpon instanceof HashMap selectionAsHashMap) {
-                    selectionAsHashMap.put(query.getFromQuery()[query.getFromQuery().length - 1], newItem); 
+                    selectionAsHashMap.put(
+                        query.getFromQuery()[query.getFromQuery().length - 1], newItem
+                    ); 
                 } else if (selectionToInsertUpon instanceof List selectionAsList) {
                     selectionAsList.add(newItem);
                 }
@@ -410,6 +401,7 @@ public class MatchaDbTable {
             return false;
         }
 
+        this.lastUpdateTimeInMillis = System.currentTimeMillis();
         return true;
     }
 
@@ -430,10 +422,16 @@ public class MatchaDbTable {
                     if (meetsQueryRequirement(value, query.getSelectQuery())) {
                         for (String[] update : query.getUpdateQuery()) {
                             if (value instanceof HashMap valueAsHashMap) {
-                                valueAsHashMap.put(update[QUERY_UPDATED_KEY_POSITION], update[QUERY_UPDATED_VALUE_POSITION]);
+                                valueAsHashMap.put(
+                                    update[QUERY_UPDATED_KEY_POSITION], 
+                                    update[QUERY_UPDATED_VALUE_POSITION]
+                                );
                             } else if (value instanceof ArrayList valueAsArrayList) {
                                 if (canBeInterpretedAsInteger(update[QUERY_UPDATED_KEY_POSITION])) {
-                                    valueAsArrayList.set(Integer.valueOf(update[QUERY_UPDATED_KEY_POSITION]), update[QUERY_UPDATED_VALUE_POSITION]);
+                                    valueAsArrayList.set(
+                                        Integer.valueOf(update[QUERY_UPDATED_KEY_POSITION]), 
+                                        update[QUERY_UPDATED_VALUE_POSITION]
+                                    );
                                 } else {
                                     valueAsArrayList.set(
                                         valueAsArrayList.indexOf(update[QUERY_UPDATED_KEY_POSITION]), 
@@ -442,25 +440,34 @@ public class MatchaDbTable {
                                 }
                             }
                             else {
-                                // For all other instances, I think we are just literally seting "value" to 
-                                // a new value that's coming in the 2nd slot of the updateQuery.
+                                // For all other instances, I think we are just literally seting 
+                                //"value" to  a new value that's coming in the 2nd slot of the 
+                                // updateQuery.
                                 value = update[QUERY_UPDATED_VALUE_POSITION];
                             }
                         }
                     }
                 }     
             } else if (selection instanceof HashMap finalHashmapSelection) {
-                for (Iterator finalHashmapSelectionIterator = finalHashmapSelection.keySet().iterator(); 
+                for (Iterator finalHashmapSelectionIterator = 
+                    finalHashmapSelection.keySet().iterator(); 
                     finalHashmapSelectionIterator.hasNext();) {
+
                     String key = (String) finalHashmapSelectionIterator.next();
                     Object value = finalHashmapSelection.get(key);
                     if (meetsQueryRequirement(value, query.getSelectQuery())) {
                         for (String[] update : query.getUpdateQuery()) {
                             if (value instanceof HashMap valueAsHashMap) {
-                                valueAsHashMap.put(update[QUERY_UPDATED_KEY_POSITION], update[QUERY_UPDATED_VALUE_POSITION]);
+                                valueAsHashMap.put(
+                                    update[QUERY_UPDATED_KEY_POSITION], 
+                                    update[QUERY_UPDATED_VALUE_POSITION]
+                                );
                             } else if (value instanceof ArrayList valueAsArrayList) {
                                 if (canBeInterpretedAsInteger(update[QUERY_UPDATED_KEY_POSITION])) {
-                                    valueAsArrayList.set(Integer.valueOf(update[QUERY_UPDATED_KEY_POSITION]), update[QUERY_UPDATED_VALUE_POSITION]);
+                                    valueAsArrayList.set(
+                                        Integer.valueOf(update[QUERY_UPDATED_KEY_POSITION]), 
+                                        update[QUERY_UPDATED_VALUE_POSITION]
+                                    );
                                 } else {
                                     valueAsArrayList.set(
                                         valueAsArrayList.indexOf(update[QUERY_UPDATED_KEY_POSITION]), 
@@ -469,8 +476,9 @@ public class MatchaDbTable {
                                 }
                             }
                             else {
-                                // For all other instances, I think we are just literally seting "value" to 
-                                // a new value that's coming in the 2nd slot of the updateQuery.
+                                // For all other instances, I think we are just literally seting 
+                                // "value" to a new value that's coming in the 2nd slot of the 
+                                // updateQuery.
                                 value = update[QUERY_UPDATED_VALUE_POSITION];
                             }
                         }
@@ -480,20 +488,28 @@ public class MatchaDbTable {
                 if (meetsQueryRequirement(selection, query.getSelectQuery())) {
                     for (String[] update : query.getUpdateQuery()) {
                         if (selection instanceof HashMap selectionAsHashMap) {
-                            selectionAsHashMap.put(update[QUERY_UPDATED_KEY_POSITION], update[QUERY_UPDATED_VALUE_POSITION]);
+                            selectionAsHashMap.put(
+                                update[QUERY_UPDATED_KEY_POSITION], 
+                                update[QUERY_UPDATED_VALUE_POSITION]
+                            );
                         } else if (selection instanceof ArrayList selectionAsArrayList) {
                             if (canBeInterpretedAsInteger(update[QUERY_UPDATED_KEY_POSITION])) {
-                                selectionAsArrayList.set(Integer.valueOf(update[QUERY_UPDATED_KEY_POSITION]), update[QUERY_UPDATED_VALUE_POSITION]);
+                                selectionAsArrayList.set(
+                                    Integer.valueOf(update[QUERY_UPDATED_KEY_POSITION]), 
+                                    update[QUERY_UPDATED_VALUE_POSITION]
+                                );
                             } else {
                                 selectionAsArrayList.set(
-                                    selectionAsArrayList.indexOf(update[QUERY_UPDATED_KEY_POSITION]), 
+                                    selectionAsArrayList.indexOf(
+                                    update[QUERY_UPDATED_KEY_POSITION]), 
                                     update[QUERY_UPDATED_VALUE_POSITION]
                                 );
                             }
                         }
                         else {
-                            // For all other instances, I think we are just literally seting "value" to 
-                            // a new value that's coming in the 2nd slot of the updateQuery.
+                            // For all other instances, I think we are just literally seting 
+                            // "value"to a new value that's coming in the 2nd slot of the 
+                            // updateQuery.
                             selection = update[QUERY_UPDATED_VALUE_POSITION];
                         }
                     }
@@ -504,6 +520,7 @@ public class MatchaDbTable {
             return false;
         }
 
+        this.lastUpdateTimeInMillis = System.currentTimeMillis();
         return true;
     }
 
@@ -523,32 +540,38 @@ public class MatchaDbTable {
             return false;
         }
 
+        this.lastUpdateTimeInMillis = System.currentTimeMillis();
         return true;
     }
 
     /**
-     * A helper method that deletes data from the class level "table" object by removing it's reference
-     * in the table object itself.
+     * A helper method that deletes data from the class level "table" object by removing it's 
+     * reference in the table object itself.
      *
      * @param fromQuery The from query used to gather the object.
-     * @param selectQuery The select query that will be used to determine if the object is to be deleted.
+     * @param selectQuery The select query that will be used to determine if the object is to be 
+     *                    deleted.
      * @param tablePortion The table portion to which the data will be removed from.
      */
-    private void deleteDataFromDbTable(String[] fromQuery, String[][] selectQuery, Object tablePortion) {
+    private void deleteDataFromDbTable(String[] fromQuery, String[][] selectQuery, 
+                                       Object tablePortion) {
         if (fromQuery.length > 0) {
             for (String fromQueryPortion : fromQuery) {
                 if (SELECT_ALL.equals(fromQueryPortion)) {
                     if (tablePortion instanceof List tablePortionAsList) {
                         for (Object tablePortionAsListPortion : tablePortionAsList) {
                             deleteDataFromDbTable(
-                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery, tablePortionAsListPortion
+                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery, 
+                                tablePortionAsListPortion
                             );
                         }
                     } else if (tablePortion instanceof HashMap tablePortionAsHashMap) {
-                        for (Iterator keyIterator = tablePortionAsHashMap.keySet().iterator(); keyIterator.hasNext();) {
+                        for (Iterator keyIterator = tablePortionAsHashMap.keySet().iterator(); 
+                            keyIterator.hasNext();) {
                             String key = (String) keyIterator.next();
                             deleteDataFromDbTable(
-                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery, tablePortionAsHashMap.get(key)
+                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery,
+                                tablePortionAsHashMap.get(key)
                             );
                         }
                     }
@@ -564,8 +587,10 @@ public class MatchaDbTable {
                     }
                 }
             } else if (tablePortion instanceof HashMap tablePortionAsHashMap) {
-                for (Iterator tablePortionAsHashMapIterator = tablePortionAsHashMap.keySet().iterator();
+                for (Iterator tablePortionAsHashMapIterator 
+                    = tablePortionAsHashMap.keySet().iterator();
                     tablePortionAsHashMapIterator.hasNext();) {
+
                     String key = (String) tablePortionAsHashMapIterator.next();
                     if (meetsQueryRequirement(tablePortionAsHashMap.get(key), selectQuery)) {
                         tablePortionAsHashMapIterator.remove();
@@ -594,16 +619,29 @@ public class MatchaDbTable {
                     for (Object selectionAsListPortion : selectionAsList) {
                         ((List) returnedSelection).add(
                             searchForData(
-                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectionAsListPortion));
+                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), 
+                                selectionAsListPortion)
+                            );
                     }
                     // We queried the remaining of the "From Query" on the selection portions.
-                    // All data has been recursively collected and we no longer need to do any queries.
+                    // All data has been recursively collected and we no longer need to do any 
+                    // queries.
                 } else if (returnedSelection instanceof HashMap selectionAsHashMap) {
                     returnedSelection = new ArrayList<>();
 
-                    for (Iterator keyIterator = selectionAsHashMap.keySet().iterator(); keyIterator.hasNext();) {
+                    // For all of the keys in the Hashmap
+                    for (Iterator keyIterator = selectionAsHashMap.keySet().iterator(); 
+                        keyIterator.hasNext();) {
                         String key = (String) keyIterator.next(); 
-                        for (Object selectableObjects : Arrays.asList(searchForData(Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectionAsHashMap.get(key)))) {
+
+                        // Interpolate objects
+                        for (Object selectableObjects : Arrays.asList(
+                            searchForData(
+                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), 
+                                selectionAsHashMap.get(key)))) {
+
+                            // Add all of the objects, if it comes back as a List. Otherwise, just
+                            // add the one single object to the returned selection.
                             if (selectableObjects instanceof List selectableObjectsAsList) {
                                 for (Object selectableObject : selectableObjectsAsList) {
                                     ((List) returnedSelection).add(selectableObject);
@@ -613,9 +651,8 @@ public class MatchaDbTable {
                             }
                         }
                     }
-                    
-
-                } // else, just return the entire selection
+                }
+                // else, just return the entire selection
                 break;
             } else {
                 if (returnedSelection instanceof List listSelection) {
@@ -651,19 +688,17 @@ public class MatchaDbTable {
     }
 
     /**
-     * Allows for the select query contents to take action on a potential candidate
-     * for action, whether this candidate matches some regex pattern, has a value
-     * within some pattern, or likewise.
+     * Allows for the select query contents to take action on a potential candidate for action, 
+     * whether this candidate matches some regex pattern, has a valuewithin some pattern, or 
+     * likewise.
      *
      * Current Query Implementations:
      *     has - Does the object "have" the specific character in their field?
+     *     is - Is the object a 1-to-1 string match?
      *     equals - Does the value in the query equal the value in the queried field?
      *              (This relating to numerical based queries only)
      *     less than - Is the value less than what was expected?
      *     greater than - Is the value greater than what was expected?
-     * To Implement:
-     *     is - Is the object a 1-to-1 string match?
-     *
      *
      * @param value The value or Object to be identified or have queries enacted 
      *        upon it.
@@ -678,51 +713,69 @@ public class MatchaDbTable {
         // Run each subquery, and if all match, finish the method by returning true.
         // Otherwise, return false promptly.
         for (String[] selectQuery : selectQueryContents) {
-            // has query
+
+            // Has query is to be used
             if (HAS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
-                if (!((String) (valueMap.get(selectQuery[QUERY_KEY_POSITION]))).contains(
-                    selectQuery[QUERY_VALUE_POSITION].substring(1, selectQuery[QUERY_VALUE_POSITION].length() - 1)
+
+                // Check to see if the queried value has the substring provided in the query
+                if (!((String) (valueMap.get(selectQuery[QUERY_KEY_POSITION])))
+                    .contains(selectQuery[QUERY_VALUE_POSITION]
+                    .substring(1, selectQuery[QUERY_VALUE_POSITION].length() - 1)
                 )) { 
                     queryResults.add(false);
                 } else {
                     queryResults.add(true);
                 }
             } 
-            // is query
+
+            // An "Is" query is to be used
             else if (IS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
-                if (!((String) valueMap.get(selectQuery[QUERY_KEY_POSITION])).equals(selectQuery[QUERY_VALUE_POSITION])) {
+
+                // Check to see if the provided string is a one-to-one match
+                if (!((String) valueMap.get(selectQuery[QUERY_KEY_POSITION]))
+                    .equals(selectQuery[QUERY_VALUE_POSITION])) {
                     queryResults.add(false);
                 } else {
                     queryResults.add(true);
                 }
             }
-            // equals query
+
+            // Equals query is to be used
             else if (EQUALS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
-                // Run a numerical check on the params
+
+                // Check to see if the two values are equal
                 if (valueMap.get(selectQuery[QUERY_KEY_POSITION]) 
-                        != Integer.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
+                    != Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
                     queryResults.add(false);
                 } else {
                     queryResults.add(true);
                 }
             } 
-            // Greater than query
+
+            // Greater than query is to be used
             else if (GREATER_THAN.equals(selectQuery[QUERY_CHECK_TYPE_POSITION]) 
                 && canBeInterpretedAsDouble(selectQuery[QUERY_VALUE_POSITION])
-                && canBeInterpretedAsDouble(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
-                if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) > 
-                    Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
+                && canBeInterpretedAsDouble(
+                    valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
+
+                // Check to see if the table value is larger than the provided value
+                if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) 
+                    > Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
                     queryResults.add(true);
                 } else {
                     queryResults.add(false);
                 }
             }
-            // Less than
+
+            // Less than query is to be used 
             else if (LESS_THAN.equals(selectQuery[QUERY_CHECK_TYPE_POSITION]) 
                 && canBeInterpretedAsDouble(selectQuery[QUERY_VALUE_POSITION])
-                && canBeInterpretedAsDouble(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
-                if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) < 
-                    Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
+                && canBeInterpretedAsDouble(
+                    valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
+
+                // Check to see if the table value is smaller than the provided value
+                if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) 
+                    < Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
                     queryResults.add(true);
                 } else {
                     queryResults.add(false);
@@ -753,8 +806,8 @@ public class MatchaDbTable {
      *
      * TODO: Move to helper functions class
      *
-     * @param stringToInterpret The string that will be interpreted if it is an 
-     *                          integer/can be turned into an integer.
+     * @param stringToInterpret The string that will be interpreted if it is an integer/can be 
+     *                          turned into an integer.
      *
      * @return A boolean describing if the String could be an integer.
      */
@@ -770,15 +823,14 @@ public class MatchaDbTable {
     }
 
     /**
-     * A small helper method to determine if a String is in fact convertable to 
-     * a double value.
+     * A small helper method to determine if a String is in fact convertable to a double value.
      *
      * TODO: Move to helper functions class
      *
-     * @param stringToInterpret The string that will be interpreted if it is an 
-     *                          integer/can be turned into an integer.
+     * @param stringToInterpret The string that will be interpreted if it is an double/can be 
+     *                          turned into an double.
      *
-     * @return A boolean describing if the String could be an integer.
+     * @return A boolean describing if the String could be an double.
      */
     private boolean canBeInterpretedAsDouble(String stringToInterpret) {
         try {
