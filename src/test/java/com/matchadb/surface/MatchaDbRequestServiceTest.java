@@ -1,8 +1,11 @@
 package com.matchadb.surface;
 
+import com.matchadb.enums.MatchaDbRequestType;
+
 import com.matchadb.models.MatchaDbRequestObject;
 import com.matchadb.models.MatchaDbResponseObject;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import mockit.Tested;
 
@@ -11,7 +14,7 @@ import mockit.Tested;
  */
 public class MatchaDbRequestServiceTest {
 
-    @Tested MatchaDbRequestParser matchaDbRequestService;
+    @Tested MatchaDbRequestService matchaDbRequestService;
 
     /**
      * Tests the usage of the conduct request method.
@@ -20,6 +23,11 @@ public class MatchaDbRequestServiceTest {
      */
     @Test
     public void testConductRequest() {
+        // Determine how to declare this above properly with the @Tested tags
+        matchaDbRequestService = new MatchaDbRequestService();
+
+        MatchaDbResponseObject result = matchaDbRequestService.conductRequest(new MatchaDbRequestObject(MatchaDbRequestType.GET, "ok"));
+
         // General declarations for the test
 
         // Any expectations we need
