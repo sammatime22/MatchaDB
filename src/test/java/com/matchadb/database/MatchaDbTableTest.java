@@ -22,9 +22,6 @@ import org.junit.jupiter.api.Test;
 
 import org.json.simple.parser.ParseException;
 
-import mockit.Tested;
-import mockit.Mocked;
-
 /**
  * Tests the DB Table methods.
  */
@@ -68,7 +65,7 @@ public class MatchaDbTableTest {
     // Different queries usable on the table.
     private final String UPDATE = "Update";
 
-    @Tested MatchaDbTable matchaDbTable;
+    MatchaDbTable matchaDbTable;
 
     /**
      * The following test checks to see that our Load Data method works appropriately.

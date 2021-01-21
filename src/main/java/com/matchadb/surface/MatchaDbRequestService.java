@@ -17,8 +17,8 @@ public class MatchaDbRequestService {
     }
 
     /**
-     * Conducts the request, and returns the response appropriate to the 
-     * contents of the request.
+     * Conducts the request by calling on an internal method, and then returns the
+     * request result back to the Parser.
      * 
      * @param request The request to be conducted.
      *
@@ -29,50 +29,30 @@ public class MatchaDbRequestService {
     }
 
     /**
-     * Interprets the result of a Get command, and returns the appropriate
-     * result string upstream.
-     *
-     * @param result The result of running the command.
-     *
-     * @return A string defining the result of the command.
+     * TODO: Documentation
      */
-    public String interpretGetResult(Object result) {
+    public MatchaDbResponseObject runGetCommand(String requestQuery) {
         return null;
     }
 
     /**
-     * Interprets the result of a Post command, and returns the appropriate
-     * result string upstream.
-     *
-     * @param result The result of running the command.
-     *
-     * @return A string defining the result of the command.
+     * TODO: Documentation
      */
-    public String interpretPostResult(boolean result) {
+    public MatchaDbResponseObject runPostCommand(String requestQuery) {
         return null;
     }
 
     /**
-     * Interprets the result of a Update command, and returns the appropriate
-     * result string upstream.
-     *
-     * @param result The result of running the command.
-     *
-     * @return A string defining the result of the command.
+     * TODO: Documentation
      */
-    public String interpretUpdateResult(boolean result) {
+    public MatchaDbResponseObject runUpdateCommand(String requestQuery) {
         return null;
     }
 
     /**
-     * Interprets the result of a Delete command, and returns the appropriate
-     * result string upstream.
-     *
-     * @param result The result of running the command.
-     *
-     * @return A string defining the result of the command.
+     * TODO: Documentation
      */
-    public String interpretDeleteResult(boolean result) {
+    public MatchaDbResponseObject runDeleteCommand(String requestQuery) {
         return null;
     }
 }
