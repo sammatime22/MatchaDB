@@ -1,5 +1,8 @@
 package com.matchadb.surface;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.matchadb.database.MatchaDbTable;
 
 import com.matchadb.enums.MatchaDbRequestType;
@@ -20,16 +23,46 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import org.mockito.Mock;
-
 /**
  * This class tests the MatchaDbRequestService.
  */
 public class MatchaDbRequestServiceTest {
 
-    MatchaDbRequestService matchaDbRequestService;
+    static MatchaDbRequestService matchaDbRequestService;
 
-    MatchaDbTable matchaDbTable;
+    static MatchaDbTable matchaDbTable;
+
+    // Request Objects throughout the tests
+    MatchaDbRequestObject getRequestObject = new MatchaDbRequestObject(MatchaDbRequestType.GET, 
+        "{\"From\": \"Eggs\", \"Select\":[\"'Shell Color' is 'Green'\"]}");
+    MatchaDbRequestObject postRequestObject = new MatchaDbRequestObject(MatchaDbRequestType.POST, 
+        "{\"From\": \"Customer 4\", \"Insert\":[\"'Shell Color' is 'Green'\"]}");
+    MatchaDbRequestObject updateRequestObject = new MatchaDbRequestObject(MatchaDbRequestType.UPDATE,
+        "{\"From\": \"Eggs\", \"Select\":[\"'Shell Color' is 'Green'\"]," + 
+        "\"Update\": \"\"}");
+    MatchaDbRequestObject deleteRequestObject = new MatchaDbRequestObject(MatchaDbRequestType.DELETE,
+        "{\"From\": \"Eggs\", \"Select\":[\"'Shell Color' is 'Green'\"]}");
+
+    // Queries used throughout the tests
+    MatchaGetQuery getGreenEggsQuery = new MatchaGetQuery(new String[] {"Eggs"},
+        new String[][] {{"Shell Color", "is", "Green"}});
+    MatchaPostQuery postTwoCupsOfTea = new MatchaPostQuery(new String[] {"Customer 4"},
+        null, new String[][] {{"Order", "Earl Grey"}, {"Order", "Matcha"}});
+    MatchaUpdateQuery updateEmployeeSalary = new MatchaUpdateQuery(new String[] {"Employee"},
+        new String[][] {{"Name", "is", "Prince"}}, 
+        new String[][] {{"Update", "Salary", "$20/hr"}});
+    MatchaDeleteQuery deleteDesk = new MatchaDeleteQuery(new String[] {"Desks"},
+        new String[][] {{"Characteristic", "is", "mean"}});
+
+
+    /**
+     * Instantiates our Request Service and sets up the mock Matcha DB Table.
+     */
+    @BeforeAll
+    public static void setup() {
+        matchaDbRequestService = new MatchaDbRequestService();
+        matchaDbTable = mock(MatchaDbTable.class);
+    }
 
     /**
      * Tests the usage of the conduct request method.
@@ -42,12 +75,37 @@ public class MatchaDbRequestServiceTest {
      */
     @Test
     public void testConductRequest() throws ParseException {
-        // General declarations for the test
+        // Get Test
+        MatchaDbResponseObject getFailedResponseObject 
+            = new MatchaDbResponseObject("Retrieval Failed", "");
+        when(matchaDbTable.getData(getGreenEggsQuery)).thenReturn(null);
+        Assert.assertEquals(matchaDbTable.getData(getGreenEggsQuery), null);
+        compareResponseObjects(getFailedResponseObject, 
+            matchaDbRequestService.conductRequest(getRequestObject));
 
-        // Any expectations we need
+        // Post Test
+        MatchaDbResponseObject postFailedResponseObject 
+            = new MatchaDbResponseObject("Insert Failed", "");
+        when(matchaDbTable.postData(postTwoCupsOfTea)).thenReturn(false);
+        Assert.assertFalse(matchaDbTable.postData(postTwoCupsOfTea));
+        compareResponseObjects(postFailedResponseObject, 
+            matchaDbRequestService.conductRequest(postRequestObject));
 
-        
+        // Update Test
+        MatchaDbResponseObject updateFailedResponseObject 
+            = new MatchaDbResponseObject("Update Failed", "");
+        when(matchaDbTable.updateData(updateEmployeeSalary)).thenReturn(false);
+        Assert.assertFalse(matchaDbTable.updateData(updateEmployeeSalary));
+        compareResponseObjects(updateFailedResponseObject, 
+            matchaDbRequestService.conductRequest(updateRequestObject));
 
+        // Delete Test
+        MatchaDbResponseObject deleteFailedResponseObject 
+            = new MatchaDbResponseObject("Removal Failed", "");
+        when(matchaDbTable.deleteData(deleteDesk)).thenReturn(false);
+        Assert.assertFalse(matchaDbTable.deleteData(deleteDesk));
+        compareResponseObjects(deleteFailedResponseObject, 
+            matchaDbRequestService.conductRequest(deleteRequestObject));
     }
 
     /**
@@ -56,10 +114,12 @@ public class MatchaDbRequestServiceTest {
      */
     @Test
     public void testRunGetCommand() {
-        // We run a get method, have three objects returned
-        // We get what we need back from the interpret Get
-        // We return the completed object
-
+        // MatchaDbResponseObject getFailedResponseObject 
+        //     = new MatchaDbResponseObject("Retrieval Failed", "");
+        // when(matchaDbTable.getData(getGreenEggsQuery)).thenReturn(null);
+        // Assert.assertEquals(matchaDbTable.getData(getGreenEggsQuery), null);
+        // compareResponseObjects(getFailedResponseObject, 
+        //     matchaDbRequestService.conductRequest(getRequestObject));
     }
 
     /**
@@ -68,10 +128,12 @@ public class MatchaDbRequestServiceTest {
      */
     @Test
     public void testRunPostCommand() throws ParseException {
-        // We run a post method, have one object inserted
-        // We get stuff back from the interpret Post
-        // We return the completed object
-
+        // MatchaDbResponseObject postFailedResponseObject 
+        //     = new MatchaDbResponseObject("Insert Failed", "");
+        // when(matchaDbTable.postData(postTwoCupsOfTea)).thenReturn(false);
+        // Assert.assertFalse(matchaDbTable.postData(postTwoCupsOfTea));
+        // compareResponseObjects(postFailedResponseObject, 
+        //     matchaDbRequestService.conductRequest(postRequestObject));
     }
 
     /**
@@ -80,10 +142,12 @@ public class MatchaDbRequestServiceTest {
      */
     @Test
     public void testRunUpdateCommand() {
-        // We run an update method, have two objects updated
-        // We get stuff back from the interpret Update
-        // We return the response object
-
+        // MatchaDbResponseObject updateFailedResponseObject 
+        //     = new MatchaDbResponseObject("Update Failed", "");
+        // when(matchaDbTable.updateData(updateEmployeeSalary)).thenReturn(false);
+        // Assert.assertFalse(matchaDbTable.updateData(updateEmployeeSalary));
+        // compareResponseObjects(updateFailedResponseObject, 
+        //     matchaDbRequestService.conductRequest(updateRequestObject));
     }
 
     /**
@@ -92,10 +156,12 @@ public class MatchaDbRequestServiceTest {
      */
     @Test
     public void testRunDeleteCommand() {
-        // We run a delete method, have half the db deleted
-        // We get stuff back from the interpret Delete
-        // We return the completed object
-
+        // MatchaDbResponseObject deleteFailedResponseObject 
+        //     = new MatchaDbResponseObject("Removal Failed", "");
+        // when(matchaDbTable.deleteData(deleteDesk)).thenReturn(false);
+        // Assert.assertFalse(matchaDbTable.deleteData(deleteDesk));
+        // compareResponseObjects(deleteFailedResponseObject, 
+        //     matchaDbRequestService.conductRequest(deleteRequestObject));
     }
 
 
@@ -104,10 +170,14 @@ public class MatchaDbRequestServiceTest {
      * fields.
      *
      * @param expected The expected parms for nthe Resueslt Object.
-     * @prm ctul The actual prmeters for the Result Object.
+     * @param actual The actual prmeters for the Result Object.
      */
-    private void compareResponseObjects(MatchaDbRequestObject expected, 
-                                        MatchaDbRequestObject actual) {
-        Assert.assertTrue(expected.toString().equals(actual.toString()));
+    private void compareResponseObjects(MatchaDbResponseObject expected, 
+                                        MatchaDbResponseObject actual) {
+        try {
+            Assert.assertTrue(expected.toString().equals(actual.toString()));
+        } catch (NullPointerException npe) {
+            Assert.fail("Null expected or actual response objects");
+        }
     }
 }
