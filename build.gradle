@@ -25,7 +25,6 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
-	testImplementation 'org.jmockit:jmockit:1.49'
 }
 
 /**
@@ -45,6 +44,5 @@ test {
 	// TODO: Determine error with improper VM instantiation.
 	// jvmArgs "-javaagent:resources/MatchaDbInstrumentationTool.jar"
 	jvmArgs (["--enable-preview"])
-	jvmArgs "-javaagent:${classpath.find { it.name.contains("jmockit") }.absolutePath}"
 	useJUnitPlatform()
 }

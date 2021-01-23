@@ -14,24 +14,22 @@ import com.matchadb.models.query.MatchaDeleteQuery;
 
 import java.util.ArrayList;
 
-import mockit.Expectations;
-import mockit.Mocked;
-import mockit.Tested;
-
 import org.json.simple.parser.ParseException;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import org.mockito.Mock;
+
 /**
  * This class tests the MatchaDbRequestService.
  */
 public class MatchaDbRequestServiceTest {
 
-    @Tested MatchaDbRequestService matchaDbRequestService;
+    MatchaDbRequestService matchaDbRequestService;
 
-    @Mocked MatchaDbTable matchaDbTable;
+    MatchaDbTable matchaDbTable;
 
     /**
      * Tests the usage of the conduct request method.
@@ -47,19 +45,7 @@ public class MatchaDbRequestServiceTest {
         // General declarations for the test
 
         // Any expectations we need
-        new Expectations() {{
-            matchaDbTable.getData(null);
-            result = new ArrayList<>();
 
-            matchaDbTable.postData(null);
-            result = false;
-
-            matchaDbTable.updateData(null);
-            result = false;
-
-            matchaDbTable.deleteData(null);
-            result = false;
-        }};
         
 
     }
@@ -74,10 +60,6 @@ public class MatchaDbRequestServiceTest {
         // We get what we need back from the interpret Get
         // We return the completed object
 
-        new Expectations() {{
-            matchaDbTable.getData(null);
-            result = null; // Switch to being three objects
-        }};
     }
 
     /**
@@ -90,10 +72,6 @@ public class MatchaDbRequestServiceTest {
         // We get stuff back from the interpret Post
         // We return the completed object
 
-        new Expectations() {{
-            matchaDbTable.postData(null);
-            result = true;
-        }};
     }
 
     /**
@@ -106,10 +84,6 @@ public class MatchaDbRequestServiceTest {
         // We get stuff back from the interpret Update
         // We return the response object
 
-        new Expectations() {{
-            matchaDbTable.updateData(null);
-            result = true;
-        }};
     }
 
     /**
@@ -122,10 +96,6 @@ public class MatchaDbRequestServiceTest {
         // We get stuff back from the interpret Delete
         // We return the completed object
 
-        new Expectations() {{
-            matchaDbTable.deleteData(null);
-            result = true;
-        }};
     }
 
 

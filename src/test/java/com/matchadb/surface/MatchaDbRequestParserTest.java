@@ -1,14 +1,13 @@
 package com.matchadb.surface;
 
 import org.junit.jupiter.api.Test;
-import mockit.Tested;
 
 /**
  * This class tests the MatchaDb Request Parser.
  */
 public class MatchaDbRequestParserTest {
 
-    @Tested MatchaDbRequestParser matchaDbRequestParser;
+    MatchaDbRequestParser matchaDbRequestParser;
 
     /**
      * Tests the ingestion of a Raw Request and it's transform into a Request

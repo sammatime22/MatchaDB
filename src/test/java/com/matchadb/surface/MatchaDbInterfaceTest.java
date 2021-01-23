@@ -1,7 +1,6 @@
 package com.matchadb.surface;
 
 import org.junit.jupiter.api.Test;
-import mockit.Tested;
 
 /**
  * This class tests any and all endpoint types for the MatchaDbInterface
@@ -9,7 +8,7 @@ import mockit.Tested;
  */
 public class MatchaDbInterfaceTest {
 
-    @Tested MatchaDbInterface matchaDbInterface;
+    MatchaDbInterface matchaDbInterface;
 
     @Test
     public void testGetRequestSuccessful() {
