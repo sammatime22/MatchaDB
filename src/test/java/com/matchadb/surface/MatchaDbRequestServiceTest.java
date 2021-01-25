@@ -114,12 +114,14 @@ public class MatchaDbRequestServiceTest {
      */
     @Test
     public void testRunGetCommand() {
-        // MatchaDbResponseObject getFailedResponseObject 
-        //     = new MatchaDbResponseObject("Retrieval Failed", "");
-        // when(matchaDbTable.getData(getGreenEggsQuery)).thenReturn(null);
-        // Assert.assertEquals(matchaDbTable.getData(getGreenEggsQuery), null);
-        // compareResponseObjects(getFailedResponseObject, 
-        //     matchaDbRequestService.conductRequest(getRequestObject));
+        String threeGreenEggs = "[{\"Name\":\"Green Egg A\"}, {\"Name\":\"Green Egg B\"},"
+            + "{\"Name\":\"Green Egg C\"}]";
+        MatchaDbRequestObject getSuccessfulResponseObject
+            = new MatchaDbRequestObject("Retrieval Complete", threeGreenEggs);
+        when(matchaDbTable.getData(getGreenEggsQuery)).thenReturn(threeGreenEggs);
+        Assert.assertEquals(matchaDbTable.getData(getGreenEggsQuery),threeGreenEggs);
+        compareResponseObjects(getSuccessfulResponseObject, 
+            matchaDbRequestService.conductRequest(getRequestObject));
     }
 
     /**
