@@ -37,21 +37,23 @@ public class MatchaDbRequestServiceTest {
         "{\"From\": \"Eggs\", \"Select\":[\"'Shell Color' is 'Green'\"]}");
     MatchaDbRequestObject postRequestObject = new MatchaDbRequestObject(MatchaDbRequestType.POST, 
         "{\"From\": \"Customer 4\", \"Insert\":[\"'Shell Color' is 'Green'\"]}");
-    MatchaDbRequestObject updateRequestObject = new MatchaDbRequestObject(MatchaDbRequestType.UPDATE,
+    MatchaDbRequestObject updateRequestObject = new MatchaDbRequestObject(
+        MatchaDbRequestType.UPDATE,
         "{\"From\": \"Eggs\", \"Select\":[\"'Shell Color' is 'Green'\"]," + 
         "\"Update\": \"\"}");
-    MatchaDbRequestObject deleteRequestObject = new MatchaDbRequestObject(MatchaDbRequestType.DELETE,
+    MatchaDbRequestObject deleteRequestObject = new MatchaDbRequestObject(
+        MatchaDbRequestType.DELETE,
         "{\"From\": \"Eggs\", \"Select\":[\"'Shell Color' is 'Green'\"]}");
 
     // Queries used throughout the tests
     MatchaGetQuery getGreenEggsQuery = new MatchaGetQuery(new String[] {"Eggs"},
         new String[][] {{"Shell Color", "is", "Green"}});
-    MatchaPostQuery postTwoCupsOfTea = new MatchaPostQuery(new String[] {"Customer 4"},
+    MatchaPostQuery postTwoCupsOfTeaQuery = new MatchaPostQuery(new String[] {"Customer 4"},
         null, new String[][] {{"Order", "Earl Grey"}, {"Order", "Matcha"}});
-    MatchaUpdateQuery updateEmployeeSalary = new MatchaUpdateQuery(new String[] {"Employee"},
+    MatchaUpdateQuery updateEmployeeSalaryQuery = new MatchaUpdateQuery(new String[] {"Employee"},
         new String[][] {{"Name", "is", "Prince"}}, 
         new String[][] {{"Update", "Salary", "$20/hr"}});
-    MatchaDeleteQuery deleteDesk = new MatchaDeleteQuery(new String[] {"Desks"},
+    MatchaDeleteQuery deleteDeskQuery = new MatchaDeleteQuery(new String[] {"Desks"},
         new String[][] {{"Characteristic", "is", "mean"}});
 
 
@@ -79,31 +81,27 @@ public class MatchaDbRequestServiceTest {
         MatchaDbResponseObject getFailedResponseObject 
             = new MatchaDbResponseObject("Retrieval Failed", "");
         when(matchaDbTable.getData(getGreenEggsQuery)).thenReturn(null);
-        Assert.assertEquals(matchaDbTable.getData(getGreenEggsQuery), null);
         compareResponseObjects(getFailedResponseObject, 
             matchaDbRequestService.conductRequest(getRequestObject));
 
         // Post Test
         MatchaDbResponseObject postFailedResponseObject 
             = new MatchaDbResponseObject("Insert Failed", "");
-        when(matchaDbTable.postData(postTwoCupsOfTea)).thenReturn(false);
-        Assert.assertFalse(matchaDbTable.postData(postTwoCupsOfTea));
+        when(matchaDbTable.postData(postTwoCupsOfTeaQuery)).thenReturn(false);
         compareResponseObjects(postFailedResponseObject, 
             matchaDbRequestService.conductRequest(postRequestObject));
 
         // Update Test
         MatchaDbResponseObject updateFailedResponseObject 
             = new MatchaDbResponseObject("Update Failed", "");
-        when(matchaDbTable.updateData(updateEmployeeSalary)).thenReturn(false);
-        Assert.assertFalse(matchaDbTable.updateData(updateEmployeeSalary));
+        when(matchaDbTable.updateData(updateEmployeeSalaryQuery)).thenReturn(false);
         compareResponseObjects(updateFailedResponseObject, 
             matchaDbRequestService.conductRequest(updateRequestObject));
 
         // Delete Test
         MatchaDbResponseObject deleteFailedResponseObject 
             = new MatchaDbResponseObject("Removal Failed", "");
-        when(matchaDbTable.deleteData(deleteDesk)).thenReturn(false);
-        Assert.assertFalse(matchaDbTable.deleteData(deleteDesk));
+        when(matchaDbTable.deleteData(deleteDeskQuery)).thenReturn(false);
         compareResponseObjects(deleteFailedResponseObject, 
             matchaDbRequestService.conductRequest(deleteRequestObject));
     }
@@ -116,54 +114,50 @@ public class MatchaDbRequestServiceTest {
     public void testRunGetCommand() {
         String threeGreenEggs = "[{\"Name\":\"Green Egg A\"}, {\"Name\":\"Green Egg B\"},"
             + "{\"Name\":\"Green Egg C\"}]";
-        MatchaDbRequestObject getSuccessfulResponseObject
-            = new MatchaDbRequestObject("Retrieval Complete", threeGreenEggs);
+        MatchaDbResponseObject getSuccessfulResponseObject
+            = new MatchaDbResponseObject("Retrieval Complete", threeGreenEggs);
         when(matchaDbTable.getData(getGreenEggsQuery)).thenReturn(threeGreenEggs);
-        Assert.assertEquals(matchaDbTable.getData(getGreenEggsQuery),threeGreenEggs);
         compareResponseObjects(getSuccessfulResponseObject, 
-            matchaDbRequestService.conductRequest(getRequestObject));
+            matchaDbRequestService.runGetCommand(getRequestObject.getQueryString()));
     }
 
     /**
-     * This test tests the successful run of the runPostCommand method, inserting one object,
+     * This test tests the successful run of the runPostCommand method, inserting two objects,
      * and then returning a successfully complete back to the user.
      */
     @Test
     public void testRunPostCommand() throws ParseException {
-        // MatchaDbResponseObject postFailedResponseObject 
-        //     = new MatchaDbResponseObject("Insert Failed", "");
-        // when(matchaDbTable.postData(postTwoCupsOfTea)).thenReturn(false);
-        // Assert.assertFalse(matchaDbTable.postData(postTwoCupsOfTea));
-        // compareResponseObjects(postFailedResponseObject, 
-        //     matchaDbRequestService.conductRequest(postRequestObject));
+        MatchaDbResponseObject postSuccessfulResponseObject
+            = new MatchaDbResponseObject("Insert Successful", true);
+        when(matchaDbTable.postData(postTwoCupsOfTeaQuery)).thenReturn(true);
+        compareResponseObjects(postSuccessfulResponseObject,
+            matchaDbRequestService.runPostCommand(postRequestObject.getQueryString()));
     }
 
     /**
-     * This test tests the successful run of the runUpdateCommand method, updating two objects,
+     * This test tests the successful run of the runUpdateCommand method, updating objects,
      * and then returning a successful response back to the user.
      */
     @Test
     public void testRunUpdateCommand() {
-        // MatchaDbResponseObject updateFailedResponseObject 
-        //     = new MatchaDbResponseObject("Update Failed", "");
-        // when(matchaDbTable.updateData(updateEmployeeSalary)).thenReturn(false);
-        // Assert.assertFalse(matchaDbTable.updateData(updateEmployeeSalary));
-        // compareResponseObjects(updateFailedResponseObject, 
-        //     matchaDbRequestService.conductRequest(updateRequestObject));
+        MatchaDbResponseObject updateSuccessfulResponseObject
+            = new MatchaDbResponseObject("Update Successful", true);
+        when(matchaDbTable.updateData(updateEmployeeSalaryQuery)).thenReturn(true);
+        compareResponseObjects(updateSuccessfulResponseObject,
+            matchaDbRequestService.runUpdateCommand(postRequestObject.getQueryString()));
     }
 
     /**
-     * This test tests the successful run of the runDeleteCommand method, calling to delete half
-     * of the DB, and then returning a success on said delete.
+     * This test tests the successful run of the runDeleteCommand method, calling to delete data
+     * from the DB, and then returning a success on said delete.
      */
     @Test
     public void testRunDeleteCommand() {
-        // MatchaDbResponseObject deleteFailedResponseObject 
-        //     = new MatchaDbResponseObject("Removal Failed", "");
-        // when(matchaDbTable.deleteData(deleteDesk)).thenReturn(false);
-        // Assert.assertFalse(matchaDbTable.deleteData(deleteDesk));
-        // compareResponseObjects(deleteFailedResponseObject, 
-        //     matchaDbRequestService.conductRequest(deleteRequestObject));
+        MatchaDbResponseObject deleteSuccessfulResponseObject
+            = new MatchaDbResponseObject("Removal Successful", true);
+        when(matchaDbTable.deleteData(deleteDeskQuery)).thenReturn(true);
+        compareResponseObjects(deleteSuccessfulResponseObject,
+            matchaDbRequestService.runDeleteCommand(postRequestObject.getQueryString()));
     }
 
 
