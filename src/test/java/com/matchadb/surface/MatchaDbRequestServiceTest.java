@@ -115,7 +115,7 @@ public class MatchaDbRequestServiceTest {
         String threeGreenEggs = "[{\"Name\":\"Green Egg A\"}, {\"Name\":\"Green Egg B\"},"
             + "{\"Name\":\"Green Egg C\"}]";
         MatchaDbResponseObject getSuccessfulResponseObject
-            = new MatchaDbResponseObject("Retrieval Complete", threeGreenEggs);
+            = new MatchaDbResponseObject("Retrieval Successful", threeGreenEggs);
         when(matchaDbTable.getData(getGreenEggsQuery)).thenReturn(threeGreenEggs);
         compareResponseObjects(getSuccessfulResponseObject, 
             matchaDbRequestService.runGetCommand(getRequestObject.getQueryString()));
