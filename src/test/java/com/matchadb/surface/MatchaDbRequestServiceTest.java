@@ -34,16 +34,17 @@ public class MatchaDbRequestServiceTest {
 
     // Request Objects throughout the tests
     MatchaDbRequestObject getRequestObject = new MatchaDbRequestObject(MatchaDbRequestType.GET, 
-        "{\"From\": \"Eggs\", \"Select\":[\"'Shell Color' is 'Green'\"]}");
+        new String[] {"Eggs"}, new String[][] {{"Shell Color", "is", "Green"}}, null, null);
     MatchaDbRequestObject postRequestObject = new MatchaDbRequestObject(MatchaDbRequestType.POST, 
-        "{\"From\": \"Customer 4\", \"Insert\":[\"'Shell Color' is 'Green'\"]}");
+        new String[] {"Customer 4"}, null, 
+        new String[][] {{"Order", "Earl Grey"}, {"Order", "Matcha"}}, null);
     MatchaDbRequestObject updateRequestObject = new MatchaDbRequestObject(
-        MatchaDbRequestType.UPDATE,
-        "{\"From\": \"Eggs\", \"Select\":[\"'Shell Color' is 'Green'\"]," + 
-        "\"Update\": \"\"}");
+        MatchaDbRequestType.UPDATE, new String[] {"Employee"}, 
+        new String[][] {{"Name", "is", "Prince"}}, null,
+        new String[][] {{"Update", "Salary", "$20/hr"}});
     MatchaDbRequestObject deleteRequestObject = new MatchaDbRequestObject(
-        MatchaDbRequestType.DELETE,
-        "{\"From\": \"Eggs\", \"Select\":[\"'Shell Color' is 'Green'\"]}");
+        MatchaDbRequestType.DELETE, new String[] {"Desks"}, 
+        new String[][] {{"Characteristic", "is", "mean"}}, null, null);
 
     // Queries used throughout the tests
     MatchaGetQuery getGreenEggsQuery = new MatchaGetQuery(new String[] {"Eggs"},
@@ -118,7 +119,7 @@ public class MatchaDbRequestServiceTest {
             = new MatchaDbResponseObject("Retrieval Successful", threeGreenEggs);
         when(matchaDbTable.getData(getGreenEggsQuery)).thenReturn(threeGreenEggs);
         compareResponseObjects(getSuccessfulResponseObject, 
-            matchaDbRequestService.runGetCommand(getRequestObject.getQueryString()));
+            matchaDbRequestService.runGetCommand(getRequestObject));
     }
 
     /**
@@ -131,7 +132,7 @@ public class MatchaDbRequestServiceTest {
             = new MatchaDbResponseObject("Insert Successful", true);
         when(matchaDbTable.postData(postTwoCupsOfTeaQuery)).thenReturn(true);
         compareResponseObjects(postSuccessfulResponseObject,
-            matchaDbRequestService.runPostCommand(postRequestObject.getQueryString()));
+            matchaDbRequestService.runPostCommand(postRequestObject));
     }
 
     /**
@@ -144,7 +145,7 @@ public class MatchaDbRequestServiceTest {
             = new MatchaDbResponseObject("Update Successful", true);
         when(matchaDbTable.updateData(updateEmployeeSalaryQuery)).thenReturn(true);
         compareResponseObjects(updateSuccessfulResponseObject,
-            matchaDbRequestService.runUpdateCommand(postRequestObject.getQueryString()));
+            matchaDbRequestService.runUpdateCommand(updateRequestObject));
     }
 
     /**
@@ -157,7 +158,7 @@ public class MatchaDbRequestServiceTest {
             = new MatchaDbResponseObject("Removal Successful", true);
         when(matchaDbTable.deleteData(deleteDeskQuery)).thenReturn(true);
         compareResponseObjects(deleteSuccessfulResponseObject,
-            matchaDbRequestService.runDeleteCommand(postRequestObject.getQueryString()));
+            matchaDbRequestService.runDeleteCommand(deleteRequestObject));
     }
 
 
