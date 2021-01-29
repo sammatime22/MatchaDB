@@ -22,10 +22,14 @@ import org.json.simple.parser.ParseException;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+
+import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  * This class tests the MatchaDbRequestService.
  */
+@RunWith(MockitoJUnitRunner.class)
 public class MatchaDbRequestServiceTest {
 
     static MatchaDbRequestService matchaDbRequestService;
