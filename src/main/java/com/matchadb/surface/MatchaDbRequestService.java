@@ -35,8 +35,20 @@ public class MatchaDbRequestService {
     private String UNSUCCESSFUL_UPDATE_INFO = "Update Failed";
     private String UNSUCCESSFUL_DELETE_INFO = "Removal Failed";    
 
+    /**
+     * Constructor used for autowiring (if applicable).
+     */
     public MatchaDbRequestService() {
 
+    }
+
+    /**
+     * Constructor used when passing in an instance of the MatchaDbTable.
+     *
+     * @param matchaDbTable an instance of the MatchaDbTable class.
+     */
+    public MatchaDbRequestService(MatchaDbTable matchaDbTable) {
+        this.matchaDbTable = matchaDbTable;
     }
 
     /**
@@ -75,13 +87,12 @@ public class MatchaDbRequestService {
 
         Object matchaGetQueryResponseObject = matchaDbTable.getData(matchaGetQuery);
 
-        // if (matchaGetQueryResponseObject != null 
-        //     || ((List) matchaGetQueryResponseObject).isEmpty()) {
-        //     return new MatchaDbResponseObject(SUCCESSFUL_GET_INFO, matchaGetQueryResponseObject);
-        // } else {
-        //     return new MatchaDbResponseObject(UNSUCCESSFUL_GET_INFO, "");
-        // }
-        return null;
+        if (matchaGetQueryResponseObject != null) {
+            System.out.println(matchaGetQueryResponseObject.toString());
+            return new MatchaDbResponseObject(SUCCESSFUL_GET_INFO, matchaGetQueryResponseObject);
+        }
+        System.out.println("Other");
+        return new MatchaDbResponseObject(UNSUCCESSFUL_GET_INFO, "");
     }
 
     /**

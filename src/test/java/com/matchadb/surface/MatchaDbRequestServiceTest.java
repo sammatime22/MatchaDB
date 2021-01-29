@@ -16,6 +16,7 @@ import com.matchadb.models.query.MatchaUpdateQuery;
 import com.matchadb.models.query.MatchaDeleteQuery;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.json.simple.parser.ParseException;
 
@@ -32,9 +33,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class MatchaDbRequestServiceTest {
 
-    static MatchaDbRequestService matchaDbRequestService;
+    MatchaDbTable matchaDbTable = mock(MatchaDbTable.class);
 
-    static MatchaDbTable matchaDbTable;
+    MatchaDbRequestService matchaDbRequestService = new MatchaDbRequestService(matchaDbTable);
 
     // Request Objects throughout the tests
     MatchaDbRequestObject getRequestObject = new MatchaDbRequestObject(MatchaDbRequestType.GET, 
@@ -60,16 +61,6 @@ public class MatchaDbRequestServiceTest {
         new String[][] {{"Update", "Salary", "$20/hr"}});
     MatchaDeleteQuery deleteDeskQuery = new MatchaDeleteQuery(new String[] {"Desks"},
         new String[][] {{"Characteristic", "is", "mean"}});
-
-
-    /**
-     * Instantiates our Request Service and sets up the mock Matcha DB Table.
-     */
-    @BeforeAll
-    public static void setup() {
-        matchaDbRequestService = new MatchaDbRequestService();
-        matchaDbTable = mock(MatchaDbTable.class);
-    }
 
     /**
      * Tests the usage of the conduct request method.
@@ -117,8 +108,13 @@ public class MatchaDbRequestServiceTest {
      */
     @Test
     public void testRunGetCommand() {
-        String threeGreenEggs = "[{\"Name\":\"Green Egg A\"}, {\"Name\":\"Green Egg B\"},"
-            + "{\"Name\":\"Green Egg C\"}]";
+        Object threeGreenEggs = new ArrayList<>() {{
+            add(new HashMap<>() {{ put("Name", "Green Egg A"); }});
+            add(new HashMap<>() {{ put("Name", "Green Egg B"); }});
+            add(new HashMap<>() {{ put("Name", "Green Egg C"); }});
+        }}; 
+        //"[{\"Name\":\"Green Egg A\"}, {\"Name\":\"Green Egg B\"},"
+            //+ "{\"Name\":\"Green Egg C\"}]";
         MatchaDbResponseObject getSuccessfulResponseObject
             = new MatchaDbResponseObject("Retrieval Successful", threeGreenEggs);
         when(matchaDbTable.getData(getGreenEggsQuery)).thenReturn(threeGreenEggs);
