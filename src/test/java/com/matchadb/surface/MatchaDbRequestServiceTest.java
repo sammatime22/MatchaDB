@@ -1,5 +1,6 @@
 package com.matchadb.surface;
 
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -24,13 +25,14 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * This class tests the MatchaDbRequestService.
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class MatchaDbRequestServiceTest {
 
     MatchaDbTable matchaDbTable = mock(MatchaDbTable.class);
@@ -117,7 +119,7 @@ public class MatchaDbRequestServiceTest {
             //+ "{\"Name\":\"Green Egg C\"}]";
         MatchaDbResponseObject getSuccessfulResponseObject
             = new MatchaDbResponseObject("Retrieval Successful", threeGreenEggs);
-        when(matchaDbTable.getData(getGreenEggsQuery)).thenReturn(threeGreenEggs);
+        when(matchaDbTable.getData(any(MatchaGetQuery.class))).thenReturn(threeGreenEggs);
         compareResponseObjects(getSuccessfulResponseObject, 
             matchaDbRequestService.runGetCommand(getRequestObject));
     }

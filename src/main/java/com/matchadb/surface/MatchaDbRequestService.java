@@ -36,14 +36,7 @@ public class MatchaDbRequestService {
     private String UNSUCCESSFUL_DELETE_INFO = "Removal Failed";    
 
     /**
-     * Constructor used for autowiring (if applicable).
-     */
-    public MatchaDbRequestService() {
-
-    }
-
-    /**
-     * Constructor used when passing in an instance of the MatchaDbTable.
+     * Constructor used for autowiring.
      *
      * @param matchaDbTable an instance of the MatchaDbTable class.
      */
