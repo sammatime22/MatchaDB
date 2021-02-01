@@ -2,6 +2,7 @@ package com.matchadb.surface;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.matchadb.database.MatchaDbTable;
@@ -18,6 +19,7 @@ import com.matchadb.models.query.MatchaDeleteQuery;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.json.simple.parser.ParseException;
 
@@ -27,6 +29,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
@@ -63,6 +67,8 @@ public class MatchaDbRequestServiceTest {
         new String[][] {{"Update", "Salary", "$20/hr"}});
     MatchaDeleteQuery deleteDeskQuery = new MatchaDeleteQuery(new String[] {"Desks"},
         new String[][] {{"Characteristic", "is", "mean"}});
+
+    @Captor ArgumentCaptor<MatchaGetQuery> matchaGetQueryCaptor;
 
     /**
      * Tests the usage of the conduct request method.
@@ -110,7 +116,7 @@ public class MatchaDbRequestServiceTest {
      */
     @Test
     public void testRunGetCommand() {
-        Object threeGreenEggs = new ArrayList<>() {{
+        List<HashMap> threeGreenEggs = new ArrayList<>() {{
             add(new HashMap<>() {{ put("Name", "Green Egg A"); }});
             add(new HashMap<>() {{ put("Name", "Green Egg B"); }});
             add(new HashMap<>() {{ put("Name", "Green Egg C"); }});
@@ -119,9 +125,17 @@ public class MatchaDbRequestServiceTest {
             //+ "{\"Name\":\"Green Egg C\"}]";
         MatchaDbResponseObject getSuccessfulResponseObject
             = new MatchaDbResponseObject("Retrieval Successful", threeGreenEggs);
+
         when(matchaDbTable.getData(any(MatchaGetQuery.class))).thenReturn(threeGreenEggs);
+
+        // See overall results
         compareResponseObjects(getSuccessfulResponseObject, 
             matchaDbRequestService.runGetCommand(getRequestObject));
+
+        // Run captor verifications
+        verify(matchaDbTable).getData(matchaGetQueryCaptor.capture());
+        MatchaGetQuery capturedMatchaGetQuery = matchaGetQueryCaptor.getValue();
+        Assert.assertTrue(capturedMatchaGetQuery.toString().equals(getGreenEggsQuery.toString()));
     }
 
     /**
