@@ -47,13 +47,13 @@ public class MatchaQuery {
     public String toString() {
         String fromQueryAsString = "";
 
-        for (String fromQueryAsStringPortion : this.fromQuery) {
+        for (String fromQueryAsStringPortion : this.getFromQuery()) {
             fromQueryAsString += " '" + fromQueryAsStringPortion + "' ";
         }
 
         String selectQueryAsString = "";
 
-        for (String[] selectQueryAsStringPortion : this.selectQuery) {
+        for (String[] selectQueryAsStringPortion : this.getSelectQuery()) {
             String selectQueryAsStringPortionToAdd = "";
 
             for (String selectQueryAsStringPortionSection : selectQueryAsStringPortion) {
