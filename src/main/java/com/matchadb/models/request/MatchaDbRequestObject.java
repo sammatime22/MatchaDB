@@ -11,12 +11,21 @@ public class MatchaDbRequestObject {
     // The Request Type of choices GET/POST/UPDATE/DELETE
     private MatchaDbRequestType requestType;
 
-    // The actual query provided to the system
-    private String queryString;
+    private String[] fromQuery;
 
-    public MatchaDbRequestObject(MatchaDbRequestType requestType, String queryString) {
+    private String[][] selectQuery;
+
+    private String[][] insertQuery;
+
+    private String[][] updateQuery;
+
+    public MatchaDbRequestObject(MatchaDbRequestType requestType, String[] fromQuery,
+        String[][] selectQuery, String[][] insertQuery, String[][] updateQuery) {
         this.requestType = requestType;
-        this.queryString = queryString;
+        this.fromQuery = fromQuery;
+        this.selectQuery = selectQuery;
+        this.insertQuery = insertQuery;
+        this.updateQuery = updateQuery;
     }
 
     /**
@@ -29,11 +38,38 @@ public class MatchaDbRequestObject {
     }
 
     /**
-     * Gets the query string.
+     * Returns a from query that existed on the request.
      *
-     * @return the query string.
+     * @return a from query that existed on the request.
      */
-    public String getQueryString() {
-        return this.queryString;
+    public String[] getFromQuery() {
+        return this.fromQuery;
+    }
+
+    /**
+     * Returns a select query that existed on the request.
+     *
+     * @return a select query that existed on the request.
+     */
+    public String[][] getSelectQuery() {
+        return this.selectQuery;
+    }
+
+    /**
+     * Returns an insert query that existed on the request.
+     *
+     * @return an insert query that existed on the request.
+     */
+    public String[][] getInsertQuery() {
+        return this.insertQuery;
+    }
+
+    /**
+     * Returns an update query that existed on the request.
+     *
+     * @return an update query that existed on the request.
+     */
+    public String[][] getUpdateQuery() {
+        return this.updateQuery;
     }
 }

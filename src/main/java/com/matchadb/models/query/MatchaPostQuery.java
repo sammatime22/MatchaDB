@@ -23,4 +23,48 @@ public class MatchaPostQuery extends MatchaQuery {
     public String[][] getInsertQuery() {
         return this.insertQuery;
     }
+
+    /**
+     * Returns a string of the MatchaPostQuery object.
+     *
+     * @return a string of the MatchaPostQuery object.
+     */
+    public String toString() {
+        String fromQueryAsString = "";
+
+        for (String fromQueryAsStringPortion : this.getFromQuery()) {
+            fromQueryAsString += " '" + fromQueryAsStringPortion + "' ";
+        }
+
+        String selectQueryAsString = "";
+
+        if (this.getSelectQuery() != null) {
+            for (String[] selectQueryAsStringPortion : this.getSelectQuery()) {
+                String selectQueryAsStringPortionToAdd = "";
+
+                for (String selectQueryAsStringPortionSection : selectQueryAsStringPortion) {
+                    selectQueryAsStringPortionToAdd += selectQueryAsStringPortionSection;
+                }
+
+                selectQueryAsString += " '" + selectQueryAsStringPortionToAdd + "' ";
+            }
+        }
+
+        String insertQueryAsString = "";
+
+        for (String[] insertQueryAsStringPortion : this.getInsertQuery()) {
+            String insertQueryAsStringPortionToAdd = "";
+
+            for (String insertQueryAsStringPortionSection : insertQueryAsStringPortion) {
+                insertQueryAsStringPortionToAdd += insertQueryAsStringPortionSection;
+            }
+
+            insertQueryAsString += " '" + insertQueryAsStringPortionToAdd + "' ";
+        }        
+
+        return String.format(
+            "{ \"From\": [%s], \"Select\": [%s], \"Insert\": [%s]}", 
+            fromQueryAsString, selectQueryAsString, insertQueryAsString
+        );
+    }
 }

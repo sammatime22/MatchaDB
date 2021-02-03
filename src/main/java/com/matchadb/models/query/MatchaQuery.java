@@ -38,4 +38,34 @@ public class MatchaQuery {
     public String[][] getSelectQuery() {
         return this.selectQuery;
     }
+
+    /**
+     * Returns a string of the MatchaQuery object.
+     *
+     * @return a string of the MatchaQuery object.
+     */
+    public String toString() {
+        String fromQueryAsString = "";
+
+        for (String fromQueryAsStringPortion : this.getFromQuery()) {
+            fromQueryAsString += " '" + fromQueryAsStringPortion + "' ";
+        }
+
+        String selectQueryAsString = "";
+
+        for (String[] selectQueryAsStringPortion : this.getSelectQuery()) {
+            String selectQueryAsStringPortionToAdd = "";
+
+            for (String selectQueryAsStringPortionSection : selectQueryAsStringPortion) {
+                selectQueryAsStringPortionToAdd += selectQueryAsStringPortionSection;
+            }
+
+            selectQueryAsString += " '" + selectQueryAsStringPortionToAdd + "' ";
+        }
+
+        return String.format(
+            "{ \"From\": [%s], \"Select\": [%s]}", 
+            fromQueryAsString, selectQueryAsString
+        );
+    }
 }

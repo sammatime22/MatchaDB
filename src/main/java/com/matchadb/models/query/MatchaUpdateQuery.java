@@ -23,4 +23,46 @@ public class MatchaUpdateQuery extends MatchaQuery {
     public String[][] getUpdateQuery() {
         return this.updateQuery;
     }
+
+    /**
+     * Returns a string of the MatchaPostQuery object.
+     *
+     * @return a string of the MatchaPostQuery object.
+     */
+    public String toString() {
+        String fromQueryAsString = "";
+
+        for (String fromQueryAsStringPortion : this.getFromQuery()) {
+            fromQueryAsString += " '" + fromQueryAsStringPortion + "' ";
+        }
+
+        String selectQueryAsString = "";
+
+        for (String[] selectQueryAsStringPortion : this.getSelectQuery()) {
+            String selectQueryAsStringPortionToAdd = "";
+
+            for (String selectQueryAsStringPortionSection : selectQueryAsStringPortion) {
+                selectQueryAsStringPortionToAdd += selectQueryAsStringPortionSection;
+            }
+
+            selectQueryAsString += " '" + selectQueryAsStringPortionToAdd + "' ";
+        }
+
+        String updateQueryAsString = "";
+
+        for (String[] updateQueryAsStringPortion : this.getUpdateQuery()) {
+            String updateQueryAsStringPortionToAdd = "";
+
+            for (String updateQueryAsStringPortionSection : updateQueryAsStringPortion) {
+                updateQueryAsStringPortionToAdd += updateQueryAsStringPortionSection;
+            }
+
+            updateQueryAsString += " '" + updateQueryAsStringPortionToAdd + "' ";
+        }        
+
+        return String.format(
+            "{ \"From\": [%s], \"Select\": [%s], \"Insert\": [%s]}", 
+            fromQueryAsString, selectQueryAsString, updateQueryAsString
+        );
+    }
 }

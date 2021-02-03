@@ -16,8 +16,8 @@ public class MatchaDbInterface {
     MatchaDbRequestParser requestParser;
 
     // Contstructor
-    public MatchaDbInterface(MatchaDbRequestParser requestParser) {
-        this.requestParser = requestParser;
+    public MatchaDbInterface() {
+        
     }
 
     // Generic GET
