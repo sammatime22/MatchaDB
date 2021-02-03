@@ -94,21 +94,21 @@ public class MatchaDbRequestServiceTest {
 
         // Post Test
         MatchaDbResponseObject postFailedResponseObject 
-            = new MatchaDbResponseObject("Insert Failed", "");
+            = new MatchaDbResponseObject("Insert Failed", false);
         when(matchaDbTable.postData(any(MatchaPostQuery.class))).thenReturn(false);
         compareResponseObjects(postFailedResponseObject, 
             matchaDbRequestService.conductRequest(postRequestObject));
 
         // Update Test
         MatchaDbResponseObject updateFailedResponseObject 
-            = new MatchaDbResponseObject("Update Failed", "");
+            = new MatchaDbResponseObject("Update Failed", false);
         when(matchaDbTable.updateData(any(MatchaUpdateQuery.class))).thenReturn(false);
         compareResponseObjects(updateFailedResponseObject, 
             matchaDbRequestService.conductRequest(updateRequestObject));
 
         // Delete Test
         MatchaDbResponseObject deleteFailedResponseObject 
-            = new MatchaDbResponseObject("Removal Failed", "");
+            = new MatchaDbResponseObject("Removal Failed", false);
         when(matchaDbTable.deleteData(any(MatchaDeleteQuery.class))).thenReturn(false);
         compareResponseObjects(deleteFailedResponseObject, 
             matchaDbRequestService.conductRequest(deleteRequestObject));
@@ -117,6 +117,8 @@ public class MatchaDbRequestServiceTest {
     /**
      * This test tests the successful run of the runGetCommand method, retrieving three objects,
      * and then returning said objects back to the end user.
+     *
+     * This is also testing the construction of the required MatchaGetQuery object.
      */
     @Test
     public void testRunGetCommand() {
@@ -142,6 +144,8 @@ public class MatchaDbRequestServiceTest {
     /**
      * This test tests the successful run of the runPostCommand method, inserting two objects,
      * and then returning a successfully complete back to the user.
+     *
+     * This is also testing the construction of the required MatchaPostQuery object.
      */
     @Test
     public void testRunPostCommand() throws ParseException {
@@ -163,6 +167,8 @@ public class MatchaDbRequestServiceTest {
     /**
      * This test tests the successful run of the runUpdateCommand method, updating objects,
      * and then returning a successful response back to the user.
+     *
+     * This is also testing the construction of the required MatchaUpdateQuery object.
      */
     @Test
     public void testRunUpdateCommand() {
@@ -184,6 +190,8 @@ public class MatchaDbRequestServiceTest {
     /**
      * This test tests the successful run of the runDeleteCommand method, calling to delete data
      * from the DB, and then returning a success on said delete.
+     *
+     * This is also testing the construction of the required MatchaDeleteQuery object.
      */
     @Test
     public void testRunDeleteCommand() {

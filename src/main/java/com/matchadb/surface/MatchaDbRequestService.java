@@ -1,5 +1,7 @@
 package com.matchadb.surface;
 
+import com.matchadb.enums.MatchaDbRequestType;
+
 import com.matchadb.database.MatchaDbTable;
 
 import com.matchadb.models.MatchaDbRequestObject;
@@ -37,6 +39,8 @@ public class MatchaDbRequestService {
     private String UNSUCCESSFUL_UPDATE_INFO = "Update Failed";
     private String UNSUCCESSFUL_DELETE_INFO = "Removal Failed";    
 
+    private String UNSUCCESSFUL_COMMAND_UNIDENTIFIABLE = "Command could not be identified...";
+
     /**
      * Constructor used for autowiring.
      *
@@ -54,8 +58,19 @@ public class MatchaDbRequestService {
      *
      * @return A Response object.
      */
-    public MatchaDbResponseObject conductRequest(MatchaDbRequestObject request) {
-        return null;
+    public MatchaDbResponseObject conductRequest(MatchaDbRequestObject request) throws ParseException {
+        if (request.getRequestType() == MatchaDbRequestType.GET) {
+            return runGetCommand(request);
+        } else if (request.getRequestType() == MatchaDbRequestType.POST) {
+            return runPostCommand(request);
+        } else if (request.getRequestType() == MatchaDbRequestType.UPDATE) {
+            return runUpdateCommand(request);
+        } else if (request.getRequestType() == MatchaDbRequestType.DELETE) {
+            return runDeleteCommand(request);
+        } else {
+            // This should never happen, but just in case.
+            return new MatchaDbResponseObject(UNSUCCESSFUL_COMMAND_UNIDENTIFIABLE, "");
+        }
     }
 
     /**

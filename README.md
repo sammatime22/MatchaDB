@@ -6,8 +6,6 @@
 
 **Recent Updates**:
 
-2020/12/29 - Implemented updateData, as well as new portions of meetsQueryRequirements
-
 2020/12/30 - Created new query types for each request opertion type
 
 2021/01/04 - Re-implemented searchForData as well as an "All Tables" lookup
@@ -15,6 +13,8 @@
 2021/01/09 - Implemented deleteData and 1-to-1 string comparison
 
 2021/01/16 - Formatting changes for MatchaDbTable and related classes
+
+2021/02/02 - Implemented basic Request Service
 
 **System Requirements**
 
