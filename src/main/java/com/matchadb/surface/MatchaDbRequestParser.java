@@ -6,18 +6,23 @@ import com.matchadb.models.MatchaDbRawRequestObject;
 import com.matchadb.models.MatchaDbRequestObject;
 import com.matchadb.models.MatchaDbResponseObject;
 
+import org.json.simple.parser.ParseException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * This service is an intermediary service which determines the 
- * request type and data associated with the request.
+ * This service is an intermediary service which determines the request type and data associated 
+ * with the request.
  */
 @Service
 public class MatchaDbRequestParser {
 
-    // Constructor
-    public MatchaDbRequestParser() {
+    @Autowired MatchaDbRequestService matchaDbRequestService;
 
+    // Constructor
+    public MatchaDbRequestParser(MatchaDbRequestService matchaDbRequestService) {
+        this.matchaDbRequestService = matchaDbRequestService;
     }
 
     /**
@@ -28,53 +33,21 @@ public class MatchaDbRequestParser {
      *
      * @return The response from the database.
      */
-    public MatchaDbResponseObject ingestRequest(MatchaDbRawRequestObject rawRequest) {
-        return null;
+    public MatchaDbResponseObject ingestAndConductRequest(MatchaDbRawRequestObject rawRequest)
+        throws ParseException {
+        return matchaDbRequestService.conductRequest(convertRawRequest(rawRequest));
     }
 
     /**
-     * This method runs the other conversion steps.
+     * This method runs an interpretation on an incoming raw request, and returns a request object
+     * that can be used by the ingestAndConductRequest method.
      *
      * @param rawRequest The raw request to be parsed.
      *
-     * @return A fully developed request object, or null if the request is invalid.
+     * @return a request object that can be used on the DB.
      */
     public MatchaDbRequestObject convertRawRequest(MatchaDbRawRequestObject rawRequest) {
-        return null;
-    }
 
-    /**
-     * Gets and returns the enum associated with the request type.
-     *
-     * @param rawRequest The raw request to be parsed.
-     *
-     * @return An enum assicated with the request object.
-     */
-    public MatchaDbRequestType getRequestType(MatchaDbRawRequestObject rawRequest) {
-        return null;
-    }
-
-    /**
-     * Gets the contents of the request, and turns them into an acceptable command
-     * for the system.
-     *
-     * @param rawRequest The raw request to be parsed.
-     *
-     * @return A string with the command as made up via content from the request.
-     */
-    public String getRequestContents(MatchaDbRawRequestObject rawRequest) {
-        return null;
-    }
-
-    /**
-     * Calls the appropriate method on the Request Service, and returns the 
-     * response upon completion.
-     *
-     * @param request The request to be used on the db.
-     *
-     * @return A response object.
-     */
-    public MatchaDbResponseObject makeRequest(MatchaDbRequestObject request) {
         return null;
     }
 }

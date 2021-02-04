@@ -10,45 +10,34 @@ public class MatchaDbRequestParserTest {
     MatchaDbRequestParser matchaDbRequestParser;
 
     /**
-     * Tests the ingestion of a Raw Request and it's transform into a Request
-     * object used by the system.
+     * Tests both the ingestion, conversion, and request conduction of a GET request.
      */
     @Test
-    public void testIngestRequest() {
+    public void ingestAndConductGetRequest() {
 
     }
 
     /**
-     * Tests that the convertRawRequest method calls the appropriate methods to 
-     * convert a Raw Request into one that is usable by the system.
+     * Tests both the ingestion, conversion, and request conduction of a POST request.
      */
     @Test
-    public void testConvertRawRequest() {
+    public void ingestAndConductPostRequest() {
 
     }
 
     /**
-     * Tests that we can gather the request type.
+     * Tests both the ingestion, conversion, and request conduction of a UPDATE request.
      */
     @Test
-    public void testGetRequestType() {
+    public void ingestAndConductUpdateRequest() {
 
     }
 
     /**
-     * Tests that we can gather and parse the Request contests.
+     * Tests both the ingestion, conversion, and request conduction of a DELETE request.
      */
     @Test
-    public void testGetRequestContents() {
-
-    }
-
-    /**
-     * Tests that we can appropriately conduct the request and retrieve a 
-     * Response.
-     */
-    @Test
-    public void testMakeRequest() {
+    public void ingestAndConductDeleteRequest() {
 
     }
 }
