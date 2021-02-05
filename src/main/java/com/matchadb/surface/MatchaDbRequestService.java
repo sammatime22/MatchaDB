@@ -13,8 +13,6 @@ import com.matchadb.models.query.MatchaDeleteQuery;
 
 import java.util.List;
 
-import org.json.simple.parser.ParseException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,7 +56,7 @@ public class MatchaDbRequestService {
      *
      * @return A Response object.
      */
-    public MatchaDbResponseObject conductRequest(MatchaDbRequestObject request) throws ParseException {
+    public MatchaDbResponseObject conductRequest(MatchaDbRequestObject request) {
         if (request.getRequestType() == MatchaDbRequestType.GET) {
             return runGetCommand(request);
         } else if (request.getRequestType() == MatchaDbRequestType.POST) {
@@ -100,7 +98,7 @@ public class MatchaDbRequestService {
      *
      * @return A MatchaDbResponseObject explaining the results of the command.
      */
-    public MatchaDbResponseObject runPostCommand(MatchaDbRequestObject request) throws ParseException {
+    public MatchaDbResponseObject runPostCommand(MatchaDbRequestObject request) {
         MatchaPostQuery matchaPostQuery = new MatchaPostQuery(
             request.getFromQuery(), request.getSelectQuery(), request.getInsertQuery()
         );

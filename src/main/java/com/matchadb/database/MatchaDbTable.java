@@ -376,7 +376,7 @@ public class MatchaDbTable {
      *
      * @return A boolean describing a successful insert.
      */
-    public boolean postData(MatchaPostQuery query) throws ParseException {
+    public boolean postData(MatchaPostQuery query) {
 
         try {
             Object selectionToInsertUpon = searchForData(query.getFromQuery(), this.table);
@@ -396,6 +396,9 @@ public class MatchaDbTable {
 
             }
 
+        } catch (ParseException pe) {
+            pe.printStackTrace();
+            return false;
         } catch (Exception e) {
             e.printStackTrace();
             return false;

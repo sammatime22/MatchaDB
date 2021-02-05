@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.json.simple.parser.ParseException;
-
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -84,7 +82,7 @@ public class MatchaDbRequestServiceTest {
      *   - The delete call attempting to get an object that doesn't exist
      */
     @Test
-    public void testConductRequest() throws ParseException {
+    public void testConductRequest() {
         // Get Test
         MatchaDbResponseObject getFailedResponseObject 
             = new MatchaDbResponseObject("Retrieval Failed", "");
@@ -148,7 +146,7 @@ public class MatchaDbRequestServiceTest {
      * This is also testing the construction of the required MatchaPostQuery object.
      */
     @Test
-    public void testRunPostCommand() throws ParseException {
+    public void testRunPostCommand() {
         MatchaDbResponseObject postSuccessfulResponseObject
             = new MatchaDbResponseObject("Insert Successful", true);
         when(matchaDbTable.postData(any(MatchaPostQuery.class))).thenReturn(true);

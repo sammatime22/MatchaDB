@@ -6,8 +6,6 @@ import com.matchadb.models.MatchaDbRawRequestObject;
 import com.matchadb.models.MatchaDbRequestObject;
 import com.matchadb.models.MatchaDbResponseObject;
 
-import org.json.simple.parser.ParseException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +31,7 @@ public class MatchaDbRequestParser {
      *
      * @return The response from the database.
      */
-    public MatchaDbResponseObject ingestAndConductRequest(MatchaDbRawRequestObject rawRequest)
-        throws ParseException {
+    public MatchaDbResponseObject ingestAndConductRequest(MatchaDbRawRequestObject rawRequest) {
         return matchaDbRequestService.conductRequest(convertRawRequest(rawRequest));
     }
 
