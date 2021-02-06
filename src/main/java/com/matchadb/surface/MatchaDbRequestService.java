@@ -26,18 +26,18 @@ public class MatchaDbRequestService {
     @Autowired MatchaDbTable matchaDbTable;
 
     // The info values for successful commands on the DB Table.
-    private String SUCCESSFUL_GET_INFO = "Retrieval Successful";
-    private String SUCCESSFUL_POST_INFO = "Insert Successful";
-    private String SUCCESSFUL_UPDATE_INFO = "Update Successful";
-    private String SUCCESSFUL_DELETE_INFO = "Removal Successful";
+    private final String SUCCESSFUL_GET_INFO = "Retrieval Successful";
+    private final String SUCCESSFUL_POST_INFO = "Insert Successful";
+    private final String SUCCESSFUL_UPDATE_INFO = "Update Successful";
+    private final String SUCCESSFUL_DELETE_INFO = "Removal Successful";
 
     // The info values for unsuccessful commands on the DB Table.
-    private String UNSUCCESSFUL_GET_INFO = "Retrieval Failed";
-    private String UNSUCCESSFUL_POST_INFO = "Insert Failed";
-    private String UNSUCCESSFUL_UPDATE_INFO = "Update Failed";
-    private String UNSUCCESSFUL_DELETE_INFO = "Removal Failed";    
+    private final String UNSUCCESSFUL_GET_INFO = "Retrieval Failed";
+    private final String UNSUCCESSFUL_POST_INFO = "Insert Failed";
+    private final String UNSUCCESSFUL_UPDATE_INFO = "Update Failed";
+    private final String UNSUCCESSFUL_DELETE_INFO = "Removal Failed";    
 
-    private String UNSUCCESSFUL_COMMAND_UNIDENTIFIABLE = "Command could not be identified...";
+    private final String COMMAND_UNIDENTIFIABLE = "Command could not be identified...";
 
     /**
      * Constructor used for autowiring.
@@ -67,7 +67,7 @@ public class MatchaDbRequestService {
             return runDeleteCommand(request);
         } else {
             // This should never happen, but just in case.
-            return new MatchaDbResponseObject(UNSUCCESSFUL_COMMAND_UNIDENTIFIABLE, "");
+            return new MatchaDbResponseObject(COMMAND_UNIDENTIFIABLE, "");
         }
     }
 

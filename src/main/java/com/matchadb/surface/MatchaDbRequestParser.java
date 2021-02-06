@@ -18,6 +18,8 @@ public class MatchaDbRequestParser {
 
     @Autowired MatchaDbRequestService matchaDbRequestService;
 
+    private final String COMMAND_UNPARSABLE = "Command could not be parsed...";
+
     // Constructor
     public MatchaDbRequestParser(MatchaDbRequestService matchaDbRequestService) {
         this.matchaDbRequestService = matchaDbRequestService;
@@ -32,7 +34,12 @@ public class MatchaDbRequestParser {
      * @return The response from the database.
      */
     public MatchaDbResponseObject ingestAndConductRequest(MatchaDbRawRequestObject rawRequest) {
-        return matchaDbRequestService.conductRequest(convertRawRequest(rawRequest));
+        MatchaDbRequestObject requestObject = convertRawRequest(rawRequest);
+        if (requestObject != null) {
+            return matchaDbRequestService.conductRequest(requestObject);
+        } else {
+            return new MatchaDbResponseObject(COMMAND_UNPARSABLE, "");
+        }
     }
 
     /**
@@ -44,7 +51,26 @@ public class MatchaDbRequestParser {
      * @return a request object that can be used on the DB.
      */
     public MatchaDbRequestObject convertRawRequest(MatchaDbRawRequestObject rawRequest) {
+        try {
+            if (rawRequest.getRequestType() == MatchaDbRequestType.GET) {
+            // Attempt to parse GET request
 
+
+            } else if (rawRequest.getRequestType() == MatchaDbRequestType.POST) {
+            // Attempt to parse POST request
+
+            } else if (rawRequest.getRequestType() == MatchaDbRequestType.UPDATE) {
+            // Attempt to parse UPDATE request
+
+            } else if (rawRequest.getRequestType() == MatchaDbRequestType.DELETE) {
+            // Attempt to parse DELETE request
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // If we couldn't parse the request, just return null
         return null;
     }
 }
