@@ -72,4 +72,58 @@ public class MatchaDbRequestObject {
     public String[][] getUpdateQuery() {
         return this.updateQuery;
     }
+
+    /**
+     * Returns a string representation of the MatchaDbRequestObject.
+     * 
+     * @return a string representation of the MatchaDbRequestObject.
+     */
+    public String toString() {
+        String fromQueryAsString = "";
+
+        for (String fromQueryAsStringPortion : this.getFromQuery()) {
+            fromQueryAsString += " '" + fromQueryAsStringPortion + "' ";
+        }
+
+        String selectQueryAsString = "";
+
+        for (String[] selectQueryAsStringPortion : this.getSelectQuery()) {
+            String selectQueryAsStringPortionToAdd = "";
+
+            for (String selectQueryAsStringPortionSection : selectQueryAsStringPortion) {
+                selectQueryAsStringPortionToAdd += " '" + selectQueryAsStringPortionSection + "' ";
+            }
+
+            selectQueryAsString += selectQueryAsStringPortionToAdd;
+        }
+
+        String insertQueryAsString = "";
+
+        for (String[] insertQueryAsStringPortion : this.getInsertQuery()) {
+            String insertQueryAsStringPortionToAdd = "";
+
+            for (String insertQueryAsStringPortionSection :  insertQueryAsStringPortion) {
+                insertQueryAsStringPortionToAdd += " '" + insertQueryAsStringPortionSection + "' ";
+            }
+
+            insertQueryAsString += insertQueryAsStringPortionToAdd;
+        }
+
+        String updateQueryAsString = "";
+
+        for (String[] updateQueryAsStringPortion : this.getUpdateQuery()) {
+            String updateQueryAsStringPortionToAdd = "";
+
+            for (String updateQueryAsStringPortionSection : updateQueryAsStringPortion) {
+                updateQueryAsStringPortionToAdd += " '" + updateQueryAsStringPortionSection + "' ";
+            }
+
+            updateQueryAsString += updateQueryAsStringPortionToAdd;
+        }
+
+        return String.format(
+            "{\"From\": [%s], \"Select\": [%s], \"Insert\": [%s], \"Update\": [%s]}",
+            fromQueryAsString, selectQueryAsString, insertQueryAsString, updateQueryAsString
+        );
+    }
 }

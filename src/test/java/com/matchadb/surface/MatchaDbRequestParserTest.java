@@ -24,6 +24,8 @@ public class MatchaDbRequestParserTest {
     @Test
     public void ingestAndConductGetRequest() {
         // {"From":"Fruit", "Select": [["Color", "is", "red"], ["Price", "<", "12.00"]}
+
+        // Run Captor Verifications
     }
 
     /**
@@ -31,7 +33,9 @@ public class MatchaDbRequestParserTest {
      */
     @Test
     public void ingestAndConductPostRequest() {
-        // {"From":"Cars", "Insert": ["F150"]}
+        // {"From":"Cars", "Insert": [["Name", "F150"]]}
+
+        // Run Captor Verifications
     }
 
     /**
@@ -40,6 +44,8 @@ public class MatchaDbRequestParserTest {
     @Test
     public void ingestAndConductUpdateRequest() {
         // {"From": "Laptops", "Select":[["Brand", "has", "G"]], "Update": ["Price", "to", "1300"]}
+
+        // Run Captor Verifications
     }
 
     /**
@@ -48,5 +54,7 @@ public class MatchaDbRequestParserTest {
     @Test
     public void ingestAndConductDeleteRequest() {
         // {"From": "Books", "Select":[["Author", "has", "i"]]}
+
+        // Run Captor Verifications
     }
 }

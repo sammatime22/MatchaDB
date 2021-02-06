@@ -51,19 +51,20 @@ public class MatchaDbRequestParser {
      * @return a request object that can be used on the DB.
      */
     public MatchaDbRequestObject convertRawRequest(MatchaDbRawRequestObject rawRequest) {
+        MatchaDbRequestObject requestObject = null;
+
         try {
             if (rawRequest.getRequestType() == MatchaDbRequestType.GET) {
-            // Attempt to parse GET request
-
+                // Attempt to parse GET request
 
             } else if (rawRequest.getRequestType() == MatchaDbRequestType.POST) {
-            // Attempt to parse POST request
+                // Attempt to parse POST request
 
             } else if (rawRequest.getRequestType() == MatchaDbRequestType.UPDATE) {
-            // Attempt to parse UPDATE request
+                // Attempt to parse UPDATE request
 
             } else if (rawRequest.getRequestType() == MatchaDbRequestType.DELETE) {
-            // Attempt to parse DELETE request
+                // Attempt to parse DELETE request
 
             }
         } catch (Exception e) {
@@ -71,6 +72,6 @@ public class MatchaDbRequestParser {
         }
 
         // If we couldn't parse the request, just return null
-        return null;
+        return requestObject;
     }
 }
