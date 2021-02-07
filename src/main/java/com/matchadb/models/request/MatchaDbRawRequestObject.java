@@ -1,4 +1,4 @@
-package com.matchadb.models;
+package com.matchadb.models.request;
 
 import com.matchadb.enums.MatchaDbRequestType;
 

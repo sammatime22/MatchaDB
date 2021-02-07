@@ -1,4 +1,4 @@
-package com.matchadb.models;
+package com.matchadb.models.response;
 
 /**
  * This object carries the data associated with a response from the database, 

@@ -2,7 +2,6 @@ package com.matchadb.database;
 
 import com.matchadb.instrumentation.MatchaDbInstrumentationTool;
 
-import com.matchadb.models.MatchaDbRequestObject;
 import com.matchadb.models.query.MatchaGetQuery;
 import com.matchadb.models.query.MatchaPostQuery;
 import com.matchadb.models.query.MatchaUpdateQuery;

@@ -2,9 +2,9 @@ package com.matchadb.surface;
 
 import com.matchadb.enums.MatchaDbRequestType;
 
-import com.matchadb.models.MatchaDbRawRequestObject;
-import com.matchadb.models.MatchaDbRequestObject;
-import com.matchadb.models.MatchaDbResponseObject;
+import com.matchadb.models.request.MatchaDbRawRequestObject;
+import com.matchadb.models.request.MatchaDbRequestObject;
+import com.matchadb.models.response.MatchaDbResponseObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

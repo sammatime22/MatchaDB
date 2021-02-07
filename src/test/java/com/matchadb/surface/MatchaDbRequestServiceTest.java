@@ -9,8 +9,8 @@ import com.matchadb.database.MatchaDbTable;
 
 import com.matchadb.enums.MatchaDbRequestType;
 
-import com.matchadb.models.MatchaDbRequestObject;
-import com.matchadb.models.MatchaDbResponseObject;
+import com.matchadb.models.request.MatchaDbRequestObject;
+import com.matchadb.models.response.MatchaDbResponseObject;
 
 import com.matchadb.models.query.MatchaGetQuery;
 import com.matchadb.models.query.MatchaPostQuery;
