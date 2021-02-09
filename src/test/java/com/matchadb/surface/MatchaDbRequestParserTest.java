@@ -1,11 +1,16 @@
 package com.matchadb.surface;
 
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 import com.matchadb.enums.MatchaDbRequestType;
 import com.matchadb.models.request.MatchaDbRawRequestObject;
 import com.matchadb.models.request.MatchaDbRequestObject;
 import com.matchadb.models.response.MatchaDbResponseObject;
+
+import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -56,8 +61,27 @@ public class MatchaDbRequestParserTest {
     @Test
     public void ingestAndConductGetRequest() {
         // {"From":"Fruit", "Select": [["Color", "is", "red"], ["Price", "<", "12.00"]}
+        String[] fruitToReturn = new String[]{"Strawberries", "Apples"};
+        MatchaDbResponseObject response 
+            = new MatchaDbResponseObject("Retrieval Successful", Arrays.asList(fruitToReturn));
+
+        when(
+            matchaDbRequestService.conductRequest(any(MatchaDbRequestObject.class))     
+        ).thenReturn(response);
+
 
         // Run Captor Verifications
+        verify(matchaDbRequestService).conductRequest(matchaDbRequestObjectCaptor.capture());
+        MatchaDbRequestObject capturedRequestObject = matchaDbRequestObjectCaptor.getValue();
+        Assert.assertTrue(MatchaDbRequestType.GET == capturedRequestObject.getRequestType());
+        Assert.assertTrue(
+            capturedRequestObject.toString().equals(
+                String.format(
+                    "{\"From\": [%s], \"Select\": [%s], \"Insert\": [%s], \"Update\": [%s]}",
+                    "Fruit", "[\"Color\", \"is\", \"red\"], [\"Price\", \"<\", \"12.00\"]", "", ""
+                )
+            )
+        );
     }
 
     /**
