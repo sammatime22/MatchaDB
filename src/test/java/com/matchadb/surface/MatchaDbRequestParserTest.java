@@ -5,6 +5,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
+import com.matchadb.common.MatchaDbTestUtils;
+
 import com.matchadb.enums.MatchaDbRequestType;
 import com.matchadb.models.request.MatchaDbRawRequestObject;
 import com.matchadb.models.request.MatchaDbRequestObject;
@@ -69,6 +71,16 @@ public class MatchaDbRequestParserTest {
             matchaDbRequestService.conductRequest(any(MatchaDbRequestObject.class))     
         ).thenReturn(response);
 
+        MatchaDbTestUtils.compareResponseObjects(
+            response, 
+            matchaDbRequestParser.ingestAndConductRequest(
+                new MatchaDbRawRequestObject(
+                    MatchaDbRequestType.GET,
+                    "{\"From\":\"Fruit\"," +
+                    "\"Select\": [[\"Color\", \"is\", \"red\"], [\"Price\", \"<\", \"12.00\"]}"
+                )
+            )
+        );
 
         // Run Captor Verifications
         verify(matchaDbRequestService).conductRequest(matchaDbRequestObjectCaptor.capture());

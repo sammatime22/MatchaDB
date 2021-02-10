@@ -5,6 +5,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.matchadb.common.MatchaDbTestUtils;
+
 import com.matchadb.database.MatchaDbTable;
 
 import com.matchadb.enums.MatchaDbRequestType;
@@ -87,28 +89,28 @@ public class MatchaDbRequestServiceTest {
         MatchaDbResponseObject getFailedResponseObject 
             = new MatchaDbResponseObject("Retrieval Failed", "");
         when(matchaDbTable.getData(any(MatchaGetQuery.class))).thenReturn(null);
-        compareResponseObjects(getFailedResponseObject, 
+        MatchaDbTestUtils.compareResponseObjects(getFailedResponseObject, 
             matchaDbRequestService.conductRequest(getRequestObject));
 
         // Post Test
         MatchaDbResponseObject postFailedResponseObject 
             = new MatchaDbResponseObject("Insert Failed", false);
         when(matchaDbTable.postData(any(MatchaPostQuery.class))).thenReturn(false);
-        compareResponseObjects(postFailedResponseObject, 
+        MatchaDbTestUtils.compareResponseObjects(postFailedResponseObject, 
             matchaDbRequestService.conductRequest(postRequestObject));
 
         // Update Test
         MatchaDbResponseObject updateFailedResponseObject 
             = new MatchaDbResponseObject("Update Failed", false);
         when(matchaDbTable.updateData(any(MatchaUpdateQuery.class))).thenReturn(false);
-        compareResponseObjects(updateFailedResponseObject, 
+        MatchaDbTestUtils.compareResponseObjects(updateFailedResponseObject, 
             matchaDbRequestService.conductRequest(updateRequestObject));
 
         // Delete Test
         MatchaDbResponseObject deleteFailedResponseObject 
             = new MatchaDbResponseObject("Removal Failed", false);
         when(matchaDbTable.deleteData(any(MatchaDeleteQuery.class))).thenReturn(false);
-        compareResponseObjects(deleteFailedResponseObject, 
+        MatchaDbTestUtils.compareResponseObjects(deleteFailedResponseObject, 
             matchaDbRequestService.conductRequest(deleteRequestObject));
     }
 
@@ -130,7 +132,7 @@ public class MatchaDbRequestServiceTest {
         when(matchaDbTable.getData(any(MatchaGetQuery.class))).thenReturn(threeGreenEggs);
 
         // See overall results
-        compareResponseObjects(getSuccessfulResponseObject, 
+        MatchaDbTestUtils.compareResponseObjects(getSuccessfulResponseObject, 
             matchaDbRequestService.runGetCommand(getRequestObject));
 
         // Run captor verifications
@@ -152,7 +154,7 @@ public class MatchaDbRequestServiceTest {
         when(matchaDbTable.postData(any(MatchaPostQuery.class))).thenReturn(true);
 
         // See overall results
-        compareResponseObjects(postSuccessfulResponseObject,
+        MatchaDbTestUtils.compareResponseObjects(postSuccessfulResponseObject,
             matchaDbRequestService.runPostCommand(postRequestObject));
 
         // Run captor verifications
@@ -175,7 +177,7 @@ public class MatchaDbRequestServiceTest {
         when(matchaDbTable.updateData(any(MatchaUpdateQuery.class))).thenReturn(true);
 
         // See overall results
-        compareResponseObjects(updateSuccessfulResponseObject,
+        MatchaDbTestUtils.compareResponseObjects(updateSuccessfulResponseObject,
             matchaDbRequestService.runUpdateCommand(updateRequestObject));
 
         // Run captor verifications
@@ -198,29 +200,12 @@ public class MatchaDbRequestServiceTest {
         when(matchaDbTable.deleteData(any(MatchaDeleteQuery.class))).thenReturn(true);
 
         // See overall results
-        compareResponseObjects(deleteSuccessfulResponseObject,
+        MatchaDbTestUtils.compareResponseObjects(deleteSuccessfulResponseObject,
             matchaDbRequestService.runDeleteCommand(deleteRequestObject));
 
         // Run captor verifications
         verify(matchaDbTable).deleteData(matchaDeleteQueryCaptor.capture());
         MatchaDeleteQuery capturedMatchaDeleteQuery = matchaDeleteQueryCaptor.getValue();
         Assert.assertTrue(capturedMatchaDeleteQuery.toString().equals(deleteDeskQuery.toString()));
-    }
-
-
-    /**
-     * Compares two MatchaDbResponseObjects, and fails if the two do not have comparably equal 
-     * fields.
-     *
-     * @param expected The expected parms for nthe Resueslt Object.
-     * @param actual The actual prmeters for the Result Object.
-     */
-    private void compareResponseObjects(MatchaDbResponseObject expected, 
-                                        MatchaDbResponseObject actual) {
-        try {
-            Assert.assertTrue(expected.toString().equals(actual.toString()));
-        } catch (NullPointerException npe) {
-            Assert.fail("Null expected or actual response objects");
-        }
     }
 }
