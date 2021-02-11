@@ -102,8 +102,34 @@ public class MatchaDbRequestParserTest {
     @Test
     public void ingestAndConductPostRequest() {
         // {"From":"Cars", "Insert": [["Name", "F150"]]}
+        MatchaDbResponseObject response = new MatchaDbResponseObject("Insert Successful", true);
+
+        when(
+            matchaDbRequestService.conductRequest(any(MatchaDbRequestObject.class))
+        ).thenReturn(response);
+
+        MatchaDbTestUtils.compareResponseObjects(
+            response,
+            matchaDbRequestParser.ingestAndConductRequest(
+                new MatchaDbRawRequestObject(
+                    MatchaDbRequestType.POST,
+                    "{\"From\":\"Cars\", \"Insert\": [[\"Name\", \"F150\"]]}"
+                )
+            )
+        );
 
         // Run Captor Verifications
+        verify(matchaDbRequestService).conductRequest(matchaDbRequestObjectCaptor.capture());
+        MatchaDbRequestObject capturedRequestObject = matchaDbRequestObjectCaptor.getValue();
+        Assert.assertTrue(MatchaDbRequestType.POST == capturedRequestObject.getRequestType());
+        Assert.assertTrue(
+            capturedRequestObject.toString().equals(
+                String.format(
+                    "{\"From\": [%s], \"Select\": [%s], \"Insert\": [%s], \"Update\": [%s]}",
+                    "Cars", "", "[\"Name\", \"F150\"]", ""
+                )
+            )
+        );
     }
 
     /**
@@ -112,8 +138,35 @@ public class MatchaDbRequestParserTest {
     @Test
     public void ingestAndConductUpdateRequest() {
         // {"From": "Laptops", "Select":[["Brand", "has", "G"]], "Update": ["Price", "to", "1300"]}
+        MatchaDbResponseObject response = new MatchaDbResponseObject("Update Successful", true);
+
+        when(
+            matchaDbRequestService.conductRequest(any(MatchaDbRequestObject.class))
+        ).thenReturn(response);
+
+        MatchaDbTestUtils.compareResponseObjects(
+            response,
+            matchaDbRequestParser.ingestAndConductRequest(
+                new MatchaDbRawRequestObject(
+                    MatchaDbRequestType.UPDATE,
+                    "{\"From\": \"Laptops\", \"Select\":[[\"Brand\", \"has\", \"G\"]],"
+                    + "\"Update\": [\"Price\", \"to\", \"1300\"]}"
+                )
+            )
+        );
 
         // Run Captor Verifications
+        verify(matchaDbRequestService).conductRequest(matchaDbRequestObjectCaptor.capture());
+        MatchaDbRequestObject capturedRequestObject = matchaDbRequestObjectCaptor.getValue();
+        Assert.assertTrue(MatchaDbRequestType.UPDATE == capturedRequestObject.getRequestType());
+        Assert.assertTrue(
+            capturedRequestObject.toString().equals(
+                String.format(
+                    "{\"From\": [%s], \"Select\": [%s], \"Insert\": [%s], \"Update\": [%s]}",
+                    "\"Laptops\"", "[\"Brand\", \"has\", \"G\"]", "", "[\"Price\", \"to\", \"1300\"]"
+                )
+            )
+        );
     }
 
     /**
@@ -122,7 +175,33 @@ public class MatchaDbRequestParserTest {
     @Test
     public void ingestAndConductDeleteRequest() {
         // {"From": "Books", "Select":[["Author", "has", "i"]]}
+        MatchaDbResponseObject response = new MatchaDbResponseObject("Removal Successful", true);
+
+        when(
+            matchaDbRequestService.conductRequest(any(MatchaDbRequestObject.class))
+        ).thenReturn(response);
+
+        MatchaDbTestUtils.compareResponseObjects(
+            response,
+            matchaDbRequestParser.ingestAndConductRequest(
+                new MatchaDbRawRequestObject(
+                    MatchaDbRequestType.DELETE,
+                    "{\"From\": \"Books\", \"Select\":[[\"Author\", \"has\", \"i\"]]}"
+                )
+            )
+        );
 
         // Run Captor Verifications
+        verify(matchaDbRequestService).conductRequest(matchaDbRequestObjectCaptor.capture());
+        MatchaDbRequestObject capturedRequestObject = matchaDbRequestObjectCaptor.getValue();
+        Assert.assertTrue(MatchaDbRequestType.DELETE == capturedRequestObject.getRequestType());
+        Assert.assertTrue(
+            capturedRequestObject.toString().equals(
+                String.format(
+                    "{\"From\": [%s], \"Select\": [%s], \"Insert\": [%s], \"Update\": [%s]}",
+                    "Books", "[\"Author\", \"has\", \"i\"]", "", ""
+                )
+            )
+        );
     }
 }
