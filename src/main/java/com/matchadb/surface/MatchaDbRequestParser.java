@@ -6,6 +6,11 @@ import com.matchadb.models.request.MatchaDbRawRequestObject;
 import com.matchadb.models.request.MatchaDbRequestObject;
 import com.matchadb.models.response.MatchaDbResponseObject;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +23,17 @@ public class MatchaDbRequestParser {
 
     @Autowired MatchaDbRequestService matchaDbRequestService;
 
+
+
     private final String COMMAND_UNPARSABLE = "Command could not be parsed...";
+
+    private final String FROM = "From";
+
+    private final String SELECT = "Select";
+
+    private final String INSERT = "Insert";
+
+    private final String UPDATE = "Update";
 
     // Constructor
     public MatchaDbRequestParser(MatchaDbRequestService matchaDbRequestService) {
@@ -56,16 +71,44 @@ public class MatchaDbRequestParser {
         try {
             if (rawRequest.getRequestType() == MatchaDbRequestType.GET) {
                 // Attempt to parse GET request
+                
+                // Get From Portion
 
+                // Get Select Portion
+
+                // Return Request
+                return new MatchaDbRequestObject(MatchaDbRequestType.GET, null, null, null, null);
             } else if (rawRequest.getRequestType() == MatchaDbRequestType.POST) {
                 // Attempt to parse POST request
+                
+                // Get From Portion
 
+                // Get Select Portion (if there)
+
+                // Get Insert Portion
+
+                // Return Request
+                return new MatchaDbRequestObject(MatchaDbRequestType.GET, null, null, null, null);
             } else if (rawRequest.getRequestType() == MatchaDbRequestType.UPDATE) {
                 // Attempt to parse UPDATE request
+                
+                // Get From Portion
 
+                // Get Select Portion
+
+                // Get Update Portion
+
+                // Return Request
+                return new MatchaDbRequestObject(MatchaDbRequestType.GET, null, null, null, null);
             } else if (rawRequest.getRequestType() == MatchaDbRequestType.DELETE) {
                 // Attempt to parse DELETE request
+                
+                // Get From Portion
 
+                // Get Select Portion
+
+                // Return Request
+                return new MatchaDbRequestObject(MatchaDbRequestType.GET, null, null, null, null);
             }
         } catch (Exception e) {
             e.printStackTrace();
