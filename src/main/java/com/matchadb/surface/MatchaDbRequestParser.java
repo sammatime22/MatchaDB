@@ -23,7 +23,7 @@ public class MatchaDbRequestParser {
 
     @Autowired MatchaDbRequestService matchaDbRequestService;
 
-
+    private JSONParser parser;
 
     private final String COMMAND_UNPARSABLE = "Command could not be parsed...";
 
@@ -38,6 +38,7 @@ public class MatchaDbRequestParser {
     // Constructor
     public MatchaDbRequestParser(MatchaDbRequestService matchaDbRequestService) {
         this.matchaDbRequestService = matchaDbRequestService;
+        this.parser = new JSONParser();
     }
 
     /**
@@ -69,15 +70,16 @@ public class MatchaDbRequestParser {
         MatchaDbRequestObject requestObject = null;
 
         try {
+            JSONObject requestContents = (JSONObject) parser.parse(rawRequest.getRequestString());
+
+            System.out.println(requestContents.toString());
             if (rawRequest.getRequestType() == MatchaDbRequestType.GET) {
                 // Attempt to parse GET request
-                
+
                 // Get From Portion
 
                 // Get Select Portion
 
-                // Return Request
-                return new MatchaDbRequestObject(MatchaDbRequestType.GET, null, null, null, null);
             } else if (rawRequest.getRequestType() == MatchaDbRequestType.POST) {
                 // Attempt to parse POST request
                 
@@ -87,8 +89,6 @@ public class MatchaDbRequestParser {
 
                 // Get Insert Portion
 
-                // Return Request
-                return new MatchaDbRequestObject(MatchaDbRequestType.GET, null, null, null, null);
             } else if (rawRequest.getRequestType() == MatchaDbRequestType.UPDATE) {
                 // Attempt to parse UPDATE request
                 
@@ -98,8 +98,6 @@ public class MatchaDbRequestParser {
 
                 // Get Update Portion
 
-                // Return Request
-                return new MatchaDbRequestObject(MatchaDbRequestType.GET, null, null, null, null);
             } else if (rawRequest.getRequestType() == MatchaDbRequestType.DELETE) {
                 // Attempt to parse DELETE request
                 
@@ -107,8 +105,6 @@ public class MatchaDbRequestParser {
 
                 // Get Select Portion
 
-                // Return Request
-                return new MatchaDbRequestObject(MatchaDbRequestType.GET, null, null, null, null);
             }
         } catch (Exception e) {
             e.printStackTrace();

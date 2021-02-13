@@ -77,7 +77,7 @@ public class MatchaDbRequestParserTest {
                 new MatchaDbRawRequestObject(
                     MatchaDbRequestType.GET,
                     "{\"From\":\"Fruit\"," +
-                    "\"Select\": [[\"Color\", \"is\", \"red\"], [\"Price\", \"<\", \"12.00\"]}"
+                    "\"Select\": [[\"Color\", \"is\", \"red\"], [\"Price\", \"<\", \"12.00\"]]}"
                 )
             )
         );
