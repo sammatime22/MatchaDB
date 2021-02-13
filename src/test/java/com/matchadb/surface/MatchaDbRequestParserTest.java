@@ -62,7 +62,7 @@ public class MatchaDbRequestParserTest {
      */
     @Test
     public void ingestAndConductGetRequest() {
-        // {"From":"Fruit", "Select": [["Color", "is", "red"], ["Price", "<", "12.00"]}
+        // {"From": ["Fruit"], "Select": [["Color", "is", "red"], ["Price", "<", "12.00"]}
         String[] fruitToReturn = new String[]{"Strawberries", "Apples"};
         MatchaDbResponseObject response 
             = new MatchaDbResponseObject("Retrieval Successful", Arrays.asList(fruitToReturn));
@@ -76,7 +76,7 @@ public class MatchaDbRequestParserTest {
             matchaDbRequestParser.ingestAndConductRequest(
                 new MatchaDbRawRequestObject(
                     MatchaDbRequestType.GET,
-                    "{\"From\":\"Fruit\"," +
+                    "{\"From\": [\"Fruit\"]," +
                     "\"Select\": [[\"Color\", \"is\", \"red\"], [\"Price\", \"<\", \"12.00\"]]}"
                 )
             )
@@ -101,7 +101,7 @@ public class MatchaDbRequestParserTest {
      */
     @Test
     public void ingestAndConductPostRequest() {
-        // {"From":"Cars", "Insert": [["Name", "F150"]]}
+        // {"From": ["Cars"], "Insert": [["Name", "F150"]]}
         MatchaDbResponseObject response = new MatchaDbResponseObject("Insert Successful", true);
 
         when(
@@ -113,7 +113,7 @@ public class MatchaDbRequestParserTest {
             matchaDbRequestParser.ingestAndConductRequest(
                 new MatchaDbRawRequestObject(
                     MatchaDbRequestType.POST,
-                    "{\"From\":\"Cars\", \"Insert\": [[\"Name\", \"F150\"]]}"
+                    "{\"From\": [\"Cars\"], \"Insert\": [[\"Name\", \"F150\"]]}"
                 )
             )
         );
@@ -137,7 +137,7 @@ public class MatchaDbRequestParserTest {
      */
     @Test
     public void ingestAndConductUpdateRequest() {
-        // {"From": "Laptops", "Select":[["Brand", "has", "G"]], "Update": ["Price", "to", "1300"]}
+        // {"From": ["Laptops"], "Select":[["Brand", "has", "G"]], "Update": ["Price", "to", "1300"]}
         MatchaDbResponseObject response = new MatchaDbResponseObject("Update Successful", true);
 
         when(
@@ -149,7 +149,7 @@ public class MatchaDbRequestParserTest {
             matchaDbRequestParser.ingestAndConductRequest(
                 new MatchaDbRawRequestObject(
                     MatchaDbRequestType.UPDATE,
-                    "{\"From\": \"Laptops\", \"Select\":[[\"Brand\", \"has\", \"G\"]],"
+                    "{\"From\": [\"Laptops\"], \"Select\":[[\"Brand\", \"has\", \"G\"]],"
                     + "\"Update\": [\"Price\", \"to\", \"1300\"]}"
                 )
             )
@@ -174,7 +174,7 @@ public class MatchaDbRequestParserTest {
      */
     @Test
     public void ingestAndConductDeleteRequest() {
-        // {"From": "Books", "Select":[["Author", "has", "i"]]}
+        // {"From": ["Books"], "Select":[["Author", "has", "i"]]}
         MatchaDbResponseObject response = new MatchaDbResponseObject("Removal Successful", true);
 
         when(
@@ -186,7 +186,7 @@ public class MatchaDbRequestParserTest {
             matchaDbRequestParser.ingestAndConductRequest(
                 new MatchaDbRawRequestObject(
                     MatchaDbRequestType.DELETE,
-                    "{\"From\": \"Books\", \"Select\":[[\"Author\", \"has\", \"i\"]]}"
+                    "{\"From\": [\"Books\"], \"Select\":[[\"Author\", \"has\", \"i\"]]}"
                 )
             )
         );

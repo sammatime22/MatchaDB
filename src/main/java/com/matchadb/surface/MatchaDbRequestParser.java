@@ -6,6 +6,10 @@ import com.matchadb.models.request.MatchaDbRawRequestObject;
 import com.matchadb.models.request.MatchaDbRequestObject;
 import com.matchadb.models.response.MatchaDbResponseObject;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -77,9 +81,53 @@ public class MatchaDbRequestParser {
                 // Attempt to parse GET request
 
                 // Get From Portion
+                JSONArray fromPortionAsJSONArray = (JSONArray) requestContents.get("From");
+                System.out.println(fromPortionAsJSONArray.toString());
+
+                List<String> fromPortionAsList = new ArrayList<>();
+                for (Iterator fromPortionAsJSONArrayIterator = fromPortionAsJSONArray.iterator();
+                    fromPortionAsJSONArrayIterator.hasNext();) {
+                    fromPortionAsList.add((String) fromPortionAsJSONArrayIterator.next());
+                }
+
+                String[] fromPortionAsArray = new String[fromPortionAsList.size()];
+                fromPortionAsArray = fromPortionAsList.toArray(fromPortionAsArray);
+
+                for (String thing : fromPortionAsArray) {
+                    System.out.println(thing);
+                }
 
                 // Get Select Portion
+                JSONArray selectPortionAsJSONArray = (JSONArray) requestContents.get("Select");
+                System.out.println(selectPortionAsJSONArray.toString());
 
+
+                List<String[]> selectPortionAsList = new ArrayList<>();
+                for (Iterator selectPortionAsJSONArrayIterator 
+                    = selectPortionAsJSONArray.iterator(); 
+                    selectPortionAsJSONArrayIterator.hasNext();) {
+                    selectPortionAsList.add((String[]) selectPortionAsJSONArrayIterator.next());
+                }
+
+                System.out.println(selectPortionAsList.toString());
+
+                String[][] selectPortionAsArray = new String[selectPortionAsList.size()][];
+                selectPortionAsArray = selectPortionAsList.toArray(selectPortionAsArray);
+
+                for (String[] ding : selectPortionAsArray) {
+                    for (String aling : ding) {
+                        System.out.println(aling);
+                    }
+                }
+
+                // Develop Final Object
+                requestObject = new MatchaDbRequestObject(
+                    MatchaDbRequestType.GET,
+                    fromPortionAsArray,
+                    selectPortionAsArray,
+                    null,
+                    null
+                );
             } else if (rawRequest.getRequestType() == MatchaDbRequestType.POST) {
                 // Attempt to parse POST request
                 
