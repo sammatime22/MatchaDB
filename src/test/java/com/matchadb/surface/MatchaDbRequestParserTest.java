@@ -86,11 +86,13 @@ public class MatchaDbRequestParserTest {
         verify(matchaDbRequestService).conductRequest(matchaDbRequestObjectCaptor.capture());
         MatchaDbRequestObject capturedRequestObject = matchaDbRequestObjectCaptor.getValue();
         Assert.assertTrue(MatchaDbRequestType.GET == capturedRequestObject.getRequestType());
+
         Assert.assertTrue(
             capturedRequestObject.toString().equals(
                 String.format(
                     "{\"From\": [%s], \"Select\": [%s], \"Insert\": [%s], \"Update\": [%s]}",
-                    "Fruit", "[\"Color\", \"is\", \"red\"], [\"Price\", \"<\", \"12.00\"]", "", ""
+                    "['Fruit']", 
+                    "[ 'Color'  'is'  'red' ][ 'Price'  '<'  '12.00' ]", "", ""
                 )
             )
         );

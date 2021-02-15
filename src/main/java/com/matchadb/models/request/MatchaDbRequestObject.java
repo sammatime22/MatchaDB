@@ -80,45 +80,53 @@ public class MatchaDbRequestObject {
      */
     public String toString() {
         String fromQueryAsString = "";
-
-        for (String fromQueryAsStringPortion : this.getFromQuery()) {
-            fromQueryAsString += " '" + fromQueryAsStringPortion + "' ";
+        
+        if (this.getFromQuery() != null) {
+            for (String fromQueryAsStringPortion : this.getFromQuery()) {
+                fromQueryAsString += "['" + fromQueryAsStringPortion + "']";
+            }
         }
 
         String selectQueryAsString = "";
 
-        for (String[] selectQueryAsStringPortion : this.getSelectQuery()) {
-            String selectQueryAsStringPortionToAdd = "";
+        if (this.getSelectQuery() != null) {
+            for (String[] selectQueryAsStringPortion : this.getSelectQuery()) {
+                String selectQueryAsStringPortionToAdd = "";
 
-            for (String selectQueryAsStringPortionSection : selectQueryAsStringPortion) {
-                selectQueryAsStringPortionToAdd += " '" + selectQueryAsStringPortionSection + "' ";
+                for (String selectQueryAsStringPortionSection : selectQueryAsStringPortion) {
+                    selectQueryAsStringPortionToAdd += " '" + selectQueryAsStringPortionSection + "' ";
+                }
+
+                selectQueryAsString += "["+ selectQueryAsStringPortionToAdd + "]";
             }
-
-            selectQueryAsString += selectQueryAsStringPortionToAdd;
         }
 
         String insertQueryAsString = "";
 
-        for (String[] insertQueryAsStringPortion : this.getInsertQuery()) {
-            String insertQueryAsStringPortionToAdd = "";
+        if (this.getInsertQuery() != null) {
+            for (String[] insertQueryAsStringPortion : this.getInsertQuery()) {
+                String insertQueryAsStringPortionToAdd = "";
 
-            for (String insertQueryAsStringPortionSection :  insertQueryAsStringPortion) {
-                insertQueryAsStringPortionToAdd += " '" + insertQueryAsStringPortionSection + "' ";
+                for (String insertQueryAsStringPortionSection :  insertQueryAsStringPortion) {
+                    insertQueryAsStringPortionToAdd += " '" + insertQueryAsStringPortionSection + "' ";
+                }
+
+                insertQueryAsString += "[" + insertQueryAsStringPortionToAdd + "]";
             }
-
-            insertQueryAsString += insertQueryAsStringPortionToAdd;
         }
 
         String updateQueryAsString = "";
 
-        for (String[] updateQueryAsStringPortion : this.getUpdateQuery()) {
-            String updateQueryAsStringPortionToAdd = "";
+        if (this.getUpdateQuery() != null) {
+            for (String[] updateQueryAsStringPortion : this.getUpdateQuery()) {
+                String updateQueryAsStringPortionToAdd = "";
 
-            for (String updateQueryAsStringPortionSection : updateQueryAsStringPortion) {
-                updateQueryAsStringPortionToAdd += " '" + updateQueryAsStringPortionSection + "' ";
+                for (String updateQueryAsStringPortionSection : updateQueryAsStringPortion) {
+                    updateQueryAsStringPortionToAdd += " '" + updateQueryAsStringPortionSection + "' ";
+                }
+
+                updateQueryAsString += "[" + updateQueryAsStringPortionToAdd + "]";
             }
-
-            updateQueryAsString += updateQueryAsStringPortionToAdd;
         }
 
         return String.format(
