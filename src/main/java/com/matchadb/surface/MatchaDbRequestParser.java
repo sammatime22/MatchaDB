@@ -80,35 +80,44 @@ public class MatchaDbRequestParser {
                 // Attempt to parse GET request
                 requestObject = new MatchaDbRequestObject(
                     MatchaDbRequestType.GET,
-                    gatherFromPortion((JSONArray) requestContents.get("From")),
-                    gatherSelectPortion((JSONArray) requestContents.get("Select")),
+                    gather1DArrayPortion((JSONArray) requestContents.get("From")),
+                    gather2DArrayPortion((JSONArray) requestContents.get("Select")),
                     null,
                     null
                 );
             } else if (rawRequest.getRequestType() == MatchaDbRequestType.POST) {
                 // Attempt to parse POST request
+
+                // Optional to include a "Select" portion
+                String[][] selectPortionForInsert = null;
+
+                if (requestContents.get("Select") != null) {
+                    selectPortionForInsert = gather2DArrayPortion((JSONArray) requestContents.get("Select"));
+                }
                 
-                // Get From Portion
-
-                // Get Select Portion (if there)
-
-                // Get Insert Portion
-
+                requestObject = new MatchaDbRequestObject(
+                    MatchaDbRequestType.GET,
+                    gather1DArrayPortion((JSONArray) requestContents.get("From")),
+                    selectPortionForInsert,
+                    gather2DArrayPortion((JSONArray) requestContents.get("Insert")),
+                    null
+                );                
             } else if (rawRequest.getRequestType() == MatchaDbRequestType.UPDATE) {
                 // Attempt to parse UPDATE request
                 
-                // Get From Portion
-
-                // Get Select Portion
-
-                // Get Update Portion
-
+                requestObject = new MatchaDbRequestObject(
+                    MatchaDbRequestType.GET,
+                    gather1DArrayPortion((JSONArray) requestContents.get("From")),
+                    gather2DArrayPortion((JSONArray) requestContents.get("Select")),
+                    null,
+                    gather2DArrayPortion((JSONArray) requestContents.get("Update"))
+                );
             } else if (rawRequest.getRequestType() == MatchaDbRequestType.DELETE) {
                 // Attempt to parse DELETE request
                 requestObject = new MatchaDbRequestObject(
                     MatchaDbRequestType.DELETE,
-                    gatherFromPortion((JSONArray) requestContents.get("From")),
-                    gatherSelectPortion((JSONArray) requestContents.get("Select")),
+                    gather1DArrayPortion((JSONArray) requestContents.get("From")),
+                    gather2DArrayPortion((JSONArray) requestContents.get("Select")),
                     null,
                     null
                 );
@@ -127,7 +136,7 @@ public class MatchaDbRequestParser {
      *
      * @return The from portion as an array of String.
      */
-    private String[] gatherFromPortion(JSONArray fromPortionAsJSONArray) {
+    private String[] gather1DArrayPortion(JSONArray fromPortionAsJSONArray) {
 
         List<String> fromPortionAsList = new ArrayList<>();
         for (Iterator fromPortionAsJSONArrayIterator = fromPortionAsJSONArray.iterator();
@@ -142,11 +151,11 @@ public class MatchaDbRequestParser {
     /**
      * Gathers the "Select" portion from a request and returns it as a 2D String array.
      *
-     * @param jsonArray the JSON Array containing the "From" portion.
+     * @param jsonArray the JSON Array containing the "Select" portion.
      *
      * @return The from portion as a 2D array of String.
      */
-    private String[][] gatherSelectPortion(JSONArray selectPortionAsJSONArray) {
+    private String[][] gather2DArrayPortion(JSONArray selectPortionAsJSONArray) {
 
         List<String[]> selectPortionAsList = new ArrayList<>();
         for (Iterator selectPortionAsJSONArrayIterator = selectPortionAsJSONArray.iterator();
