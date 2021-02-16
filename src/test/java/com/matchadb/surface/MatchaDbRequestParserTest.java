@@ -62,7 +62,6 @@ public class MatchaDbRequestParserTest {
      */
     @Test
     public void ingestAndConductGetRequest() {
-        // {"From": ["Fruit"], "Select": [["Color", "is", "red"], ["Price", "<", "12.00"]}
         String[] fruitToReturn = new String[]{"Strawberries", "Apples"};
         MatchaDbResponseObject response 
             = new MatchaDbResponseObject("Retrieval Successful", Arrays.asList(fruitToReturn));
@@ -176,7 +175,6 @@ public class MatchaDbRequestParserTest {
      */
     @Test
     public void ingestAndConductDeleteRequest() {
-        // {"From": ["Books"], "Select":[["Author", "has", "i"]]}
         MatchaDbResponseObject response = new MatchaDbResponseObject("Removal Successful", true);
 
         when(
@@ -201,7 +199,7 @@ public class MatchaDbRequestParserTest {
             capturedRequestObject.toString().equals(
                 String.format(
                     "{\"From\": [%s], \"Select\": [%s], \"Insert\": [%s], \"Update\": [%s]}",
-                    "Books", "[\"Author\", \"has\", \"i\"]", "", ""
+                    "['Books']", "[ 'Author'  'has'  'i' ]", "", ""
                 )
             )
         );

@@ -78,49 +78,10 @@ public class MatchaDbRequestParser {
 
             if (rawRequest.getRequestType() == MatchaDbRequestType.GET) {
                 // Attempt to parse GET request
-
-                // Get From Portion
-                JSONArray fromPortionAsJSONArray = (JSONArray) requestContents.get("From");
-
-                List<String> fromPortionAsList = new ArrayList<>();
-                for (Iterator fromPortionAsJSONArrayIterator = fromPortionAsJSONArray.iterator();
-                    fromPortionAsJSONArrayIterator.hasNext();) {
-                    fromPortionAsList.add((String) fromPortionAsJSONArrayIterator.next());
-                }
-
-                String[] fromPortionAsArray = new String[fromPortionAsList.size()];
-                fromPortionAsArray = fromPortionAsList.toArray(fromPortionAsArray);
-
-                // Get Select Portion
-                JSONArray selectPortionAsJSONArray = (JSONArray) requestContents.get("Select");
-
-
-                List<String[]> selectPortionAsList = new ArrayList<>();
-                for (Iterator selectPortionAsJSONArrayIterator 
-                    = selectPortionAsJSONArray.iterator(); 
-                    selectPortionAsJSONArrayIterator.hasNext();) {
-                    JSONArray selectPortionSubarray 
-                        = (JSONArray) selectPortionAsJSONArrayIterator.next();
-
-                    selectPortionAsList.add(
-                        new String[] {
-                            (String) selectPortionSubarray.get(0),
-                            (String) selectPortionSubarray.get(1),
-                            (String) selectPortionSubarray.get(2)
-                        }
-                    );
-                }
-
-                // System.out.println(selectPortionAsList.toString());
-
-                String[][] selectPortionAsArray = new String[selectPortionAsList.size()][];
-                selectPortionAsArray = selectPortionAsList.toArray(selectPortionAsArray);
-
-                // Develop Final Object
                 requestObject = new MatchaDbRequestObject(
                     MatchaDbRequestType.GET,
-                    fromPortionAsArray,
-                    selectPortionAsArray,
+                    gatherFromPortion((JSONArray) requestContents.get("From")),
+                    gatherSelectPortion((JSONArray) requestContents.get("Select")),
                     null,
                     null
                 );
@@ -144,16 +105,64 @@ public class MatchaDbRequestParser {
 
             } else if (rawRequest.getRequestType() == MatchaDbRequestType.DELETE) {
                 // Attempt to parse DELETE request
-                
-                // Get From Portion
-
-                // Get Select Portion
-
+                requestObject = new MatchaDbRequestObject(
+                    MatchaDbRequestType.DELETE,
+                    gatherFromPortion((JSONArray) requestContents.get("From")),
+                    gatherSelectPortion((JSONArray) requestContents.get("Select")),
+                    null,
+                    null
+                );
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return requestObject;
+    }
+
+    /**
+     * Gathers the "From" portion from a request and returns it as a String array.
+     *
+     * @param jsonArray the JSON Array containing the "From" portion.
+     *
+     * @return The from portion as an array of String.
+     */
+    private String[] gatherFromPortion(JSONArray fromPortionAsJSONArray) {
+
+        List<String> fromPortionAsList = new ArrayList<>();
+        for (Iterator fromPortionAsJSONArrayIterator = fromPortionAsJSONArray.iterator();
+            fromPortionAsJSONArrayIterator.hasNext();) {
+            fromPortionAsList.add((String) fromPortionAsJSONArrayIterator.next());
+        }
+
+        String[] fromPortionAsArray = new String[fromPortionAsList.size()];
+        return fromPortionAsList.toArray(fromPortionAsArray);
+    }
+
+    /**
+     * Gathers the "Select" portion from a request and returns it as a 2D String array.
+     *
+     * @param jsonArray the JSON Array containing the "From" portion.
+     *
+     * @return The from portion as a 2D array of String.
+     */
+    private String[][] gatherSelectPortion(JSONArray selectPortionAsJSONArray) {
+
+        List<String[]> selectPortionAsList = new ArrayList<>();
+        for (Iterator selectPortionAsJSONArrayIterator = selectPortionAsJSONArray.iterator();
+            selectPortionAsJSONArrayIterator.hasNext();) {
+            JSONArray selectPortionSubarray = (JSONArray) selectPortionAsJSONArrayIterator.next();
+
+            selectPortionAsList.add(
+                new String[] {
+                    (String) selectPortionSubarray.get(0),
+                    (String) selectPortionSubarray.get(1),
+                    (String) selectPortionSubarray.get(2)
+                }
+            );
+        }
+
+        String[][] selectPortionAsArray = new String[selectPortionAsList.size()][];
+        return selectPortionAsList.toArray(selectPortionAsArray);
     }
 }
