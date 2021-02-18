@@ -78,6 +78,7 @@ public class MatchaDbRequestParser {
 
             if (rawRequest.getRequestType() == MatchaDbRequestType.GET) {
                 // Attempt to parse GET request
+
                 requestObject = new MatchaDbRequestObject(
                     MatchaDbRequestType.GET,
                     gather1DArrayPortion((JSONArray) requestContents.get("From")),
@@ -104,7 +105,7 @@ public class MatchaDbRequestParser {
                 );                
             } else if (rawRequest.getRequestType() == MatchaDbRequestType.UPDATE) {
                 // Attempt to parse UPDATE request
-                
+
                 requestObject = new MatchaDbRequestObject(
                     MatchaDbRequestType.UPDATE,
                     gather1DArrayPortion((JSONArray) requestContents.get("From")),
@@ -114,6 +115,7 @@ public class MatchaDbRequestParser {
                 );
             } else if (rawRequest.getRequestType() == MatchaDbRequestType.DELETE) {
                 // Attempt to parse DELETE request
+
                 requestObject = new MatchaDbRequestObject(
                     MatchaDbRequestType.DELETE,
                     gather1DArrayPortion((JSONArray) requestContents.get("From")),
