@@ -2,11 +2,9 @@
 
 **Summary**: _A simple DB implementation that can take in a json doc and develop an API from said JSON doc._
 
-**Status**: 45% to Beta v1
+**Status**: 56% to Beta v1
 
 **Recent Updates**:
-
-2020/12/30 - Created new query types for each request opertion type
 
 2021/01/04 - Re-implemented searchForData as well as an "All Tables" lookup
 
@@ -15,6 +13,8 @@
 2021/01/16 - Formatting changes for MatchaDbTable and related classes
 
 2021/02/02 - Implemented basic Request Service
+
+2021/02/17 - Implemented basic Parsing Service
 
 **System Requirements**
 

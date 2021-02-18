@@ -96,7 +96,7 @@ public class MatchaDbRequestParser {
                 }
                 
                 requestObject = new MatchaDbRequestObject(
-                    MatchaDbRequestType.GET,
+                    MatchaDbRequestType.POST,
                     gather1DArrayPortion((JSONArray) requestContents.get("From")),
                     selectPortionForInsert,
                     gather2DArrayPortion((JSONArray) requestContents.get("Insert")),
@@ -106,7 +106,7 @@ public class MatchaDbRequestParser {
                 // Attempt to parse UPDATE request
                 
                 requestObject = new MatchaDbRequestObject(
-                    MatchaDbRequestType.GET,
+                    MatchaDbRequestType.UPDATE,
                     gather1DArrayPortion((JSONArray) requestContents.get("From")),
                     gather2DArrayPortion((JSONArray) requestContents.get("Select")),
                     null,
@@ -130,11 +130,11 @@ public class MatchaDbRequestParser {
     }
 
     /**
-     * Gathers the "From" portion from a request and returns it as a String array.
+     * Gathers a 1D Array portion from a request and returns it as a 2D String array.
      *
-     * @param jsonArray the JSON Array containing the "From" portion.
+     * @param jsonArray the 1D Json Array portion.
      *
-     * @return The from portion as an array of String.
+     * @return a 1D array of String.
      */
     private String[] gather1DArrayPortion(JSONArray fromPortionAsJSONArray) {
 
@@ -149,11 +149,11 @@ public class MatchaDbRequestParser {
     }
 
     /**
-     * Gathers the "Select" portion from a request and returns it as a 2D String array.
+     * Gathers a 2D Array portion from a request and returns it as a 2D String array.
      *
-     * @param jsonArray the JSON Array containing the "Select" portion.
+     * @param jsonArray the 2D Json Array portion.
      *
-     * @return The from portion as a 2D array of String.
+     * @return a 2D array of String.
      */
     private String[][] gather2DArrayPortion(JSONArray selectPortionAsJSONArray) {
 
@@ -161,14 +161,12 @@ public class MatchaDbRequestParser {
         for (Iterator selectPortionAsJSONArrayIterator = selectPortionAsJSONArray.iterator();
             selectPortionAsJSONArrayIterator.hasNext();) {
             JSONArray selectPortionSubarray = (JSONArray) selectPortionAsJSONArrayIterator.next();
-
-            selectPortionAsList.add(
-                new String[] {
-                    (String) selectPortionSubarray.get(0),
-                    (String) selectPortionSubarray.get(1),
-                    (String) selectPortionSubarray.get(2)
-                }
-            );
+            
+            String[] selectPortionZubarray = new String[selectPortionSubarray.size()];
+            for (int i = 0; i < selectPortionSubarray.size(); i++) {
+                selectPortionZubarray[i] = (String) selectPortionSubarray.get(i);
+            }
+            selectPortionAsList.add(selectPortionZubarray);
         }
 
         String[][] selectPortionAsArray = new String[selectPortionAsList.size()][];

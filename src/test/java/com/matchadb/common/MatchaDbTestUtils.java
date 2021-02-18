@@ -20,6 +20,8 @@ public class MatchaDbTestUtils {
     public static void compareResponseObjects(MatchaDbResponseObject expected, 
                                         MatchaDbResponseObject actual) {
         try {
+            //System.out.println(expected.toString());
+            //System.out.println(actual.toString());
             Assert.assertTrue(expected.toString().equals(actual.toString()));
         } catch (NullPointerException npe) {
             Assert.fail("Null expected or actual response objects");

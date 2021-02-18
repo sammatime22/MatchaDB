@@ -127,7 +127,7 @@ public class MatchaDbRequestParserTest {
             capturedRequestObject.toString().equals(
                 String.format(
                     "{\"From\": [%s], \"Select\": [%s], \"Insert\": [%s], \"Update\": [%s]}",
-                    "Cars", "", "[\"Name\", \"F150\"]", ""
+                    "['Cars']", "", "[ 'Name'  'F150' ]", ""
                 )
             )
         );
@@ -151,7 +151,7 @@ public class MatchaDbRequestParserTest {
                 new MatchaDbRawRequestObject(
                     MatchaDbRequestType.UPDATE,
                     "{\"From\": [\"Laptops\"], \"Select\":[[\"Brand\", \"has\", \"G\"]],"
-                    + "\"Update\": [\"Price\", \"to\", \"1300\"]}"
+                    + "\"Update\": [[\"Price\", \"to\", \"1300\"]]}"
                 )
             )
         );
@@ -164,7 +164,7 @@ public class MatchaDbRequestParserTest {
             capturedRequestObject.toString().equals(
                 String.format(
                     "{\"From\": [%s], \"Select\": [%s], \"Insert\": [%s], \"Update\": [%s]}",
-                    "\"Laptops\"", "[\"Brand\", \"has\", \"G\"]", "", "[\"Price\", \"to\", \"1300\"]"
+                    "['Laptops']", "[ 'Brand'  'has'  'G' ]", "", "[ 'Price'  'to'  '1300' ]"
                 )
             )
         );
