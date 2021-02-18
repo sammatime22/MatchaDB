@@ -1,7 +1,7 @@
 package com.matchadb.surface;
 
-import com.matchadb.models.MatchaDbRequestObject;
-import com.matchadb.models.MatchaDbResponseObject;
+import com.matchadb.models.request.MatchaDbRawRequestObject;
+import com.matchadb.models.response.MatchaDbResponseObject;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,25 +22,25 @@ public class MatchaDbInterface {
 
     // Generic GET
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public MatchaDbResponseObject get(MatchaDbRequestObject request) {
+    public MatchaDbResponseObject get(MatchaDbRawRequestObject request) {
         return null;
     }
 
     // Generic POST
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public MatchaDbResponseObject post(MatchaDbRequestObject request) {
+    public MatchaDbResponseObject post(MatchaDbRawRequestObject request) {
         return null;
     }
 
     // Generic UPDATE
     @RequestMapping(value = "", method = RequestMethod.PUT)
-    public MatchaDbResponseObject update(MatchaDbRequestObject request) {
+    public MatchaDbResponseObject update(MatchaDbRawRequestObject request) {
         return null;
     }
 
     // Generic DELETE
     @RequestMapping(value = "", method = RequestMethod.DELETE)
-    public MatchaDbResponseObject delete(MatchaDbRequestObject request) {
+    public MatchaDbResponseObject delete(MatchaDbRawRequestObject request) {
         return null;
     }
 }

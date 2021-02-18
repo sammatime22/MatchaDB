@@ -20,8 +20,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 
-import org.json.simple.parser.ParseException;
-
 /**
  * Tests the DB Table methods.
  */
@@ -244,7 +242,7 @@ public class MatchaDbTableTest {
      * memory.
      */
     @Test
-    public void testPostData() throws ParseException {
+    public void testPostData() {
         String fancyHatToAddAsJSON = MatchaDbGenerateData.newClothesItemToInsert();
 
         // Query to get item

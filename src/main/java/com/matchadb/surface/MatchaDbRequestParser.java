@@ -2,22 +2,47 @@ package com.matchadb.surface;
 
 import com.matchadb.enums.MatchaDbRequestType;
 
-import com.matchadb.models.MatchaDbRawRequestObject;
-import com.matchadb.models.MatchaDbRequestObject;
-import com.matchadb.models.MatchaDbResponseObject;
+import com.matchadb.models.request.MatchaDbRawRequestObject;
+import com.matchadb.models.request.MatchaDbRequestObject;
+import com.matchadb.models.response.MatchaDbResponseObject;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * This service is an intermediary service which determines the 
- * request type and data associated with the request.
+ * This service is an intermediary service which determines the request type and data associated 
+ * with the request.
  */
 @Service
 public class MatchaDbRequestParser {
 
-    // Constructor
-    public MatchaDbRequestParser() {
+    @Autowired MatchaDbRequestService matchaDbRequestService;
 
+    private JSONParser parser;
+
+    private final String COMMAND_UNPARSABLE = "Command could not be parsed...";
+
+    private final String FROM = "From";
+
+    private final String SELECT = "Select";
+
+    private final String INSERT = "Insert";
+
+    private final String UPDATE = "Update";
+
+    // Constructor
+    public MatchaDbRequestParser(MatchaDbRequestService matchaDbRequestService) {
+        this.matchaDbRequestService = matchaDbRequestService;
+        this.parser = new JSONParser();
     }
 
     /**
@@ -28,53 +53,125 @@ public class MatchaDbRequestParser {
      *
      * @return The response from the database.
      */
-    public MatchaDbResponseObject ingestRequest(MatchaDbRawRequestObject rawRequest) {
-        return null;
+    public MatchaDbResponseObject ingestAndConductRequest(MatchaDbRawRequestObject rawRequest) {
+        MatchaDbRequestObject requestObject = convertRawRequest(rawRequest);
+        if (requestObject != null) {
+            return matchaDbRequestService.conductRequest(requestObject);
+        } else {
+            return new MatchaDbResponseObject(COMMAND_UNPARSABLE, "");
+        }
     }
 
     /**
-     * This method runs the other conversion steps.
+     * This method runs an interpretation on an incoming raw request, and returns a request object
+     * that can be used by the ingestAndConductRequest method.
      *
      * @param rawRequest The raw request to be parsed.
      *
-     * @return A fully developed request object, or null if the request is invalid.
+     * @return a request object that can be used on the DB.
      */
     public MatchaDbRequestObject convertRawRequest(MatchaDbRawRequestObject rawRequest) {
-        return null;
+        MatchaDbRequestObject requestObject = null;
+
+        try {
+            JSONObject requestContents = (JSONObject) parser.parse(rawRequest.getRequestString());
+
+            if (rawRequest.getRequestType() == MatchaDbRequestType.GET) {
+                // Attempt to parse GET request
+
+                requestObject = new MatchaDbRequestObject(
+                    MatchaDbRequestType.GET,
+                    gather1DArrayPortion((JSONArray) requestContents.get("From")),
+                    gather2DArrayPortion((JSONArray) requestContents.get("Select")),
+                    null,
+                    null
+                );
+            } else if (rawRequest.getRequestType() == MatchaDbRequestType.POST) {
+                // Attempt to parse POST request
+
+                // Optional to include a "Select" portion
+                String[][] selectPortionForInsert = null;
+
+                if (requestContents.get("Select") != null) {
+                    selectPortionForInsert = gather2DArrayPortion((JSONArray) requestContents.get("Select"));
+                }
+                
+                requestObject = new MatchaDbRequestObject(
+                    MatchaDbRequestType.POST,
+                    gather1DArrayPortion((JSONArray) requestContents.get("From")),
+                    selectPortionForInsert,
+                    gather2DArrayPortion((JSONArray) requestContents.get("Insert")),
+                    null
+                );                
+            } else if (rawRequest.getRequestType() == MatchaDbRequestType.UPDATE) {
+                // Attempt to parse UPDATE request
+
+                requestObject = new MatchaDbRequestObject(
+                    MatchaDbRequestType.UPDATE,
+                    gather1DArrayPortion((JSONArray) requestContents.get("From")),
+                    gather2DArrayPortion((JSONArray) requestContents.get("Select")),
+                    null,
+                    gather2DArrayPortion((JSONArray) requestContents.get("Update"))
+                );
+            } else if (rawRequest.getRequestType() == MatchaDbRequestType.DELETE) {
+                // Attempt to parse DELETE request
+
+                requestObject = new MatchaDbRequestObject(
+                    MatchaDbRequestType.DELETE,
+                    gather1DArrayPortion((JSONArray) requestContents.get("From")),
+                    gather2DArrayPortion((JSONArray) requestContents.get("Select")),
+                    null,
+                    null
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return requestObject;
     }
 
     /**
-     * Gets and returns the enum associated with the request type.
+     * Gathers a 1D Array portion from a request and returns it as a 2D String array.
      *
-     * @param rawRequest The raw request to be parsed.
+     * @param jsonArray the 1D Json Array portion.
      *
-     * @return An enum assicated with the request object.
+     * @return a 1D array of String.
      */
-    public MatchaDbRequestType getRequestType(MatchaDbRawRequestObject rawRequest) {
-        return null;
+    private String[] gather1DArrayPortion(JSONArray fromPortionAsJSONArray) {
+
+        List<String> fromPortionAsList = new ArrayList<>();
+        for (Iterator fromPortionAsJSONArrayIterator = fromPortionAsJSONArray.iterator();
+            fromPortionAsJSONArrayIterator.hasNext();) {
+            fromPortionAsList.add((String) fromPortionAsJSONArrayIterator.next());
+        }
+
+        String[] fromPortionAsArray = new String[fromPortionAsList.size()];
+        return fromPortionAsList.toArray(fromPortionAsArray);
     }
 
     /**
-     * Gets the contents of the request, and turns them into an acceptable command
-     * for the system.
+     * Gathers a 2D Array portion from a request and returns it as a 2D String array.
      *
-     * @param rawRequest The raw request to be parsed.
+     * @param jsonArray the 2D Json Array portion.
      *
-     * @return A string with the command as made up via content from the request.
+     * @return a 2D array of String.
      */
-    public String getRequestContents(MatchaDbRawRequestObject rawRequest) {
-        return null;
-    }
+    private String[][] gather2DArrayPortion(JSONArray selectPortionAsJSONArray) {
 
-    /**
-     * Calls the appropriate method on the Request Service, and returns the 
-     * response upon completion.
-     *
-     * @param request The request to be used on the db.
-     *
-     * @return A response object.
-     */
-    public MatchaDbResponseObject makeRequest(MatchaDbRequestObject request) {
-        return null;
+        List<String[]> selectPortionAsList = new ArrayList<>();
+        for (Iterator selectPortionAsJSONArrayIterator = selectPortionAsJSONArray.iterator();
+            selectPortionAsJSONArrayIterator.hasNext();) {
+            JSONArray selectPortionSubarray = (JSONArray) selectPortionAsJSONArrayIterator.next();
+            
+            String[] selectPortionZubarray = new String[selectPortionSubarray.size()];
+            for (int i = 0; i < selectPortionSubarray.size(); i++) {
+                selectPortionZubarray[i] = (String) selectPortionSubarray.get(i);
+            }
+            selectPortionAsList.add(selectPortionZubarray);
+        }
+
+        String[][] selectPortionAsArray = new String[selectPortionAsList.size()][];
+        return selectPortionAsList.toArray(selectPortionAsArray);
     }
 }

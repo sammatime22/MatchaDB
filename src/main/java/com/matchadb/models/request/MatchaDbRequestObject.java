@@ -1,4 +1,4 @@
-package com.matchadb.models;
+package com.matchadb.models.request;
 
 import com.matchadb.enums.MatchaDbRequestType;
 
@@ -71,5 +71,67 @@ public class MatchaDbRequestObject {
      */
     public String[][] getUpdateQuery() {
         return this.updateQuery;
+    }
+
+    /**
+     * Returns a string representation of the MatchaDbRequestObject.
+     * 
+     * @return a string representation of the MatchaDbRequestObject.
+     */
+    public String toString() {
+        String fromQueryAsString = "";
+        
+        if (this.getFromQuery() != null) {
+            for (String fromQueryAsStringPortion : this.getFromQuery()) {
+                fromQueryAsString += "['" + fromQueryAsStringPortion + "']";
+            }
+        }
+
+        String selectQueryAsString = "";
+
+        if (this.getSelectQuery() != null) {
+            for (String[] selectQueryAsStringPortion : this.getSelectQuery()) {
+                String selectQueryAsStringPortionToAdd = "";
+
+                for (String selectQueryAsStringPortionSection : selectQueryAsStringPortion) {
+                    selectQueryAsStringPortionToAdd += " '" + selectQueryAsStringPortionSection + "' ";
+                }
+
+                selectQueryAsString += "["+ selectQueryAsStringPortionToAdd + "]";
+            }
+        }
+
+        String insertQueryAsString = "";
+
+        if (this.getInsertQuery() != null) {
+            for (String[] insertQueryAsStringPortion : this.getInsertQuery()) {
+                String insertQueryAsStringPortionToAdd = "";
+
+                for (String insertQueryAsStringPortionSection :  insertQueryAsStringPortion) {
+                    insertQueryAsStringPortionToAdd += " '" + insertQueryAsStringPortionSection + "' ";
+                }
+
+                insertQueryAsString += "[" + insertQueryAsStringPortionToAdd + "]";
+            }
+        }
+
+        String updateQueryAsString = "";
+
+        if (this.getUpdateQuery() != null) {
+            for (String[] updateQueryAsStringPortion : this.getUpdateQuery()) {
+                String updateQueryAsStringPortionToAdd = "";
+
+                for (String updateQueryAsStringPortionSection : updateQueryAsStringPortion) {
+                    updateQueryAsStringPortionToAdd += " '" + updateQueryAsStringPortionSection + "' ";
+                }
+
+                updateQueryAsString += "[" + updateQueryAsStringPortionToAdd + "]";
+            }
+        }
+
+        return String.format(
+            "{\"From\": [%s], \"Select\": [%s], \"Insert\": [%s], \"Update\": [%s]}",
+            fromQueryAsString, selectQueryAsString, insertQueryAsString, updateQueryAsString
+        );
     }
 }

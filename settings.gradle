@@ -1,5 +1,7 @@
 include 'com.matchadb.database'
 include 'com.matchadb.enums'
 include 'com.matchadb.loading'
-include 'com.matchadb.models'
+include 'com.matchadb.models.query'
+include 'com.matchadb.models.request'
+include 'com.matchadb.models.response'
 include 'com.matchadb.surface'
