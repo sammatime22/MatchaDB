@@ -3,9 +3,12 @@ package com.matchadb.surface;
 import com.matchadb.models.request.MatchaDbRawRequestObject;
 import com.matchadb.models.response.MatchaDbResponseObject;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 /**
  * This class acts as the REST interface for the MatchaDB application.
@@ -13,34 +16,63 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class MatchaDbInterface {
 
-    MatchaDbRequestParser requestParser;
+    @Autowired MatchaDbRequestParser requestParser;
 
     // Contstructor
-    public MatchaDbInterface() {
-        
+    public MatchaDbInterface(MatchaDbRequestParser requestParser) {
+        this.requestParser = requestParser;
     }
 
-    // Generic GET
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public MatchaDbResponseObject get(MatchaDbRawRequestObject request) {
+    /**
+     * Takes in a string, which is expected to be in the form of a JSON object, to run commands
+     * against the DB and returns data.
+     *
+     * @param request The request as a string.
+     *
+     * @return A response object that defines the success/failure of the operation, and if 
+     *         successful returns data reflective of the command.
+     */
+    @GetMapping(path = "/")
+    public MatchaDbResponseObject get(String request) {
         return null;
     }
 
-    // Generic POST
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    public MatchaDbResponseObject post(MatchaDbRawRequestObject request) {
+    /**
+     * Takes in a string, which is expected to be in the form of a JSON object, to run commands
+     * against the DB to insert data.
+     *
+     * @param request The request as a string.
+     *
+     * @return A response object that defines the success/failure of the operation.
+     */
+    @PostMapping(path = "/")
+    public MatchaDbResponseObject post(String request) {
         return null;
     }
 
-    // Generic UPDATE
-    @RequestMapping(value = "", method = RequestMethod.PUT)
-    public MatchaDbResponseObject update(MatchaDbRawRequestObject request) {
+    /**
+     * Takes in a string, which is expected to be in the form of a JSON object, to run commands
+     * against the DB to update data.
+     *
+     * @param request The request as a string.
+     *
+     * @return A response object that defines the success/failure of the operation.
+     */
+    @PutMapping(path = "/")
+    public MatchaDbResponseObject update(String request) {
         return null;
     }
 
-    // Generic DELETE
-    @RequestMapping(value = "", method = RequestMethod.DELETE)
-    public MatchaDbResponseObject delete(MatchaDbRawRequestObject request) {
+    /**
+     * Takes in a string, which is expected to be in the form of a JSON object, to run commands
+     * against the DB to delete data.
+     *
+     * @param request The request as a string.
+     *
+     * @return A response object that defines the success/failure of the operation.
+     */
+    @DeleteMapping(path = "/")
+    public MatchaDbResponseObject delete(String request) {
         return null;
     }
 }

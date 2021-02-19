@@ -40,7 +40,7 @@ public class MatchaDbRequestService {
     private final String COMMAND_UNIDENTIFIABLE = "Command could not be identified...";
 
     /**
-     * Constructor used for autowiring.
+     * Constructor.
      *
      * @param matchaDbTable an instance of the MatchaDbTable class.
      */
