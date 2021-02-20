@@ -4,6 +4,8 @@ import com.matchadb.models.request.MatchaDbRawRequestObject;
 import com.matchadb.models.response.MatchaDbResponseObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,11 +31,11 @@ public class MatchaDbInterface {
      *
      * @param request The request as a string.
      *
-     * @return A response object that defines the success/failure of the operation, and if 
-     *         successful returns data reflective of the command.
+     * @return A response object as a string wrapped in an entity that defines the success/failure 
+     *         of the operation.
      */
     @GetMapping(path = "/")
-    public MatchaDbResponseObject get(String request) {
+    public ResponseEntity<String> get(String request) {
         return null;
     }
 
@@ -43,10 +45,11 @@ public class MatchaDbInterface {
      *
      * @param request The request as a string.
      *
-     * @return A response object that defines the success/failure of the operation.
+     * @return A response object as a string wrapped in an entity that defines the success/failure 
+     *         of the operation.
      */
     @PostMapping(path = "/")
-    public MatchaDbResponseObject post(String request) {
+    public ResponseEntity<String> post(String request) {
         return null;
     }
 
@@ -56,10 +59,11 @@ public class MatchaDbInterface {
      *
      * @param request The request as a string.
      *
-     * @return A response object that defines the success/failure of the operation.
+     * @return A response object as a string wrapped in an entity that defines the success/failure 
+     *         of the operation.
      */
     @PutMapping(path = "/")
-    public MatchaDbResponseObject update(String request) {
+    public ResponseEntity<String> update(String request) {
         return null;
     }
 
@@ -69,10 +73,11 @@ public class MatchaDbInterface {
      *
      * @param request The request as a string.
      *
-     * @return A response object that defines the success/failure of the operation.
+     * @return A response object as a string wrapped in an entity that defines the success/failure 
+     *         of the operation.
      */
     @DeleteMapping(path = "/")
-    public MatchaDbResponseObject delete(String request) {
+    public ResponseEntity<String> delete(String request) {
         return null;
     }
 }
