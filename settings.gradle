@@ -1,3 +1,4 @@
+include 'com.matchadb.common'
 include 'com.matchadb.database'
 include 'com.matchadb.enums'
 include 'com.matchadb.loading'
