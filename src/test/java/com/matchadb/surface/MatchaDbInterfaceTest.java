@@ -11,19 +11,21 @@ import static com.matchadb.common.MatchaDbConstants.UNSUCCESSFUL_DELETE_INFO;
 
 import static org.mockito.Mockito.mock;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.matchadb.enums.MatchaDbRequestType;
 import com.matchadb.models.request.MatchaDbRawRequestObject;
 
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.junit.jupiter.api.extension.ExtendWith;
+//import org.junit.jupiter.platform.runner.JUnitPlatform;
+import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
+//import org.springframework.test.context.SpringRunner;
 
 import org.mockito.junit.jupiter.MockitoExtension;
 /**
@@ -31,7 +33,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * class.
  */
 @ExtendWith(MockitoExtension.class)
-@WebMvcTest
+//@RunWith(SpringRunner.class)
+@WebMvcTest(MatchaDbInterface.class)
 public class MatchaDbInterfaceTest {  
 
     MatchaDbRequestParser matchaDbRequestParser = mock(MatchaDbRequestParser.class);
@@ -39,7 +42,7 @@ public class MatchaDbInterfaceTest {
     MatchaDbInterface matchaDbInterface = new MatchaDbInterface(matchaDbRequestParser);
 
     @Autowired
-    MockMvc mockMvc; // = new MockMvc();
+    MockMvc mockMvc = MockMvcRequestBuilders.standaloneSetup(matchaDbInterface).build();
 
     /**
      * Tests that on a successful GET request that the interface provides values accordingly.
@@ -54,8 +57,8 @@ public class MatchaDbInterfaceTest {
                 "{\"From\": \"Presents\", \"Select\": [[\"Present Owner\", \"is\", \"Me\"]]}"
             );
 
-        // Test the response
-        mockMvc.perform(get("/"));
+        // // Test the response
+        // mockMvc.perform(get("/"));
     }
 
     @Test
