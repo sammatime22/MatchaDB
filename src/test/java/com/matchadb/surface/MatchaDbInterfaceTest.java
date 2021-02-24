@@ -11,7 +11,7 @@ import static com.matchadb.common.MatchaDbConstants.UNSUCCESSFUL_DELETE_INFO;
 
 import static org.mockito.Mockito.mock;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.matchadb.enums.MatchaDbRequestType;
 import com.matchadb.models.request.MatchaDbRawRequestObject;
@@ -26,14 +26,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 //import org.springframework.test.context.SpringRunner;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import org.mockito.junit.jupiter.MockitoExtension;
 /**
  * This class tests any and all endpoint types for the MatchaDbInterface
  * class.
  */
+@SpringBootApplication
 @ExtendWith(MockitoExtension.class)
-//@RunWith(SpringRunner.class)
 @WebMvcTest(MatchaDbInterface.class)
 public class MatchaDbInterfaceTest {  
 
@@ -42,7 +43,7 @@ public class MatchaDbInterfaceTest {
     MatchaDbInterface matchaDbInterface = new MatchaDbInterface(matchaDbRequestParser);
 
     @Autowired
-    MockMvc mockMvc = MockMvcRequestBuilders.standaloneSetup(matchaDbInterface).build();
+    MockMvc mockMvc;
 
     /**
      * Tests that on a successful GET request that the interface provides values accordingly.
