@@ -12,10 +12,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
+import org.springframework.context.annotation.ComponentScan;
+
+
 /**
  * This class acts as the REST interface for the MatchaDB application.
  */
 @Controller
+@ComponentScan(basePackages = "org.matchadb.surface")
 public class MatchaDbInterface {
 
     @Autowired MatchaDbRequestParser requestParser;
