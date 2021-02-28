@@ -17,12 +17,15 @@ import org.json.simple.parser.ParseException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
+
 
 /**
  * This service is an intermediary service which determines the request type and data associated 
  * with the request.
  */
-@Service
+//@Service
+@Component("matchaDbRequestParser")
 public class MatchaDbRequestParser {
 
     @Autowired MatchaDbRequestService matchaDbRequestService;

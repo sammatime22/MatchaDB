@@ -18,15 +18,16 @@ import org.springframework.context.annotation.ComponentScan;
 /**
  * This class acts as the REST interface for the MatchaDB application.
  */
-@Controller
-@ComponentScan(basePackages = "org.matchadb.surface")
+@Controller 
 public class MatchaDbInterface {
 
-    @Autowired MatchaDbRequestParser requestParser;
+    @Autowired
+    private MatchaDbRequestParser matchaDbRequestParser;
 
-    // Contstructor
-    public MatchaDbInterface(MatchaDbRequestParser requestParser) {
-        this.requestParser = requestParser;
+    // Contstructor 
+    
+    public MatchaDbInterface(MatchaDbRequestParser matchaDbRequestParser) {
+        this.matchaDbRequestParser = matchaDbRequestParser;
     }
 
     /**

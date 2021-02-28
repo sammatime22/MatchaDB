@@ -13,6 +13,8 @@ import static org.mockito.Mockito.mock;
 
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import com.matchadb.MatchaDbApplicationInitializer;
+
 import com.matchadb.enums.MatchaDbRequestType;
 import com.matchadb.models.request.MatchaDbRawRequestObject;
 
@@ -25,7 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
-//import org.springframework.test.context.SpringRunner;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -33,9 +36,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
  * This class tests any and all endpoint types for the MatchaDbInterface
  * class.
  */
-@SpringBootApplication
+//@SpringBootApplication
 @ExtendWith(MockitoExtension.class)
+@RunWith(SpringRunner.class)
 @WebMvcTest(MatchaDbInterface.class)
+@ContextConfiguration(classes={MatchaDbApplicationInitializer.class})
 public class MatchaDbInterfaceTest {  
 
     MatchaDbRequestParser matchaDbRequestParser = mock(MatchaDbRequestParser.class);
@@ -59,41 +64,41 @@ public class MatchaDbInterfaceTest {
             );
 
         // // Test the response
-        // mockMvc.perform(get("/"));
+        mockMvc.perform(MockMvcRequestBuilders.get("/"));
     }
 
-    @Test
-    public void testGetRequestUnsuccessful() {
+    // @Test
+    // public void testGetRequestUnsuccessful() {
 
-    }
+    // }
 
-    @Test
-    public void testPostRequestSuccessful() {
+    // @Test
+    // public void testPostRequestSuccessful() {
 
-    }
+    // }
 
-    @Test
-    public void testPostRequestUnsuccessful() {
+    // @Test
+    // public void testPostRequestUnsuccessful() {
 
-    }
+    // }
 
-    @Test 
-    public void testUpdateRequestSuccessful() {
+    // @Test 
+    // public void testUpdateRequestSuccessful() {
 
-    }
+    // }
 
-    @Test 
-    public void testUpdateRequestUnsuccessful() {
+    // @Test 
+    // public void testUpdateRequestUnsuccessful() {
 
-    }
+    // }
 
-    @Test
-    public void testDeleteRequestSuccessful() {
+    // @Test
+    // public void testDeleteRequestSuccessful() {
 
-    }
+    // }
 
-    @Test
-    public void testDeleteRequestUnsuccessful() {
+    // @Test
+    // public void testDeleteRequestUnsuccessful() {
 
-    }
+    // }
 }
