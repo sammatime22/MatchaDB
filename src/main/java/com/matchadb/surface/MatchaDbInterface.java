@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -39,8 +40,8 @@ public class MatchaDbInterface {
      * @return A response object as a string wrapped in an entity that defines the success/failure 
      *         of the operation.
      */
-    @GetMapping(path = "/")
-    public ResponseEntity<String> get(String request) {
+    @GetMapping(path = "/getstuff")
+    public ResponseEntity<String> get(@RequestBody String request) {
         System.out.println("Got here!");
         // Send the request to the Parser
 
@@ -95,4 +96,8 @@ public class MatchaDbInterface {
     public ResponseEntity<String> delete(String request) {
         return null;
     }
+
+    // @ExceptionHandler
+    // Develop an exception handler so we can see why our requests are consistently returning 401s
+    // but also for the future
 }

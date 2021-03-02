@@ -90,7 +90,7 @@ public class MatchaDbInterfaceTest {
 
         RequestBuilder request 
             = MockMvcRequestBuilders
-                .get("/")
+                .get("/getstuff")
                 .content(rawRequestString)
                 .characterEncoding("UTF-8")
                 .accept(MediaType.APPLICATION_JSON);
