@@ -41,6 +41,7 @@ public class MatchaDbInterface {
      */
     @GetMapping(path = "/")
     public ResponseEntity<String> get(String request) {
+        System.out.println("Got here!");
         // Send the request to the Parser
 
         // Interpret the info - see if the request passed or failed

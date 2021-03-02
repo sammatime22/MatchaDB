@@ -92,13 +92,16 @@ public class MatchaDbInterfaceTest {
             = MockMvcRequestBuilders
                 .get("/")
                 .content(rawRequestString)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON);
+                .characterEncoding("UTF-8")
+                .accept(MediaType.APPLICATION_JSON);
+
+        System.out.println(request);
 
         // Test the response
         MvcResult result = mockMvc.perform(request).andReturn();
 
         System.out.println(result.getResponse().getStatus());
+        System.out.println(result.getRequest().getContentAsString());
         System.out.println(result.getResponse().getContentAsString());
         
     }
