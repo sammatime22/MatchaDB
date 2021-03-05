@@ -1,5 +1,6 @@
 package com.matchadb.surface;
 
+import com.matchadb.enums.MatchaDbRequestType;
 import com.matchadb.models.request.MatchaDbRawRequestObject;
 import com.matchadb.models.response.MatchaDbResponseObject;
 
@@ -40,19 +41,19 @@ public class MatchaDbInterface {
      * @return A response object as a string wrapped in an entity that defines the success/failure 
      *         of the operation.
      */
-    @GetMapping(path = "/getstuff")
+    @GetMapping(path = "/")
     public ResponseEntity<String> get(@RequestBody String request) {
         System.out.println("Got here!");
         // Send the request to the Parser
-
-        // Interpret the info - see if the request passed or failed
-
-        // Apply the info to the header
-        
-        // Apply the object to the body of the entity as a string
+        MatchaDbResponseObject response 
+            = matchaDbRequestParser.ingestAndConductRequest(
+                new MatchaDbRawRequestObject(MatchaDbRequestType.GET, request)
+            );
         
         // Return the result
-        return ResponseEntity.ok().header("Custom-Header", "grapefruit").body("sour");
+        return ResponseEntity.ok()
+            .header("Custom-Header", response.getInfo())
+            .body(response.getResponseValue().toString());
     }
 
     /**

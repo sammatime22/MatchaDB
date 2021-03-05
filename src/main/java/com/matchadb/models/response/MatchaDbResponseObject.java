@@ -17,6 +17,14 @@ public class MatchaDbResponseObject {
         this.responseValue = responseValue;
     }
 
+    public String getInfo() {
+        return this.info;
+    }
+
+    public Object getResponseValue() {
+        return this.responseValue;
+    }
+
     public String toString() {
         return String.format(
             "{\"info\": \"%s\", \"responseValue\": \"%s\"}", info, responseValue
