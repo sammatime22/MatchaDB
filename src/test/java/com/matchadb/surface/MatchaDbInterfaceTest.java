@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 //import org.junit.jupiter.platform.runner.JUnitPlatform;
@@ -81,8 +82,8 @@ public class MatchaDbInterfaceTest {
             );
         }};
 
-        String expectedResponseBody 
-            = "[{\"Name\": \"Drum Kit\", \"Number Of Parts\": 8, \"Including Cymbals?\": true}]";
+        String[] expectedResponseBodyContents
+            = new String[] {"Name=Drum Kit", "Number Of Parts=8", "Including Cymbals?=true"};
 
         when(
             matchaDbRequestParser.ingestAndConductRequest(any(MatchaDbRawRequestObject.class))
@@ -95,15 +96,16 @@ public class MatchaDbInterfaceTest {
                 .characterEncoding("UTF-8")
                 .accept(MediaType.APPLICATION_JSON);
 
-        System.out.println(request);
-
         // Test the response
         MvcResult result = mockMvc.perform(request).andReturn();
-
-        System.out.println(result.getResponse().getStatus());
-        System.out.println(result.getRequest().getContentAsString());
-        System.out.println(result.getResponse().getContentAsString());
         
+        Assert.assertTrue(rawRequestString.equals(result.getRequest().getContentAsString()));
+        Assert.assertTrue(result.getRequest() != null);
+        for (String expectedContent : expectedResponseBodyContents) {
+            Assert.assertTrue(
+                result.getResponse().getContentAsString().indexOf(expectedContent) != -1
+            );
+        }
     }
 
     // @Test
