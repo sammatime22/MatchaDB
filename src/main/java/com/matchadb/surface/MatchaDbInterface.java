@@ -45,16 +45,14 @@ public class MatchaDbInterface {
             );
         
         if (MatchaDbConstants.SUCCESSFUL_GET_INFO.equals(response.getInfo())) {
-            // Given we have a result to return, return said result
-            return ResponseEntity.ok()
-                .header("Custom-Header", MatchaDbConstants.SUCCESSFUL_GET_INFO)
-                .body(response.getResponseValue().toString());
+            // Given we have a result to return, return said result and a 200
+            return new ResponseEntity(response.getResponseValue().toString(), HttpStatus.OK);
         } else if (MatchaDbConstants.UNSUCCESSFUL_GET_INFO.equals(response.getInfo())) {
             // If the request was unsuccessful, return a 404
-            return ResponseEntity.notFound().build();
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
         } else {
             // If the request was malformed, return a 400
-            return ResponseEntity.badRequest().build();
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -64,12 +62,26 @@ public class MatchaDbInterface {
      *
      * @param request The request as a string.
      *
-     * @return A response object as a string wrapped in an entity that defines the success/failure 
-     *         of the operation.
+     * @return An HTTP response that defines the success/failure of the insert operation.
      */
     @PostMapping(path = "/")
-    public ResponseEntity<String> post(String request) {
-        return null;
+    public ResponseEntity post(String request) {
+        // Send the request to the parser
+        MatchaDbResponseObject response 
+            = matchaDbRequestParser.ingestAndConductRequest(
+                new MatchaDbRawRequestObject(MatchaDbRequestType.POST, request)
+            );
+
+        if (MatchaDbConstants.SUCCESSFUL_POST_INFO.equals(response.getInfo())) {
+            // Given that we could insert the request payload, return a 201
+            return new ResponseEntity(HttpStatus.CREATED);
+        } else if (MatchaDbConstants.UNSUCCESSFUL_POST_INFO.equals(response.getInfo())) {
+            // If the request was unsuccessful, return a 409
+            return new ResponseEntity(HttpStatus.CONFLICT);
+        } else {
+            // If the request was malformed, return a 400
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
     }
 
     /**
@@ -78,12 +90,26 @@ public class MatchaDbInterface {
      *
      * @param request The request as a string.
      *
-     * @return A response object as a string wrapped in an entity that defines the success/failure 
-     *         of the operation.
+     * @return An HTTP response that defines the success/failure of the update operation.
      */
     @PutMapping(path = "/")
-    public ResponseEntity<String> update(String request) {
-        return null;
+    public ResponseEntity update(String request) {
+        // Send the request to the parser
+        MatchaDbResponseObject response 
+            = matchaDbRequestParser.ingestAndConductRequest(
+                new MatchaDbRawRequestObject(MatchaDbRequestType.UPDATE, request)
+            );
+
+        if (MatchaDbConstants.SUCCESSFUL_UPDATE_INFO.equals(response.getInfo())) {
+            // Given that we could update the DB, return a 200
+            return new ResponseEntity(HttpStatus.OK);
+        } else if (MatchaDbConstants.UNSUCCESSFUL_UPDATE_INFO.equals(response.getInfo())) {
+            // If the request was unsuccessful, return a 409
+            return new ResponseEntity(HttpStatus.CONFLICT);
+        } else {
+            // If the request was malformed, return a 400
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
     }
 
     /**
@@ -92,11 +118,24 @@ public class MatchaDbInterface {
      *
      * @param request The request as a string.
      *
-     * @return A response object as a string wrapped in an entity that defines the success/failure 
-     *         of the operation.
+     * @return An HTTP response that defines the success/failure of the delete operation.
      */
     @DeleteMapping(path = "/")
-    public ResponseEntity<String> delete(String request) {
-        return null;
+    public ResponseEntity delete(String request) {
+        MatchaDbResponseObject response
+            = matchaDbRequestParser.ingestAndConductRequest(
+                new MatchaDbRawRequestObject(MatchaDbRequestType.DELETE, request)
+            );
+        
+        if (MatchaDbConstants.SUCCESSFUL_DELETE_INFO.equals(response.getInfo())) {
+            // Given that we could remove the item from the DB, return a 200
+            return new ResponseEntity(HttpStatus.OK);
+        } else if (MatchaDbConstants.UNSUCCESSFUL_DELETE_INFO.equals(response.getInfo())) {
+            // If the request was unsuccessful, return a 409
+            return new ResponseEntity(HttpStatus.CONFLICT);
+        } else {
+            // If the request was malformed, return a 400
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
     }
 }
