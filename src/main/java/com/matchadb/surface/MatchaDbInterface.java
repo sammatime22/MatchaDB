@@ -1,5 +1,6 @@
 package com.matchadb.surface;
 
+import com.matchadb.common.MatchaDbConstants;
 import com.matchadb.enums.MatchaDbRequestType;
 import com.matchadb.models.request.MatchaDbRawRequestObject;
 import com.matchadb.models.response.MatchaDbResponseObject;
@@ -26,12 +27,6 @@ public class MatchaDbInterface {
     @Autowired
     private MatchaDbRequestParser matchaDbRequestParser;
 
-    // Contstructor 
-    
-    // public MatchaDbInterface(MatchaDbRequestParser matchaDbRequestParser) {
-    //     this.matchaDbRequestParser = matchaDbRequestParser;
-    // }
-
     /**
      * Takes in a string, which is expected to be in the form of a JSON object, to run commands
      * against the DB and returns data.
@@ -43,17 +38,24 @@ public class MatchaDbInterface {
      */
     @GetMapping(path = "/")
     public ResponseEntity<String> get(@RequestBody String request) {
-        System.out.println("Got here!");
         // Send the request to the Parser
         MatchaDbResponseObject response 
             = matchaDbRequestParser.ingestAndConductRequest(
                 new MatchaDbRawRequestObject(MatchaDbRequestType.GET, request)
             );
         
-        // Return the result
-        return ResponseEntity.ok()
-            .header("Custom-Header", response.getInfo())
-            .body(response.getResponseValue().toString());
+        if (MatchaDbConstants.SUCCESSFUL_GET_INFO.equals(response.getInfo())) {
+            // Given we have a result to return, return said result
+            return ResponseEntity.ok()
+                .header("Custom-Header", MatchaDbConstants.SUCCESSFUL_GET_INFO)
+                .body(response.getResponseValue().toString());
+        } else if (MatchaDbConstants.UNSUCCESSFUL_GET_INFO.equals(response.getInfo())) {
+            // If the request was unsuccessful, return a 404
+            return ResponseEntity.notFound().build();
+        } else {
+            // If the request was malformed, return a 400
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     /**
@@ -97,8 +99,4 @@ public class MatchaDbInterface {
     public ResponseEntity<String> delete(String request) {
         return null;
     }
-
-    // @ExceptionHandler
-    // Develop an exception handler so we can see why our requests are consistently returning 401s
-    // but also for the future
 }
