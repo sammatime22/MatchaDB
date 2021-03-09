@@ -34,6 +34,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
@@ -106,12 +107,39 @@ public class MatchaDbInterfaceTest {
                 result.getResponse().getContentAsString().indexOf(expectedContent) != -1
             );
         }
+        Assert.assertTrue(HttpStatus.OK.value() == result.getResponse().getStatus());
     }
 
-    // @Test
-    // public void testGetRequestUnsuccessful() {
+    @Test
+    public void testGetRequestUnsuccessful() throws Exception {
+        String rawRequestString
+            = "{}";
+        
+        MatchaDbRawRequestObject rawUnsuccessfulGetRequest
+            = new MatchaDbRawRequestObject(MatchaDbRequestType.GET, rawRequestString);
+        
+        List<HashMap<String, Object>> responseObject = null;
 
-    // }
+        String expectedResponseBodyContent = "";
+
+        when(
+            matchaDbRequestParser.ingestAndConductRequest(any(MatchaDbRawRequestObject.class))
+        ).thenReturn(new MatchaDbResponseObject(UNSUCCESSFUL_GET_INFO, null));
+
+        RequestBuilder request 
+            = MockMvcRequestBuilders
+                .get("/")
+                .content(rawRequestString)
+                .characterEncoding("UTF-8")
+                .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(request).andReturn();
+
+        Assert.assertTrue(rawRequestString.equals(result.getRequest().getContentAsString()));
+        Assert.assertTrue(
+            expectedResponseBodyContent.equals(result.getResponse().getContentAsString()));
+        Assert.assertTrue(HttpStatus.NOT_FOUND.value() == result.getResponse().getStatus());
+    }
 
     // @Test
     // public void testPostRequestSuccessful() {
