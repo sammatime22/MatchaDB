@@ -8,6 +8,7 @@ import static com.matchadb.common.MatchaDbConstants.UNSUCCESSFUL_GET_INFO;
 import static com.matchadb.common.MatchaDbConstants.UNSUCCESSFUL_POST_INFO;
 import static com.matchadb.common.MatchaDbConstants.UNSUCCESSFUL_UPDATE_INFO;
 import static com.matchadb.common.MatchaDbConstants.UNSUCCESSFUL_DELETE_INFO;
+import static com.matchadb.common.MatchaDbConstants.COMMAND_UNIDENTIFIABLE;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
@@ -112,8 +113,7 @@ public class MatchaDbInterfaceTest {
 
     @Test
     public void testGetRequestUnsuccessful() throws Exception {
-        String rawRequestString
-            = "{}";
+        String rawRequestString = "{}";
         
         MatchaDbRawRequestObject rawUnsuccessfulGetRequest
             = new MatchaDbRawRequestObject(MatchaDbRequestType.GET, rawRequestString);
@@ -139,6 +139,36 @@ public class MatchaDbInterfaceTest {
         Assert.assertTrue(
             expectedResponseBodyContent.equals(result.getResponse().getContentAsString()));
         Assert.assertTrue(HttpStatus.NOT_FOUND.value() == result.getResponse().getStatus());
+    }
+
+    @Test
+    public void testGetRequestUnparsable() throws Exception {
+        String rawRequestString = "abc1234566";
+
+        MatchaDbRawRequestObject rawUnparsableGetRequest
+            = new MatchaDbRawRequestObject(MatchaDbRequestType.GET, rawRequestString);
+
+        Object responseObject = null;
+
+        String expectedResponseBodyContent = "";
+
+        when(
+            matchaDbRequestParser.ingestAndConductRequest(any(MatchaDbRawRequestObject.class))
+        ).thenReturn(new MatchaDbResponseObject(COMMAND_UNIDENTIFIABLE, null));
+
+        RequestBuilder request
+            = MockMvcRequestBuilders
+                .get("/")
+                .content(rawRequestString)
+                .characterEncoding("UTF-8")
+                .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(request).andReturn();
+
+        Assert.assertTrue(rawRequestString.equals(result.getRequest().getContentAsString()));
+        Assert.assertTrue(
+            expectedResponseBodyContent.equals(result.getResponse().getContentAsString()));
+        Assert.assertTrue(HttpStatus.BAD_REQUEST.value() == result.getResponse().getStatus());
     }
 
     // @Test
