@@ -292,13 +292,69 @@ public class MatchaDbInterfaceTest {
         Assert.assertTrue(HttpStatus.BAD_REQUEST.value() == result.getResponse().getStatus());
     }
 
-    // @Test
-    // public void testDeleteRequestSuccessful() {
+    @Test
+    public void testDeleteRequestSuccessful() throws Exception {
+        String rawRequestString
+            = "{\"From\": \"Things\", \"Select\": [[\"Price\", \"is\", \"80000000.00\"]]";
 
-    // }
+        when(
+            matchaDbRequestParser.ingestAndConductRequest(any(MatchaDbRawRequestObject.class))
+        ).thenReturn(new MatchaDbResponseObject(SUCCESSFUL_DELETE_INFO, true));
 
-    // @Test
-    // public void testDeleteRequestUnsuccessful() {
+        RequestBuilder request
+            = MockMvcRequestBuilders
+                .delete("/")
+                .content(rawRequestString)
+                .characterEncoding("UTF-8")
+                .accept(MediaType.APPLICATION_JSON);
 
-    // }
+        MvcResult result = mockMvc.perform(request).andReturn();
+
+        Assert.assertTrue(rawRequestString.equals(result.getRequest().getContentAsString()));
+        Assert.assertTrue(HttpStatus.OK.value() == result.getResponse().getStatus());
+    }
+
+    @Test
+    public void testDeleteRequestUnsuccessful() throws Exception {
+        String rawRequestString 
+            = "{\"From\": \"Thangs\", \"Select\": [[\"Price\", \"is\", \"0\"]]}";
+
+        when(
+            matchaDbRequestParser.ingestAndConductRequest(any(MatchaDbRawRequestObject.class))
+        ).thenReturn(new MatchaDbResponseObject(UNSUCCESSFUL_DELETE_INFO, false));
+
+        RequestBuilder request
+            = MockMvcRequestBuilders
+                .delete("/")
+                .content(rawRequestString)
+                .characterEncoding("UTF-8")
+                .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(request).andReturn();
+
+        Assert.assertTrue(rawRequestString.equals(result.getRequest().getContentAsString()));
+        Assert.assertTrue(HttpStatus.CONFLICT.value() == result.getResponse().getStatus());
+    }
+
+    @Test
+    public void testDeleteRequestUnparsable() throws Exception {
+        String rawRequestString
+            = "Please get rid of that stuff what I need to do this right {} cool";
+
+        when(
+            matchaDbRequestParser.ingestAndConductRequest(any(MatchaDbRawRequestObject.class))
+        ).thenReturn(new MatchaDbResponseObject(COMMAND_UNIDENTIFIABLE, false));
+
+        RequestBuilder request
+            = MockMvcRequestBuilders
+                .delete("/")
+                .content(rawRequestString)
+                .characterEncoding("UTF-8")
+                .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(request).andReturn();
+
+        Assert.assertTrue(rawRequestString.equals(result.getRequest().getContentAsString()));
+        Assert.assertTrue(HttpStatus.BAD_REQUEST.value() == result.getResponse().getStatus());
+    }
 }
