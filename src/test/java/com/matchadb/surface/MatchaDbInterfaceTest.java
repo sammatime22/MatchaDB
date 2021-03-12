@@ -64,15 +64,9 @@ public class MatchaDbInterfaceTest {
      * Tests that on a successful GET request that the interface provides values accordingly.
      */
     @Test
-    public void testGetRequestSuccessful() throws Exception {
-        // Mock the GET request's MatchaDbRawRequestObject
-        // {"From": "Presents", "Select": [["Present Owner", "is", "Me"]]}
-        
+    public void testGetRequestSuccessful() throws Exception {  
         String rawRequestString 
             = "{\"From\": \"Presents\", \"Select\": [[\"Present Owner\", \"is\", \"Me\"]]}";
-
-        MatchaDbRawRequestObject rawGetRequest 
-            = new MatchaDbRawRequestObject(MatchaDbRequestType.GET, rawRequestString);
 
         List<HashMap<String, Object>> responseObject = new ArrayList<HashMap<String, Object>>() {{
             add(
@@ -98,7 +92,6 @@ public class MatchaDbInterfaceTest {
                 .characterEncoding("UTF-8")
                 .accept(MediaType.APPLICATION_JSON);
 
-        // Test the response
         MvcResult result = mockMvc.perform(request).andReturn();
         
         Assert.assertTrue(rawRequestString.equals(result.getRequest().getContentAsString()));
@@ -114,10 +107,7 @@ public class MatchaDbInterfaceTest {
     @Test
     public void testGetRequestUnsuccessful() throws Exception {
         String rawRequestString = "{}";
-        
-        MatchaDbRawRequestObject rawUnsuccessfulGetRequest
-            = new MatchaDbRawRequestObject(MatchaDbRequestType.GET, rawRequestString);
-        
+
         List<HashMap<String, Object>> responseObject = null;
 
         String expectedResponseBodyContent = "";
@@ -144,9 +134,6 @@ public class MatchaDbInterfaceTest {
     @Test
     public void testGetRequestUnparsable() throws Exception {
         String rawRequestString = "abc1234566";
-
-        MatchaDbRawRequestObject rawUnparsableGetRequest
-            = new MatchaDbRawRequestObject(MatchaDbRequestType.GET, rawRequestString);
 
         Object responseObject = null;
 
@@ -177,9 +164,6 @@ public class MatchaDbInterfaceTest {
             = "{\"From\": \"People\", \"Select\": [[\"Present Owner\", \"is\", \"Me\"]]," 
             + "\"Insert\": {\"Present\": \"New Drumkit\"}}";
 
-        MatchaDbRawRequestObject rawPostRequest
-            = new MatchaDbRawRequestObject(MatchaDbRequestType.POST, rawRequestString);
-
         when(
             matchaDbRequestParser.ingestAndConductRequest(any(MatchaDbRawRequestObject.class))
         ).thenReturn(new MatchaDbResponseObject(SUCCESSFUL_POST_INFO, true));
@@ -203,9 +187,6 @@ public class MatchaDbInterfaceTest {
             = "{\"From\": \"Poeplu\", \"Select\": [[\"Present Owner\", \"is\", \"Me\"]]," 
             + "\"Insert\": {\"Present\": \"New Drumkit\"}}";
 
-        MatchaDbRawRequestObject rawUnsuccessfulPostRequest
-            = new MatchaDbRawRequestObject(MatchaDbRequestType.POST, rawRequestString);
-
         when(
             matchaDbRequestParser.ingestAndConductRequest(any(MatchaDbRawRequestObject.class))
         ).thenReturn(new MatchaDbResponseObject(UNSUCCESSFUL_POST_INFO, false));
@@ -227,9 +208,6 @@ public class MatchaDbInterfaceTest {
     public void testPostRequestUnparsable() throws Exception {
         String rawRequestString = "insert kit";
 
-        MatchaDbRawRequestObject rawUnparsablePostRequest
-            = new MatchaDbRawRequestObject(MatchaDbRequestType.POST, rawRequestString);
-
         when(
             matchaDbRequestParser.ingestAndConductRequest(any(MatchaDbRawRequestObject.class))
         ).thenReturn(new MatchaDbResponseObject(COMMAND_UNIDENTIFIABLE, false));
@@ -247,15 +225,72 @@ public class MatchaDbInterfaceTest {
         Assert.assertTrue(HttpStatus.BAD_REQUEST.value() == result.getResponse().getStatus());
     }
 
-    // @Test 
-    // public void testUpdateRequestSuccessful() {
+    @Test 
+    public void testUpdateRequestSuccessful() throws Exception {
+        String rawRequestString 
+            = "{\"From\": \"People\", \"Select\": [[\"Present Owner\", \"is\", \"Me\"]]"
+            + "\"Update\": {\"Present\": \"New Drumkit\"}}";
 
-    // }
+        when(
+            matchaDbRequestParser.ingestAndConductRequest(any(MatchaDbRawRequestObject.class))
+        ).thenReturn(new MatchaDbResponseObject(SUCCESSFUL_UPDATE_INFO, true));
 
-    // @Test 
-    // public void testUpdateRequestUnsuccessful() {
+        RequestBuilder request
+            = MockMvcRequestBuilders
+                .put("/")
+                .content(rawRequestString)
+                .characterEncoding("UTF-8")
+                .accept(MediaType.APPLICATION_JSON);
 
-    // }
+        MvcResult result = mockMvc.perform(request).andReturn();
+
+        Assert.assertTrue(rawRequestString.equals(result.getRequest().getContentAsString()));
+        Assert.assertTrue(HttpStatus.OK.value() == result.getResponse().getStatus());
+    }
+
+    @Test 
+    public void testUpdateRequestUnsuccessful() throws Exception {
+        String rawRequestString
+            = "{\"From\": \"Peoplu\", \"Select\": [[\"Present Owner\", \"is\", \"Me\"]],"
+            + "\"Update\": {\"Present\": \"New Drumkit\"}}";
+
+        when(
+            matchaDbRequestParser.ingestAndConductRequest(any(MatchaDbRawRequestObject.class))
+        ).thenReturn(new MatchaDbResponseObject(UNSUCCESSFUL_UPDATE_INFO, false));
+
+        RequestBuilder request
+            = MockMvcRequestBuilders
+                .put("/")
+                .content(rawRequestString)
+                .characterEncoding("UTF-8")
+                .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(request).andReturn();
+
+        Assert.assertTrue(rawRequestString.equals(result.getRequest().getContentAsString()));
+        Assert.assertTrue(HttpStatus.CONFLICT.value() == result.getResponse().getStatus());
+    }
+
+    @Test
+    public void testUpdateRequestUnparsable() throws Exception {
+        String rawRequestString = "{I wanna update the present}";
+
+        when(
+            matchaDbRequestParser.ingestAndConductRequest(any(MatchaDbRawRequestObject.class))
+        ).thenReturn(new MatchaDbResponseObject(COMMAND_UNIDENTIFIABLE, false));
+
+        RequestBuilder request
+            = MockMvcRequestBuilders
+                .put("/")
+                .content(rawRequestString)
+                .characterEncoding("UTF-8")
+                .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(request).andReturn();
+
+        Assert.assertTrue(rawRequestString.equals(result.getRequest().getContentAsString()));
+        Assert.assertTrue(HttpStatus.BAD_REQUEST.value() == result.getResponse().getStatus());
+    }
 
     // @Test
     // public void testDeleteRequestSuccessful() {
