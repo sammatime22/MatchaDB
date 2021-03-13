@@ -16,8 +16,6 @@ import static org.mockito.Mockito.when;
 
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.matchadb.MatchaDbApplicationInitializer;
-
 import com.matchadb.enums.MatchaDbRequestType;
 import com.matchadb.models.request.MatchaDbRawRequestObject;
 import com.matchadb.models.response.MatchaDbResponseObject;
@@ -28,8 +26,6 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-//import org.junit.jupiter.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +33,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import org.mockito.junit.jupiter.MockitoExtension;
 /**
@@ -104,6 +97,9 @@ public class MatchaDbInterfaceTest {
         Assert.assertTrue(HttpStatus.OK.value() == result.getResponse().getStatus());
     }
 
+    /**
+     * Tests that on an unsuccessful GET request that the interface provides values accordingly.
+     */
     @Test
     public void testGetRequestUnsuccessful() throws Exception {
         String rawRequestString = "{}";
@@ -131,6 +127,9 @@ public class MatchaDbInterfaceTest {
         Assert.assertTrue(HttpStatus.NOT_FOUND.value() == result.getResponse().getStatus());
     }
 
+    /**
+     * Tests that on an unparsable GET request that the interface provides values accordingly.
+     */
     @Test
     public void testGetRequestUnparsable() throws Exception {
         String rawRequestString = "abc1234566";
@@ -158,6 +157,9 @@ public class MatchaDbInterfaceTest {
         Assert.assertTrue(HttpStatus.BAD_REQUEST.value() == result.getResponse().getStatus());
     }
 
+    /**
+     * Tests that on a successful POST request that the interface provides values accordingly.
+     */
     @Test
     public void testPostRequestSuccessful() throws Exception {
         String rawRequestString 
@@ -181,6 +183,9 @@ public class MatchaDbInterfaceTest {
         Assert.assertTrue(HttpStatus.CREATED.value() == result.getResponse().getStatus());
     }
 
+    /**
+     * Tests that on an unsuccessful POST request that the interface provides values accordingly.
+     */
     @Test
     public void testPostRequestUnsuccessful() throws Exception {
         String rawRequestString 
@@ -204,6 +209,9 @@ public class MatchaDbInterfaceTest {
         Assert.assertTrue(HttpStatus.CONFLICT.value() == result.getResponse().getStatus());
     }
 
+    /**
+     * Tests that on an unparsable POST request that the interface provides values accordingly.
+     */
     @Test
     public void testPostRequestUnparsable() throws Exception {
         String rawRequestString = "insert kit";
@@ -225,6 +233,9 @@ public class MatchaDbInterfaceTest {
         Assert.assertTrue(HttpStatus.BAD_REQUEST.value() == result.getResponse().getStatus());
     }
 
+    /**
+     * Tests that on a successful UPDATE request that the interface provides values accordingly.
+     */
     @Test 
     public void testUpdateRequestSuccessful() throws Exception {
         String rawRequestString 
@@ -248,6 +259,9 @@ public class MatchaDbInterfaceTest {
         Assert.assertTrue(HttpStatus.OK.value() == result.getResponse().getStatus());
     }
 
+    /**
+     * Tests that on an unsuccessful UPDATE request that the interface provides values accordingly.
+     */
     @Test 
     public void testUpdateRequestUnsuccessful() throws Exception {
         String rawRequestString
@@ -271,6 +285,9 @@ public class MatchaDbInterfaceTest {
         Assert.assertTrue(HttpStatus.CONFLICT.value() == result.getResponse().getStatus());
     }
 
+    /**
+     * Tests that on an unparsable UPDATE request that the interface provides values accordingly.
+     */
     @Test
     public void testUpdateRequestUnparsable() throws Exception {
         String rawRequestString = "{I wanna update the present}";
@@ -292,6 +309,9 @@ public class MatchaDbInterfaceTest {
         Assert.assertTrue(HttpStatus.BAD_REQUEST.value() == result.getResponse().getStatus());
     }
 
+    /**
+     * Tests that on a successful DELETE request that the interface provides values accordingly.
+     */
     @Test
     public void testDeleteRequestSuccessful() throws Exception {
         String rawRequestString
@@ -314,6 +334,9 @@ public class MatchaDbInterfaceTest {
         Assert.assertTrue(HttpStatus.OK.value() == result.getResponse().getStatus());
     }
 
+    /**
+     * Tests that on an unsuccessful DELETE request that the interface provides values accordingly.
+     */
     @Test
     public void testDeleteRequestUnsuccessful() throws Exception {
         String rawRequestString 
@@ -336,6 +359,9 @@ public class MatchaDbInterfaceTest {
         Assert.assertTrue(HttpStatus.CONFLICT.value() == result.getResponse().getStatus());
     }
 
+    /**
+     * Tests that on an unparsable DELETE request that the interface provides values accordingly.
+     */
     @Test
     public void testDeleteRequestUnparsable() throws Exception {
         String rawRequestString
