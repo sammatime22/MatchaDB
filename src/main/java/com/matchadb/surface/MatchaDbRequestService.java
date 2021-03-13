@@ -1,5 +1,15 @@
 package com.matchadb.surface;
 
+import static com.matchadb.common.MatchaDbConstants.SUCCESSFUL_GET_INFO;
+import static com.matchadb.common.MatchaDbConstants.SUCCESSFUL_POST_INFO;
+import static com.matchadb.common.MatchaDbConstants.SUCCESSFUL_UPDATE_INFO;
+import static com.matchadb.common.MatchaDbConstants.SUCCESSFUL_DELETE_INFO;
+import static com.matchadb.common.MatchaDbConstants.UNSUCCESSFUL_GET_INFO;
+import static com.matchadb.common.MatchaDbConstants.UNSUCCESSFUL_POST_INFO;
+import static com.matchadb.common.MatchaDbConstants.UNSUCCESSFUL_UPDATE_INFO;
+import static com.matchadb.common.MatchaDbConstants.UNSUCCESSFUL_DELETE_INFO;
+import static com.matchadb.common.MatchaDbConstants.COMMAND_UNIDENTIFIABLE;
+
 import com.matchadb.enums.MatchaDbRequestType;
 
 import com.matchadb.database.MatchaDbTable;
@@ -25,22 +35,8 @@ public class MatchaDbRequestService {
     
     @Autowired MatchaDbTable matchaDbTable;
 
-    // The info values for successful commands on the DB Table.
-    private final String SUCCESSFUL_GET_INFO = "Retrieval Successful";
-    private final String SUCCESSFUL_POST_INFO = "Insert Successful";
-    private final String SUCCESSFUL_UPDATE_INFO = "Update Successful";
-    private final String SUCCESSFUL_DELETE_INFO = "Removal Successful";
-
-    // The info values for unsuccessful commands on the DB Table.
-    private final String UNSUCCESSFUL_GET_INFO = "Retrieval Failed";
-    private final String UNSUCCESSFUL_POST_INFO = "Insert Failed";
-    private final String UNSUCCESSFUL_UPDATE_INFO = "Update Failed";
-    private final String UNSUCCESSFUL_DELETE_INFO = "Removal Failed";    
-
-    private final String COMMAND_UNIDENTIFIABLE = "Command could not be identified...";
-
     /**
-     * Constructor used for autowiring.
+     * Constructor.
      *
      * @param matchaDbTable an instance of the MatchaDbTable class.
      */

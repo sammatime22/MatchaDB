@@ -2,11 +2,9 @@
 
 **Summary**: _A simple DB implementation that can take in a json doc and develop an API from said JSON doc._
 
-**Status**: 56% to Beta v1
+**Status**: 67% to Beta v1
 
 **Recent Updates**:
-
-2021/01/04 - Re-implemented searchForData as well as an "All Tables" lookup
 
 2021/01/09 - Implemented deleteData and 1-to-1 string comparison
 
@@ -15,6 +13,8 @@
 2021/02/02 - Implemented basic Request Service
 
 2021/02/17 - Implemented basic Parsing Service
+
+2021/03/13 - Implemented basic DB Interface
 
 **System Requirements**
 
