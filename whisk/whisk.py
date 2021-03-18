@@ -2,6 +2,8 @@
 The following tool helps developers and likewise check their work on MatchaDB by providing an easy
 to use CLI interface, using Python 3, to run commands against the DB.
 '''
+import requests
+
 GET = "GET"
 POST = "POST"
 UPDATE = "UPDATE"
@@ -50,6 +52,18 @@ def help_command():
 
 
 # Run Get Command
+def get_command():
+    from_portion = input("From: ")
+    select_portion = input("Select: ")
+    parameterValues = {"From": from_portion, "Select": select_portion}
+
+    try:
+        requests.get("http://127.0.0.1:8080/", data = str(parameterValues))
+    except requests.exceptions.ConnectionError:
+        print("A connection error has occured.")
+    except Exception as e:
+        print("An unidentified error has occured of type " + type(e) + ".")
+
 
 
 # Run Post Command
@@ -70,7 +84,9 @@ print("SammaTime22, 2021")
 while True:
     command_to_use = retrieve_command().upper()
 
-    if (command_to_use == HELP):
+    if (command_to_use == GET):
+        get_command()
+    elif (command_to_use == HELP):
         help_command()
     elif (command_to_use == EXIT):
         break
