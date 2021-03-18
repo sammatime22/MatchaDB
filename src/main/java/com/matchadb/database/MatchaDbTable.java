@@ -115,6 +115,9 @@ public class MatchaDbTable {
      */
     public MatchaDbTable (String dropoffPath) {
         this.dropoffPath = dropoffPath;
+        if (this.dropoffPath == null) {
+            // Potentially add logging in here
+        }
         this.parser = new JSONParser();
     }
 
@@ -253,15 +256,17 @@ public class MatchaDbTable {
             tableInJSONForm = gatherJSONObjectFromTable(tableAsHashMap);
         }
 
-        // Still need to determine the right path.
-        try (FileWriter fileWriter = new FileWriter(getSaveDataFilename())) {
-            if (tableInJSONForm != null) {
-                fileWriter.write(tableInJSONForm.toString());
-            } else {
-                fileWriter.write("");
+        if (this.dropoffPath != null) {
+            // Still need to determine the right path.
+            try (FileWriter fileWriter = new FileWriter(getSaveDataFilename())) {
+                if (tableInJSONForm != null) {
+                    fileWriter.write(tableInJSONForm.toString());
+                } else {
+                    fileWriter.write("");
+                }
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
             }
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
         }
     }
 
