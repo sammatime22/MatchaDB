@@ -92,6 +92,7 @@ def update_command():
 
     try:
         response = requests.put("http://127.0.0.1:8080/", data = str(parameter_values))
+        print(response)
     except requests.exceptions.ConnectionError:
         print("A connection error has occured.")
     except Exception as e:
@@ -106,6 +107,7 @@ def delete_command():
 
     try:
         response = requests.delete("http://127.0.0.1:8080/", data = str(parameter_values))
+        print(response)
     except requests.exceptions.ConnectionError:
         print("A connection error has occured.")
     except Exception as e:
