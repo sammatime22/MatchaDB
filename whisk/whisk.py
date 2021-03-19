@@ -55,10 +55,11 @@ def help_command():
 def get_command():
     from_portion = input("From: ")
     select_portion = input("Select: ")
-    parameterValues = {"From": from_portion, "Select": select_portion}
+    parameter_values = {"From": from_portion, "Select": select_portion}
 
     try:
-        requests.get("http://127.0.0.1:8080/", data = str(parameterValues))
+        response = requests.get("http://127.0.0.1:8080/", data = str(parameter_values))
+        print(response)
     except requests.exceptions.ConnectionError:
         print("A connection error has occured.")
     except Exception as e:
@@ -67,13 +68,48 @@ def get_command():
 
 
 # Run Post Command
+def post_command():
+    from_portion = input("From: ")
+    select_portion = input("Select: ")
+    insert_portion = input("Insert: ")
+    parameter_values = {"From": from_portion, "Select": select_portion, "Insert": insert_portion}
+
+    try:
+        response = requests.post("http://127.0.0.1:8080/", data = str(parameter_values))
+        print(response)
+    except requests.exceptions.ConnectionError:
+        print("A connection error has occured.")
+    except Exception as e:
+        print("An unidentified error has occured of type " + type(e) + ".")
 
 
 # Run Update Command
+def update_command():
+    from_portion = input("From: ")
+    select_portion = input("Select: ")
+    update_portion = input("Update: ")
+    parameter_values = {"From": from_portion, "Select": select_portion, "Update": update_portion}
+
+    try:
+        response = requests.put("http://127.0.0.1:8080/", data = str(parameter_values))
+    except requests.exceptions.ConnectionError:
+        print("A connection error has occured.")
+    except Exception as e:
+        print("An unidentified error has occured of type " + type(e) + ".")
 
 
 # Run Delete Command
+def delete_command():
+    from_portion = input("From: ")
+    select_portion = input("Select: ")
+    parameter_values = {"From": from_portion, "Select": select_portion}
 
+    try:
+        response = requests.delete("http://127.0.0.1:8080/", data = str(parameter_values))
+    except requests.exceptions.ConnectionError:
+        print("A connection error has occured.")
+    except Exception as e:
+        print("An unidentified error has occured of type " + type(e) + ".")
 
 
 
@@ -86,6 +122,12 @@ while True:
 
     if (command_to_use == GET):
         get_command()
+    elif (command_to_use == POST):
+        post_command()
+    elif (command_to_use == UPDATE):
+        update_command()
+    elif (command_to_use == DELETE):
+        delete_command()
     elif (command_to_use == HELP):
         help_command()
     elif (command_to_use == EXIT):
