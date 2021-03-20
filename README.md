@@ -2,11 +2,9 @@
 
 **Summary**: _A simple DB implementation that can take in a json doc and develop an API from said JSON doc._
 
-**Status**: 67% to Beta v1
+**Status**: 75% to Beta v1
 
 **Recent Updates**:
-
-2021/01/09 - Implemented deleteData and 1-to-1 string comparison
 
 2021/01/16 - Formatting changes for MatchaDbTable and related classes
 
@@ -15,6 +13,8 @@
 2021/02/17 - Implemented basic Parsing Service
 
 2021/03/13 - Implemented basic DB Interface
+
+2021/03/20 - Implemented basic Whisk Application
 
 **System Requirements**
 

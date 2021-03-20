@@ -13,3 +13,4 @@ Updates List:
 2021/02/02 - Implemented basic Request Service
 2021/02/17 - Implemented basic Parsing Service
 2021/03/13 - Implemented basic DB Interface
+2021/03/20 - Implemented basic Whisk Application
