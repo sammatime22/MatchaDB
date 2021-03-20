@@ -1,6 +1,6 @@
-**Project Name**: MatchaDB
+**Project Name**: Whisk
 
-**Summary**: _A simple DB implementation that can take in a json doc and develop an API from said JSON doc._
+**Summary**: _An application that allows quick client access to MatchaDB._
 
 **Status**: Beta Version Implemented
 
