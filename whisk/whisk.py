@@ -3,6 +3,7 @@ The following tool helps developers and likewise check their work on MatchaDB by
 to use CLI interface, using Python 3, to run commands against the DB.
 '''
 import requests
+import sys
 
 GET = "GET"
 POST = "POST"
@@ -10,6 +11,10 @@ UPDATE = "UPDATE"
 DELETE = "DELETE"
 HELP = "HELP"
 EXIT = "EXIT"
+
+protocol = "http://"   # Default is http
+host = "127.0.0.1"     # Default is localhost
+port = "8080"          # Default is port 8080
 
 # Retrieve Command and Info
 def retrieve_command():
@@ -53,12 +58,15 @@ def help_command():
 
 # Run Get Command
 def get_command():
-    from_portion = input("From: ")
-    select_portion = input("Select: ")
-    parameter_values = {"From": from_portion, "Select": select_portion}
+    from_portion = "\"" + input("From: ") + "\""
+
+    part_one, part_two, part_three = input("Select: ").split()
+    select_portion = "[[\"" + part_one + "\", \"" + part_two + "\", \"" + part_three + "\"]]"
+
+    parameter_vals = "{\"From\": " + from_portion + ", \"Select\": " + select_portion + "}"
 
     try:
-        response = requests.get("http://127.0.0.1:8080/", data = str(parameter_values))
+        response = requests.get(protocol + host + ":" + port + "/", data = str(parameter_vals))
         print(response)
     except requests.exceptions.ConnectionError:
         print("A connection error has occured.")
@@ -72,10 +80,10 @@ def post_command():
     from_portion = input("From: ")
     select_portion = input("Select: ")
     insert_portion = input("Insert: ")
-    parameter_values = {"From": from_portion, "Select": select_portion, "Insert": insert_portion}
+    parameter_vals = {"From": from_portion, "Select": select_portion, "Insert": insert_portion}
 
     try:
-        response = requests.post("http://127.0.0.1:8080/", data = str(parameter_values))
+        response = requests.post(protocol + host + ":" + port + "/", data = str(parameter_vals))
         print(response)
     except requests.exceptions.ConnectionError:
         print("A connection error has occured.")
@@ -88,10 +96,10 @@ def update_command():
     from_portion = input("From: ")
     select_portion = input("Select: ")
     update_portion = input("Update: ")
-    parameter_values = {"From": from_portion, "Select": select_portion, "Update": update_portion}
+    parameter_vals = {"From": from_portion, "Select": select_portion, "Update": update_portion}
 
     try:
-        response = requests.put("http://127.0.0.1:8080/", data = str(parameter_values))
+        response = requests.put(protocol + host + ":" + port + "/", data = str(parameter_vals))
         print(response)
     except requests.exceptions.ConnectionError:
         print("A connection error has occured.")
@@ -103,10 +111,10 @@ def update_command():
 def delete_command():
     from_portion = input("From: ")
     select_portion = input("Select: ")
-    parameter_values = {"From": from_portion, "Select": select_portion}
+    parameter_vals = {"From": from_portion, "Select": select_portion}
 
     try:
-        response = requests.delete("http://127.0.0.1:8080/", data = str(parameter_values))
+        response = requests.delete(protocol + host + ":" + port + "/", data = str(parameter_vals))
         print(response)
     except requests.exceptions.ConnectionError:
         print("A connection error has occured.")
@@ -118,6 +126,12 @@ def delete_command():
 # Start of app
 print("Welcome to Whisk, the MatchaDB Tester!")
 print("SammaTime22, 2021")
+
+# Get the hostname, if it exists
+if len(sys.argv) > 2:
+    host = sys.argv[1]
+if len(sys.argv) > 3:
+    port = sys.argv[2]
 
 while True:
     command_to_use = retrieve_command().upper()
