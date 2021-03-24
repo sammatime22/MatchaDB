@@ -1,0 +1,2 @@
+logging:
+    properties: logback-spring.xml
