@@ -27,6 +27,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
 
 /**
@@ -35,7 +38,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class MatchaDbTable {
 
-    // The databases table name.
+    private final static Logger logger = LoggerFactory.getLogger(MatchaDbTable.class);
+
+    // The database's table name.
     private String databaseTableName;
 
     // The JSONParser object used to parse through provided JSON file data.
@@ -114,11 +119,15 @@ public class MatchaDbTable {
      *                    method is called.
      */
     public MatchaDbTable (String dropoffPath) {
+        logger.info("Loading MatchaDbTable...");
+
         this.dropoffPath = dropoffPath;
         if (this.dropoffPath == null) {
-            // Potentially add logging in here
+            logger.error("No dropoffPath supplied, will not save DB contents on shutdown.");
         }
         this.parser = new JSONParser();
+
+        logger.info("MatchaDbTable Loaded!");
     }
 
     /**
@@ -129,6 +138,8 @@ public class MatchaDbTable {
      */
     public void loadData(FileReader file, String databaseTableName) {
         this.databaseTableName = databaseTableName;
+
+        logger.info(String.format("Loading Data for %s", this.databaseTableName));
 
         try {
             // Parse the incoming FileReader for Data
@@ -141,11 +152,12 @@ public class MatchaDbTable {
             this.lastUpdateTimeInMillis = System.currentTimeMillis();
 
             this.databaseFilled = true;
+            logger.info("MatchaDbTable is filled.");
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            logger.error("An IOException occurred:\n ", ioe);
             this.databaseCorrupted = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("An unidentified Exception occurred:\n", e);
             this.databaseCorrupted = true;
         }
     }    
