@@ -23,6 +23,9 @@ import com.matchadb.models.query.MatchaDeleteQuery;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +36,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class MatchaDbRequestService {
     
+    private static final Logger logger = LoggerFactory.getLogger(MatchaDbRequestService.class);
+
     @Autowired MatchaDbTable matchaDbTable;
 
     /**
@@ -75,6 +80,8 @@ public class MatchaDbRequestService {
      * @return A MatchaDbResponseObject explaining the results of the command.
      */
     public MatchaDbResponseObject runGetCommand(MatchaDbRequestObject request) {
+        logger.info(String.format("Running runGetCommand with: %s", request.toString()));
+
         MatchaGetQuery matchaGetQuery 
             = new MatchaGetQuery(request.getFromQuery(), request.getSelectQuery());
 
@@ -95,6 +102,8 @@ public class MatchaDbRequestService {
      * @return A MatchaDbResponseObject explaining the results of the command.
      */
     public MatchaDbResponseObject runPostCommand(MatchaDbRequestObject request) {
+        logger.info(String.format("Running runPostCommand with: %s", request.toString()));
+
         MatchaPostQuery matchaPostQuery = new MatchaPostQuery(
             request.getFromQuery(), request.getSelectQuery(), request.getInsertQuery()
         );
@@ -116,6 +125,8 @@ public class MatchaDbRequestService {
      * @return A MatchaDbResponseObject explaining the results of the command.
      */
     public MatchaDbResponseObject runUpdateCommand(MatchaDbRequestObject request) {
+        logger.info(String.format("Running runUpdateCommand with: %s", request.toString()));
+
         MatchaUpdateQuery matchaUpdateQuery = new MatchaUpdateQuery(
             request.getFromQuery(), request.getSelectQuery(), request.getUpdateQuery()
         );
@@ -137,6 +148,8 @@ public class MatchaDbRequestService {
      * @return A MatchaDbResponseObject explaining the results of the command.
      */
     public MatchaDbResponseObject runDeleteCommand(MatchaDbRequestObject request) {
+        logger.info(String.format("Running runDeleteCommand with: %s", request.toString()));
+
         MatchaDeleteQuery matchaDeleteQuery 
             = new MatchaDeleteQuery(request.getFromQuery(), request.getSelectQuery());
 
