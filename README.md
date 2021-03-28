@@ -16,6 +16,8 @@
 
 2021/03/20 - Implemented basic Whisk Application
 
+2021/03/28 - Implemented basic logging functionality
+
 **System Requirements**
 
 Java: 
