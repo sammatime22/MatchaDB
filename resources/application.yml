@@ -1,5 +1,0 @@
-logging:
-    properties: logback.xml
-
-server:
-  port: 11150

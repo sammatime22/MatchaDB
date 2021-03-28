@@ -27,8 +27,7 @@ import org.springframework.stereotype.Component;
  * This service is an intermediary service which determines the request type and data associated 
  * with the request.
  */
-//@Service
-@Component("matchaDbRequestParser")
+@Service
 public class MatchaDbRequestParser {
 
     private static final Logger logger = LoggerFactory.getLogger(MatchaDbRequestParser.class);
