@@ -2,7 +2,7 @@
 
 **Summary**: _A simple DB implementation that can take in a json doc and develop an API from said JSON doc._
 
-**Status**: 75% to Beta v1
+**Status**: 83% to Beta v1
 
 **Recent Updates**:
 
