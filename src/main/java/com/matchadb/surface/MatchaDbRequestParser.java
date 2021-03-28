@@ -15,6 +15,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.stereotype.Component;
@@ -24,9 +27,10 @@ import org.springframework.stereotype.Component;
  * This service is an intermediary service which determines the request type and data associated 
  * with the request.
  */
-//@Service
-@Component("matchaDbRequestParser")
+@Service
 public class MatchaDbRequestParser {
+
+    private static final Logger logger = LoggerFactory.getLogger(MatchaDbRequestParser.class);
 
     @Autowired MatchaDbRequestService matchaDbRequestService;
 
@@ -57,8 +61,12 @@ public class MatchaDbRequestParser {
      * @return The response from the database.
      */
     public MatchaDbResponseObject ingestAndConductRequest(MatchaDbRawRequestObject rawRequest) {
+        logger.info(String.format("Ingesting: %s", rawRequest.toString()));
+
         MatchaDbRequestObject requestObject = convertRawRequest(rawRequest);
+
         if (requestObject != null) {
+            logger.info(String.format("Requesting with: %s", requestObject.toString()));
             return matchaDbRequestService.conductRequest(requestObject);
         } else {
             return new MatchaDbResponseObject(COMMAND_UNPARSABLE, "");
@@ -128,7 +136,7 @@ public class MatchaDbRequestParser {
                 );
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("An unidentified Exception has occurred:\n", e);
         }
 
         return requestObject;

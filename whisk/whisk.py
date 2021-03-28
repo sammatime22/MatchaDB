@@ -189,7 +189,7 @@ def main():
     global host
     global port
     host = "127.0.0.1"     # Default is localhost
-    port = "8080"          # Default is port 8080
+    port = "11150"          # Default is port 8080
 
     # Get the hostname, if it exists.
     if len(sys.argv) > 2:

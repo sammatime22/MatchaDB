@@ -5,6 +5,9 @@ import com.matchadb.enums.MatchaDbRequestType;
 import com.matchadb.models.request.MatchaDbRawRequestObject;
 import com.matchadb.models.response.MatchaDbResponseObject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +25,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 @RestController
 public class MatchaDbInterface {
 
+    private static final Logger logger = LoggerFactory.getLogger(MatchaDbInterface.class);
+
     @Autowired
     private MatchaDbRequestParser matchaDbRequestParser;
 
@@ -36,6 +41,8 @@ public class MatchaDbInterface {
      */
     @GetMapping(path = "/")
     public ResponseEntity<String> get(@RequestBody String request) {
+        logger.info(String.format("\"get\" received request: %s", request));
+
         // Send the request to the Parser
         MatchaDbResponseObject response 
             = matchaDbRequestParser.ingestAndConductRequest(
@@ -63,7 +70,9 @@ public class MatchaDbInterface {
      * @return An HTTP response that defines the success/failure of the insert operation.
      */
     @PostMapping(path = "/")
-    public ResponseEntity post(String request) {
+    public ResponseEntity post(@RequestBody String request) {
+        logger.info(String.format("\"post\" received request: %s", request));
+
         // Send the request to the parser
         MatchaDbResponseObject response 
             = matchaDbRequestParser.ingestAndConductRequest(
@@ -91,7 +100,9 @@ public class MatchaDbInterface {
      * @return An HTTP response that defines the success/failure of the update operation.
      */
     @PutMapping(path = "/")
-    public ResponseEntity update(String request) {
+    public ResponseEntity update(@RequestBody String request) {
+        logger.info(String.format("\"update\" received request: %s", request));
+
         // Send the request to the parser
         MatchaDbResponseObject response 
             = matchaDbRequestParser.ingestAndConductRequest(
@@ -119,7 +130,10 @@ public class MatchaDbInterface {
      * @return An HTTP response that defines the success/failure of the delete operation.
      */
     @DeleteMapping(path = "/")
-    public ResponseEntity delete(String request) {
+    public ResponseEntity delete(@RequestBody String request) {
+        logger.info(String.format("\"delete\" received request: %s", request));
+
+        // Send the request to the parser
         MatchaDbResponseObject response
             = matchaDbRequestParser.ingestAndConductRequest(
                 new MatchaDbRawRequestObject(MatchaDbRequestType.DELETE, request)

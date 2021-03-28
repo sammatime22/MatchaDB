@@ -27,6 +27,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
 
 /**
@@ -35,7 +38,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class MatchaDbTable {
 
-    // The databases table name.
+    private final static Logger logger = LoggerFactory.getLogger(MatchaDbTable.class);
+
+    // The database's table name.
     private String databaseTableName;
 
     // The JSONParser object used to parse through provided JSON file data.
@@ -114,11 +119,15 @@ public class MatchaDbTable {
      *                    method is called.
      */
     public MatchaDbTable (String dropoffPath) {
+        logger.info("Loading MatchaDbTable...");
+
         this.dropoffPath = dropoffPath;
         if (this.dropoffPath == null) {
-            // Potentially add logging in here
+            logger.error("No dropoffPath supplied, will not save DB contents on shutdown.");
         }
         this.parser = new JSONParser();
+
+        logger.info("MatchaDbTable Loaded!");
     }
 
     /**
@@ -129,6 +138,8 @@ public class MatchaDbTable {
      */
     public void loadData(FileReader file, String databaseTableName) {
         this.databaseTableName = databaseTableName;
+
+        logger.info(String.format("Loading Data for %s", this.databaseTableName));
 
         try {
             // Parse the incoming FileReader for Data
@@ -141,11 +152,12 @@ public class MatchaDbTable {
             this.lastUpdateTimeInMillis = System.currentTimeMillis();
 
             this.databaseFilled = true;
+            logger.info("MatchaDbTable is filled.");
         } catch (IOException ioe) {
-            ioe.printStackTrace();
+            logger.error("An IOException occurred:\n ", ioe);
             this.databaseCorrupted = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("An unidentified Exception occurred:\n", e);
             this.databaseCorrupted = true;
         }
     }    
@@ -261,11 +273,13 @@ public class MatchaDbTable {
             try (FileWriter fileWriter = new FileWriter(getSaveDataFilename())) {
                 if (tableInJSONForm != null) {
                     fileWriter.write(tableInJSONForm.toString());
+                    logger.info("MatchaDbTable contents have been written to file.");
                 } else {
                     fileWriter.write("");
+                    logger.info("Empty contents have been written to file.");
                 }
             } catch (IOException ioe) {
-                ioe.printStackTrace();
+                logger.error("An IO Exception has occurred:\n ", ioe);
             }
         }
     }
@@ -341,34 +355,43 @@ public class MatchaDbTable {
      * @return The data encapsulated in a MatchaData object.
      */
     public Object getData(MatchaGetQuery query) {
-        Object selection = searchForData(query.getFromQuery(), this.table);
+        logger.info(String.format("getData called with contents: %s", query.toString()));
+
         Object valuesToReturn = null;
 
-        // Next, perform the subset query
-        if (selection instanceof List finalListselection) {
-            valuesToReturn = new ArrayList<>();
-            for (Object value : finalListselection.toArray()) { 
-                if (meetsQueryRequirement(value, query.getSelectQuery())) {
-                    ((ArrayList) valuesToReturn).add(value);
-                }
-            }     
-        } else if (selection instanceof HashMap finalHashmapSelection) {
-            valuesToReturn = new HashMap<>();
-            for (Iterator finalHashmapSelectionIterator 
-                    = finalHashmapSelection.keySet().iterator(); 
-                finalHashmapSelectionIterator.hasNext();) {
-                String key = (String) finalHashmapSelectionIterator.next();
-                Object value = finalHashmapSelection.get(key);
-                if (meetsQueryRequirement(value, query.getSelectQuery())) {
-                    ((HashMap) valuesToReturn).put(key, value);
-                }
-            }
-        } else {
-            if (meetsQueryRequirement(selection, query.getSelectQuery())) {
-                valuesToReturn = selection;
-            }
-        }   
+        try {
+            Object selection = searchForData(query.getFromQuery(), this.table);
 
+            // Next, perform the subset query
+            if (selection instanceof List finalListselection) {
+                valuesToReturn = new ArrayList<>();
+                for (Object value : finalListselection.toArray()) { 
+                    if (meetsQueryRequirement(value, query.getSelectQuery())) {
+                        ((ArrayList) valuesToReturn).add(value);
+                    }
+                }     
+            } else if (selection instanceof HashMap finalHashmapSelection) {
+                valuesToReturn = new HashMap<>();
+                for (Iterator finalHashmapSelectionIterator 
+                        = finalHashmapSelection.keySet().iterator(); 
+                    finalHashmapSelectionIterator.hasNext();) {
+                    String key = (String) finalHashmapSelectionIterator.next();
+                    Object value = finalHashmapSelection.get(key);
+                    if (meetsQueryRequirement(value, query.getSelectQuery())) {
+                        ((HashMap) valuesToReturn).put(key, value);
+                    }
+                }
+            } else {
+                if (meetsQueryRequirement(selection, query.getSelectQuery())) {
+                    valuesToReturn = selection;
+                }
+            }   
+        } catch (Exception e) {
+            logger.error("An unidentified Exception has occured:\n", e);
+            return null;
+        }
+
+        logger.info("getData ran successfully.");
         return valuesToReturn;
     }
 
@@ -380,6 +403,7 @@ public class MatchaDbTable {
      * @return A boolean describing a successful insert.
      */
     public boolean postData(MatchaPostQuery query) {
+        logger.info(String.format("postData called with contents: %s", query.toString()));
 
         try {
             Object selectionToInsertUpon = searchForData(query.getFromQuery(), this.table);
@@ -400,14 +424,15 @@ public class MatchaDbTable {
             }
 
         } catch (ParseException pe) {
-            pe.printStackTrace();
+            logger.error("A Parse Exception has occurred:\n", pe);
             return false;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("An unidentified Exception has occurred:\n", e);
             return false;
         }
 
         this.lastUpdateTimeInMillis = System.currentTimeMillis();
+        logger.info("postData ran successfully.");
         return true;
     }
 
@@ -419,10 +444,12 @@ public class MatchaDbTable {
      * @return A boolean describing a successful update.
      */
     public boolean updateData(MatchaUpdateQuery query) {
-        Object selection = searchForData(query.getFromQuery(), this.table);
+        logger.info(String.format("updateData called with contents: %s", query.toString()));
 
-        // Next, perform the subset query
         try {
+            Object selection = searchForData(query.getFromQuery(), this.table);
+
+            // Next, perform the subset query
             if (selection instanceof List finalListselection) {
                 for (Object value : finalListselection.toArray()) { 
                     if (meetsQueryRequirement(value, query.getSelectQuery())) {
@@ -522,11 +549,12 @@ public class MatchaDbTable {
                 }
             }   
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("An unidentified Exception has occurred:\n", e);
             return false;
         }
 
         this.lastUpdateTimeInMillis = System.currentTimeMillis();
+        logger.info("updateData ran successfully.");
         return true;
     }
 
@@ -538,11 +566,12 @@ public class MatchaDbTable {
      * @return A boolean describing a successful insert.
      */
     public boolean deleteData(MatchaDeleteQuery query) {
+        logger.info(String.format("deleteData called with contents: %s", query.toString()));
 
         try {
             deleteDataFromDbTable(query.getFromQuery(), query.getSelectQuery(), this.table);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("An unidentified Exception has occurred:\n", e);
             return false;
         }
 
