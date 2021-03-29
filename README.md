@@ -6,8 +6,6 @@
 
 **Recent Updates**:
 
-2021/01/16 - Formatting changes for MatchaDbTable and related classes
-
 2021/02/02 - Implemented basic Request Service
 
 2021/02/17 - Implemented basic Parsing Service
