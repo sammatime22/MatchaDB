@@ -7,11 +7,13 @@ import com.matchadb.models.query.MatchaPostQuery;
 import com.matchadb.models.query.MatchaUpdateQuery;
 import com.matchadb.models.query.MatchaDeleteQuery;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
 import java.lang.NumberFormatException;
+import java.lang.System;
 import java.lang.instrument.Instrumentation;
 
 import java.util.ArrayList;
@@ -45,6 +47,12 @@ public class MatchaDbTable {
 
     // The JSONParser object used to parse through provided JSON file data.
     private JSONParser parser;
+
+    // A constant for the property name for where the database data will come from.
+    private final String DATABASE_FILE = "databaseFile";
+
+    // A constatnt for the property name for where the database name will come from.
+    private final String DATABASE_NAME = "databaseName";
 
     // The path to where data is to be dropped off.
     private String dropoffPath;
@@ -126,6 +134,19 @@ public class MatchaDbTable {
             logger.error("No dropoffPath supplied, will not save DB contents on shutdown.");
         }
         this.parser = new JSONParser();
+
+        if (System.getProperty(DATABASE_FILE) != null) {
+            String databaseFile = System.getProperty(DATABASE_FILE);
+            String databaseName = System.getProperty(DATABASE_NAME);
+            try {
+                loadData(
+                    new FileReader(databaseFile), 
+                    databaseName != null ? databaseName : ""
+                );
+            } catch (FileNotFoundException fnfe) {
+                logger.error(String.format("File %s was not found.", databaseFile), fnfe);
+            }
+        }
 
         logger.info("MatchaDbTable Loaded!");
     }
