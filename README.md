@@ -44,5 +44,7 @@ Gradle:
 
 
 **Instructions on Running MatchaDB**
+
 Upon building, run the following command:
+    
     java -jar --enable-preview -DdatabaseFile=path/to/yourjsonfile.json -DdatabaseName="Your DB Name" build/libs/MatchaDB-<version>-SNAPSHOT.war
