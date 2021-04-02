@@ -41,3 +41,8 @@ Gradle:
     - Ant:          Apache Ant(TM) version 1.10.8 compiled on May 10 2020
 
     - JVM:          14.0.1 (Oracle Corporation 14.0.1+7)
+
+
+**Instructions on Running MatchaDB**
+Upon building, run the following command:
+    java -jar --enable-preview -DdatabaseFile=path/to/yourjsonfile.json -DdatabaseName="Your DB Name" build/libs/MatchaDB-<version>-SNAPSHOT.war

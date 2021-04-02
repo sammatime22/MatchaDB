@@ -42,23 +42,27 @@ def help_command():
 
     # Print help information accordingly.
     if (selected_command == GET):
+        # TODO: Rewrite with respect to better input sequence
         print("This command allows users to retrieve data from the DB.")
         print("Below are the promts provided with the GET command:")
         print("From: Provide the name of the table in the database you would like data from.")
         print("Select: A query separated by spaces in the format \"key\" \"operation\" \"value\"")
     elif (selected_command == POST):
+        # TODO: Rewrite with respect to better input sequence
         print("This command allows users to insert data into the DB.")
         print("Below are the promts provided with the POST command:")
         print("From: Provide the name of the table in the database you would like to insert data.")
         print("Select: A query separated by spaces in the format \"key\" \"operation\" \"value\"")
         print("Insert: The action to update the DB in a standard JSON format") 
     elif (selected_command == UPDATE):
+        # TODO: Rewrite with respect to better input sequence
         print("This command allows users to update data in the DB.")
         print("Below are the promts provided with the UPDATE command:")
         print("From: Provide the name of the table in the database you would like to update.")
         print("Select: A query separated by spaces in the format \"key\" \"operation\" \"value\"")
         print("Update: The action to update the DB in the format \"key\" \"operation\" \"value\"")        
     elif (selected_command == DELETE):
+        # TODO: Rewrite with respect to better input sequence
         print("This command allows users to remove data from the DB.")
         print("Below are the promts provided with the DELETE command:")
         print("From: Provide the name of the table in the database you would remove data from.")
@@ -78,6 +82,7 @@ def get_command():
     from_portion = "\"" + input("From: ") + "\""
 
     # Gather the Select portion of the command.
+    # TODO: Rewrite better input sequence
     spart_one, spart_two, spart_three = input("Select: ").split()
     select_portion = "[[\"" + spart_one + "\", \"" + spart_two + "\", \"" + spart_three + "\"]]"
 
@@ -103,6 +108,7 @@ def post_command():
     from_portion = "\'" + input("From: ") + "\""
 
     # Gather the Select portion of the command.
+    # TODO: Rewrite better input sequence
     spart_one, spart_two, spart_three = input("Select: ").split()
     select_portion = "[[\"" + spart_one + "\", \"" + spart_two + "\", \"" + spart_three + "\"]]"
 
@@ -132,6 +138,7 @@ def update_command():
     from_portion = input("From: ")
 
     # Gather the Select portion of the command.
+    # TODO: Rewrite better input sequence
     spart_one, spart_two, spart_three = input("Select: ").split()
     select_portion = "[[\"" + spart_one + "\", \"" + spart_two + "\", \"" + spart_three + "\"]]"
 
@@ -161,6 +168,7 @@ def delete_command():
     from_portion = input("From: ")
 
     # Gather the Select portion of the command.
+    # TODO: Rewrite better input sequence
     spart_one, spart_two, spart_three = input("Select: ").split()
     select_portion = "[[\"" + spart_one + "\", \"" + spart_two + "\", \"" + spart_three + "\"]]"
 
