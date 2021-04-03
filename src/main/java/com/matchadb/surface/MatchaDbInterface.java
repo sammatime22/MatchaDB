@@ -42,6 +42,8 @@ public class MatchaDbInterface {
     @GetMapping(path = "/")
     public ResponseEntity<String> get(@RequestBody String request) {
         logger.info(String.format("\"get\" received request: %s", request));
+        // TODO: Implement rephraser
+        request = request.substring(1, request.length() - 1);
 
         // Send the request to the Parser
         MatchaDbResponseObject response 

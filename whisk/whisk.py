@@ -52,21 +52,21 @@ def help_command():
         print("This command allows users to insert data into the DB.")
         print("Below are the promts provided with the POST command:")
         print("From: Provide the name of the table in the database you would like to insert data.")
-        print("Select: A query separated by spaces in the format \"key\" \"operation\" \"value\"")
-        print("Insert: The action to update the DB in a standard JSON format") 
+        print("Select: A query of format \"key\" \"operation\" \"value\", given over three inputs.")
+        print("Insert: An item to insert, provided in JSON format") 
     elif (selected_command == UPDATE):
         # TODO: Rewrite with respect to better input sequence
         print("This command allows users to update data in the DB.")
         print("Below are the promts provided with the UPDATE command:")
         print("From: Provide the name of the table in the database you would like to update.")
-        print("Select: A query separated by spaces in the format \"key\" \"operation\" \"value\"")
-        print("Update: The action to update the DB in the format \"key\" \"operation\" \"value\"")        
+        print("Select: A query of format \"key\" \"operation\" \"value\", given over three inputs")
+        print("Update: An update action of format \"key\" \"operation\" \"value\" in three inputs")        
     elif (selected_command == DELETE):
         # TODO: Rewrite with respect to better input sequence
         print("This command allows users to remove data from the DB.")
         print("Below are the promts provided with the DELETE command:")
         print("From: Provide the name of the table in the database you would remove data from.")
-        print("Select: A query separated by spaces in the format \"key\" \"operation\" \"value\"")
+        print("Select: A query of format \"key\" \"operation\" \"value\", given over three inputs")
     elif (selected_command == HELP):
         print("After typing help in any casing, when prompted, provide the command of interest.")
     elif (selected_command == EXIT):
@@ -109,8 +109,9 @@ def post_command():
     from_portion = "\'" + input("From: ") + "\""
 
     # Gather the Select portion of the command.
-    # TODO: Rewrite better input sequence
-    spart_one, spart_two, spart_three = input("Select: ").split()
+    spart_one = input("Select (key): ")
+    spart_two = input("Select (operation): ")
+    spart_three = input("Select (value): ")
     select_portion = "[[\"" + spart_one + "\", \"" + spart_two + "\", \"" + spart_three + "\"]]"
 
     # Gather the Insert portion of the command.
@@ -136,15 +137,18 @@ def update_command():
     occur.
     '''
     # Gather the From portion of the command.
-    from_portion = input("From: ")
+    from_portion = "[" + input("From: ") + "]"
 
     # Gather the Select portion of the command.
-    # TODO: Rewrite better input sequence
-    spart_one, spart_two, spart_three = input("Select: ").split()
+    spart_one = input("Select (key): ")
+    spart_two = input("Select (operation): ")
+    spart_three = input("Select (value): ")
     select_portion = "[[\"" + spart_one + "\", \"" + spart_two + "\", \"" + spart_three + "\"]]"
 
     # Gather the Update portion of the command.
-    upart_one, upart_two, upart_three = input("Update: ").split()
+    upart_one = input("Select (key): ")
+    upart_two = input("Select (operation): ")
+    upart_three = input("Select (value): ")
     update_portion = "[[\"" + upart_one + "\", \"" + upart_two + "\", \"" + upart_three + "\"]]"
 
     # Develop the Parameter Values.
@@ -169,8 +173,9 @@ def delete_command():
     from_portion = input("From: ")
 
     # Gather the Select portion of the command.
-    # TODO: Rewrite better input sequence
-    spart_one, spart_two, spart_three = input("Select: ").split()
+    spart_one = input("Select (key): ")
+    spart_two = input("Select (operation): ")
+    spart_three = input("Select (value): ")
     select_portion = "[[\"" + spart_one + "\", \"" + spart_two + "\", \"" + spart_three + "\"]]"
 
     # Develop the Parameter Values.
