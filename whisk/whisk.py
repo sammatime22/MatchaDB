@@ -46,7 +46,7 @@ def help_command():
         print("This command allows users to retrieve data from the DB.")
         print("Below are the promts provided with the GET command:")
         print("From: Provide the name of the table in the database you would like data from.")
-        print("Select: A query separated by spaces in the format \"key\" \"operation\" \"value\"")
+        print("Select: A query of format \"key\" \"operation\" \"value\", given over three inputs.")
     elif (selected_command == POST):
         # TODO: Rewrite with respect to better input sequence
         print("This command allows users to insert data into the DB.")
@@ -82,8 +82,9 @@ def get_command():
     from_portion = "\"" + input("From: ") + "\""
 
     # Gather the Select portion of the command.
-    # TODO: Rewrite better input sequence
-    spart_one, spart_two, spart_three = input("Select: ").split()
+    spart_one = input("Select (key): ")
+    spart_two = input("Select (operation): ")
+    spart_three = input("Select (value): ")
     select_portion = "[[\"" + spart_one + "\", \"" + spart_two + "\", \"" + spart_three + "\"]]"
 
     # Develop the Parameter Values.
