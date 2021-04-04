@@ -79,7 +79,7 @@ def get_command():
     and prints the response code. It will also print exceptions, given that they occur.
     '''
     # Gather the From portion of the command.
-    from_portion = "\"" + input("From: ") + "\""
+    from_portion = "[\"" + input("From: ") + "\"]"
 
     # Gather the Select portion of the command.
     spart_one = input("Select (key): ")
@@ -106,7 +106,7 @@ def post_command():
     MatchaDB, and prints the response code. It will also print exceptions, given that they occur.
     '''
     # Gather the From portion of the command.
-    from_portion = "\'" + input("From: ") + "\""
+    from_portion = "[\"" + input("From: ") + "\"]"
 
     # Gather the Select portion of the command.
     spart_one = input("Select (key): ")
@@ -137,7 +137,7 @@ def update_command():
     occur.
     '''
     # Gather the From portion of the command.
-    from_portion = "[" + input("From: ") + "]"
+    from_portion = "[\"" + input("From: ") + "\"]"
 
     # Gather the Select portion of the command.
     spart_one = input("Select (key): ")
@@ -170,7 +170,7 @@ def delete_command():
     MatchaDB, and prints the response code. It will also print exceptions, given that they occur.
     '''   
     # Gather the From portion of the command.
-    from_portion = input("From: ")
+    from_portion = "[\"" + input("From: ") + "\"]"
 
     # Gather the Select portion of the command.
     spart_one = input("Select (key): ")

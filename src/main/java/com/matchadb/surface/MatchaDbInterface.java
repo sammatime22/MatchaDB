@@ -41,9 +41,9 @@ public class MatchaDbInterface {
      */
     @GetMapping(path = "/")
     public ResponseEntity<String> get(@RequestBody String request) {
+        request = rephraseRequest(request);
+
         logger.info(String.format("\"get\" received request: %s", request));
-        // TODO: Implement rephraser
-        request = request.substring(1, request.length() - 1);
 
         // Send the request to the Parser
         MatchaDbResponseObject response 
@@ -73,6 +73,8 @@ public class MatchaDbInterface {
      */
     @PostMapping(path = "/")
     public ResponseEntity post(@RequestBody String request) {
+        request = rephraseRequest(request);
+
         logger.info(String.format("\"post\" received request: %s", request));
 
         // Send the request to the parser
@@ -103,6 +105,8 @@ public class MatchaDbInterface {
      */
     @PutMapping(path = "/")
     public ResponseEntity update(@RequestBody String request) {
+        request = rephraseRequest(request);
+
         logger.info(String.format("\"update\" received request: %s", request));
 
         // Send the request to the parser
@@ -133,6 +137,8 @@ public class MatchaDbInterface {
      */
     @DeleteMapping(path = "/")
     public ResponseEntity delete(@RequestBody String request) {
+        request = rephraseRequest(request);
+
         logger.info(String.format("\"delete\" received request: %s", request));
 
         // Send the request to the parser
@@ -150,6 +156,30 @@ public class MatchaDbInterface {
         } else {
             // If the request was malformed, return a 400
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * This method takes in a request string, and tries to turn said string into something that can
+     * actually be understood within the underlying system. It also allows MatchaDB to handle 
+     * multiple different REST client types.
+     *
+     * Infinite TODO: As errors come in from other REST client architectures, update this method to
+     *                hanlde these new request formats. 
+     *
+     * As of 2021/04/04, we just have rephrasing implemented for the Python requests module.
+     *
+     * @param request The request to be rephrased.
+     */
+    private String rephraseRequest(String request) {
+        // For the Python requests module (for Whisk).
+        if (request.charAt(0) == '\'' && request.charAt(request.length() - 1) == '\'') {
+            return request.substring(1, request.length() - 1);
+        } 
+
+        // Nothing was different about the formatting of the request, or we couldn't recognize it.
+        else {
+            return request;
         }
     }
 }
