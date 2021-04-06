@@ -174,12 +174,12 @@ public class MatchaDbInterface {
     private String rephraseRequest(String request) {
         // For the Python requests module (for Whisk).
         if (request.charAt(0) == '\'' && request.charAt(request.length() - 1) == '\'') {
-            return request.substring(1, request.length() - 1);
+            return request.substring(1, request.length() - 1).replace('\'', '\"');
         } 
 
         // Nothing was different about the formatting of the request, or we couldn't recognize it.
         else {
-            return request;
+            return request.replace('\'', '\"');
         }
     }
 }

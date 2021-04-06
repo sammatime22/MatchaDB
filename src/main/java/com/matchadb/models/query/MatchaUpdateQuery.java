@@ -42,10 +42,10 @@ public class MatchaUpdateQuery extends MatchaQuery {
             String selectQueryAsStringPortionToAdd = "";
 
             for (String selectQueryAsStringPortionSection : selectQueryAsStringPortion) {
-                selectQueryAsStringPortionToAdd += selectQueryAsStringPortionSection;
+                selectQueryAsStringPortionToAdd += " '" + selectQueryAsStringPortionSection + "' ";
             }
 
-            selectQueryAsString += " '" + selectQueryAsStringPortionToAdd + "' ";
+            selectQueryAsString += "[" + selectQueryAsStringPortionToAdd + "]";
         }
 
         String updateQueryAsString = "";
@@ -54,10 +54,10 @@ public class MatchaUpdateQuery extends MatchaQuery {
             String updateQueryAsStringPortionToAdd = "";
 
             for (String updateQueryAsStringPortionSection : updateQueryAsStringPortion) {
-                updateQueryAsStringPortionToAdd += updateQueryAsStringPortionSection;
+                updateQueryAsStringPortionToAdd += " '" + updateQueryAsStringPortionSection + "' ";
             }
 
-            updateQueryAsString += " '" + updateQueryAsStringPortionToAdd + "' ";
+            updateQueryAsString += "[" + updateQueryAsStringPortionToAdd + "]";
         }        
 
         return String.format(

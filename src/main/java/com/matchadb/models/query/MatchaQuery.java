@@ -57,10 +57,10 @@ public class MatchaQuery {
             String selectQueryAsStringPortionToAdd = "";
 
             for (String selectQueryAsStringPortionSection : selectQueryAsStringPortion) {
-                selectQueryAsStringPortionToAdd += selectQueryAsStringPortionSection;
+                selectQueryAsStringPortionToAdd += " '" + selectQueryAsStringPortionSection + "' ";
             }
 
-            selectQueryAsString += " '" + selectQueryAsStringPortionToAdd + "' ";
+            selectQueryAsString += "[" + selectQueryAsStringPortionToAdd + "]";
         }
 
         return String.format(
