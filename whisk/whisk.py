@@ -118,7 +118,9 @@ def post_command():
     insert_portion = input("Insert: ")
 
     # Develop the Parameter Values.
-    parameter_vals = {"From": from_portion, "Select": select_portion, "Insert": insert_portion}
+    parameter_vals = "{\"From\": " + from_portion \
+                    + ", \"Select\": " + select_portion \
+                    + ", \"Insert\": " + insert_portion + "}"
 
     try:
         # Make the request and see the response code.
