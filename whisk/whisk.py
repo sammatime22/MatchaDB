@@ -42,27 +42,23 @@ def help_command():
 
     # Print help information accordingly.
     if (selected_command == GET):
-        # TODO: Rewrite with respect to better input sequence
         print("This command allows users to retrieve data from the DB.")
         print("Below are the promts provided with the GET command:")
         print("From: Provide the name of the table in the database you would like data from.")
         print("Select: A query of format \"key\" \"operation\" \"value\", given over three inputs.")
     elif (selected_command == POST):
-        # TODO: Rewrite with respect to better input sequence
         print("This command allows users to insert data into the DB.")
         print("Below are the promts provided with the POST command:")
         print("From: Provide the name of the table in the database you would like to insert data.")
         print("Select: A query of format \"key\" \"operation\" \"value\", given over three inputs.")
-        print("Insert: An item to insert, provided in JSON format") 
+        print("Insert: An item to insert, in key-value pairs provided in 2D arrays in one 2D array") 
     elif (selected_command == UPDATE):
-        # TODO: Rewrite with respect to better input sequence
         print("This command allows users to update data in the DB.")
         print("Below are the promts provided with the UPDATE command:")
         print("From: Provide the name of the table in the database you would like to update.")
         print("Select: A query of format \"key\" \"operation\" \"value\", given over three inputs")
         print("Update: An update action of format \"key\" \"operation\" \"value\" in three inputs")        
     elif (selected_command == DELETE):
-        # TODO: Rewrite with respect to better input sequence
         print("This command allows users to remove data from the DB.")
         print("Below are the promts provided with the DELETE command:")
         print("From: Provide the name of the table in the database you would remove data from.")

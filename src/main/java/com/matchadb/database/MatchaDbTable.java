@@ -426,6 +426,8 @@ public class MatchaDbTable {
     public boolean postData(MatchaPostQuery query) {
         logger.info(String.format("postData called with contents: %s", query.toString()));
 
+        // TODO: Transform this method to use an array instead of attempting to parse a JSON Object
+
         try {
             Object selectionToInsertUpon = searchForData(query.getFromQuery(), this.table);
 
