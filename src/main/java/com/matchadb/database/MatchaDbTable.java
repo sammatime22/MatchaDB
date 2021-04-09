@@ -432,10 +432,13 @@ public class MatchaDbTable {
             Object selectionToInsertUpon = searchForData(query.getFromQuery(), this.table);
 
             for (String[] insertQuery : query.getInsertQuery()) {
-                HashMap<String, Object> newItem = 
-                    interpretJSONObject(
-                        (JSONObject) this.parser.parse(insertQuery[OBJECT_TO_INSERT_INDEX])
-                    );
+                // Build the object
+                HashMap<String, Object> newItem = new HashMap<>();
+                for (String entry : insertQuery) {
+                    String[] components = entry.split("="); // Split on an equals sign
+                    newItem.put(components[0], determineDataType(components[1]));
+                }
+
                 if (selectionToInsertUpon instanceof HashMap selectionAsHashMap) {
                     selectionAsHashMap.put(
                         query.getFromQuery()[query.getFromQuery().length - 1], newItem
@@ -446,9 +449,6 @@ public class MatchaDbTable {
 
             }
 
-        } catch (ParseException pe) {
-            logger.error("A Parse Exception has occurred:\n", pe);
-            return false;
         } catch (Exception e) {
             logger.error("An unidentified Exception has occurred:\n", e);
             return false;
@@ -457,6 +457,37 @@ public class MatchaDbTable {
         this.lastUpdateTimeInMillis = System.currentTimeMillis();
         logger.info("postData ran successfully.");
         return true;
+    }
+
+    /**
+     * Determines the data type of a value such that it can properly be inserted into an entry.
+     *
+     * @param value The value to interpret.
+     *
+     * @return A value in the data type of best fit. 
+     */
+    private Object determineDataType(String value) {
+        try {
+            return Integer.valueOf(value);
+        } catch (Exception e) {
+            logger.error("Could not interpret as an integer.", e);
+        }
+
+        try {
+            return Double.valueOf(value);
+        } catch (Exception e) {
+            logger.error("Could not interpret as a double.", e);
+        }
+
+        try { 
+            return Boolean.valueOf(value);
+        } catch (Exception e) {
+            logger.error("Could not interpret as a boolean.", e);
+        }
+
+        // Given that we couldn't get any other data type interpreted from the value, we'll just
+        // return it back as a String.
+        return value;
     }
 
     /**
