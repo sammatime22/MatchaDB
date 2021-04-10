@@ -243,11 +243,12 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testPostData() {
-        String fancyHatToAddAsJSON = MatchaDbGenerateData.newClothesItemToInsert();
+        // Rewrite the data generator method
+        String[][] fancyHatToAddAs2DArray = MatchaDbGenerateData.newClothesItemToInsert();
 
         // Query to get item
         MatchaGetQuery matchaQueryGetFancyHat = new MatchaGetQuery(new String[] {HATS_TABLE},
-            new String[][] {{ITEM_NAME, HAS_OPERATION, "'Trendy Hat'"}}
+            new String[][] {{ITEM_NAME, HAS_OPERATION, "Trendy Hat"}}
         );
 
         // Query to insert item, which in JSON might come in as...
@@ -257,7 +258,7 @@ public class MatchaDbTableTest {
         // \"Item Price\": 9000000.95 }""
         MatchaPostQuery matchaQueryInsertFancyHat = new MatchaPostQuery(new String[] {HATS_TABLE},
             new String[][] {{}},
-            new String[][] {{fancyHatToAddAsJSON}}
+            fancyHatToAddAs2DArray
         );
         matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
         String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;

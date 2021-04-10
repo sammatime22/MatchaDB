@@ -145,16 +145,13 @@ public class MatchaDbGenerateData {
     /**
      * A generator method that returns a clothes item to insert.
      *
-     * @return a clothes items to insert in the form of a JSON Object.
+     * @return a clothes items to insert in the form of a 2D String array for insert to the table.
      */
-    public static String newClothesItemToInsert() {
-        String newClothingItem = "{ \"Item Name\": \"Trendy Hat\", \"Item Brand\": \"qwertu\","
-            + "\"Item Description\": \"A hat with a feather for a feather.\"," 
-            + "\"Item Price\": 9000000.95 }";
-        
-
-        // newClothingItems.add(buildClothesObject("Trendy Hat", "qwertu", 
-        //     "A hat with a feather for a feather.", 9000000.95));
+    public static String[][] newClothesItemToInsert() {
+        String[][] newClothingItem = new String[][]{{
+            "Item Name=Trendy Hat", "Item Brand=qwertu", 
+            "Item Description=A hat with a feather for a feather.", "Item Price=9000000.95"
+        }};
 
         return newClothingItem;
     }
