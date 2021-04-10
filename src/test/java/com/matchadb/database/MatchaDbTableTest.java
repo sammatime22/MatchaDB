@@ -60,8 +60,7 @@ public class MatchaDbTableTest {
 
     private final String ALL_TABLES = "*";
 
-    // Different queries usable on the table.
-    private final String UPDATE = "Update";
+    private final String TO = "to";
 
     MatchaDbTable matchaDbTable;
 
@@ -322,7 +321,7 @@ public class MatchaDbTableTest {
         
         MatchaUpdateQuery matchaQueryUpdate = new MatchaUpdateQuery(new String[]{ALL_TABLES}, 
             new String[][]{{ITEM_PRICE, GREATER_THAN, "15.00"}, {ITEM_PRICE, LESS_THAN, "20.00"}},
-            new String[][]{{UPDATE, ITEM_PRICE, newPrice}, {UPDATE, ITEM_BRAND, newBrand}});
+            new String[][]{{ITEM_PRICE, TO, newPrice}, {ITEM_BRAND, TO, newBrand}});
 
         matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
 

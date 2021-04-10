@@ -79,7 +79,7 @@ public class MatchaDbTable {
     private final int OBJECT_TO_INSERT_INDEX = 0;
 
     // The position of the Key that should be updated.
-    private final int QUERY_UPDATED_KEY_POSITION = 1;
+    private final int QUERY_UPDATED_KEY_POSITION = 0;
 
     // The postion of the Value to be updated.
     private final int QUERY_UPDATED_VALUE_POSITION = 2;
@@ -477,12 +477,13 @@ public class MatchaDbTable {
             logger.error("Could not interpret as a double.", e);
         }
 
-        try { 
-            return Boolean.valueOf(value);
-        } catch (Exception e) {
-            logger.error("Could not interpret as a boolean.", e);
+        if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
+            try { 
+                return Boolean.valueOf(value);
+            } catch (Exception e) {
+                logger.error("Could not interpret as a boolean.", e);
+            }
         }
-
         // Given that we couldn't get any other data type interpreted from the value, we'll just
         // return it back as a String.
         return value;
@@ -644,6 +645,7 @@ public class MatchaDbTable {
                                        Object tablePortion) {
         if (fromQuery.length > 0) {
             for (String fromQueryPortion : fromQuery) {
+                // Given that we have a Select All query, move through the entire
                 if (SELECT_ALL.equals(fromQueryPortion)) {
                     if (tablePortion instanceof List tablePortionAsList) {
                         for (Object tablePortionAsListPortion : tablePortionAsList) {
@@ -662,9 +664,22 @@ public class MatchaDbTable {
                             );
                         }
                     }
+                } else {
+                    if (tablePortion instanceof List tablePortionAsList) {
+                        deleteDataFromDbTable(
+                            Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery,
+                            tablePortionAsList.get(tablePortionAsList.indexOf(fromQueryPortion))
+                        );
+                    } else if (tablePortion instanceof HashMap tablePortionAsHashMap) {
+                        deleteDataFromDbTable(
+                            Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery,
+                            tablePortionAsHashMap.get(fromQueryPortion)
+                        );
+                    }
                 }
             }
         } else {
+            logger.error("Came here! " +  tablePortion);
             if (tablePortion instanceof List tablePortionAsList) {
                 for (Iterator tablePortionAsListIterator = tablePortionAsList.iterator(); 
                     tablePortionAsListIterator.hasNext();) {
@@ -796,6 +811,7 @@ public class MatchaDbTable {
     private boolean meetsQueryRequirement(Object value, String[][] selectQueryContents) {
         HashMap<String, Object> valueMap = ((HashMap) value);
         List<Boolean> queryResults = new ArrayList<>();
+        System.out.println(valueMap);
 
         // Run each subquery, and if all match, finish the method by returning true.
         // Otherwise, return false promptly.

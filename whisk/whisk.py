@@ -90,6 +90,7 @@ def get_command():
         # Make the request and see the response code.
         response = requests.get(PROTOCOL + host + ":" + port + "/", data = repr(parameter_vals))
         print(response)
+        print(response.content)
     except requests.exceptions.ConnectionError:
         print("A connection error has occured.")
     except Exception as e:
@@ -122,6 +123,7 @@ def post_command():
         # Make the request and see the response code.
         response = requests.post(PROTOCOL + host + ":" + port + "/", data = repr(parameter_vals))
         print(response)
+        print(response.content)
     except requests.exceptions.ConnectionError:
         print("A connection error has occured.")
     except Exception as e:
@@ -144,18 +146,21 @@ def update_command():
     select_portion = "[[\"" + spart_one + "\", \"" + spart_two + "\", \"" + spart_three + "\"]]"
 
     # Gather the Update portion of the command.
-    upart_one = input("Select (key): ")
-    upart_two = input("Select (operation): ")
-    upart_three = input("Select (value): ")
+    upart_one = input("Update (key): ")
+    upart_two = input("Update (operation): ")
+    upart_three = input("Update (value): ")
     update_portion = "[[\"" + upart_one + "\", \"" + upart_two + "\", \"" + upart_three + "\"]]"
 
     # Develop the Parameter Values.
-    parameter_vals = {"From": from_portion, "Select": select_portion, "Update": update_portion}
+    parameter_vals = "{\"From\": " + from_portion \
+                    + ", \"Select\": " + select_portion \
+                    + ", \"Update\": " + update_portion + "}"
 
     try:
         # Make the request and see the response code.
         response = requests.put(PROTOCOL + host + ":" + port + "/", data = repr(parameter_vals))
         print(response)
+        print(response.content)
     except requests.exceptions.ConnectionError:
         print("A connection error has occured.")
     except Exception as e:
@@ -177,12 +182,13 @@ def delete_command():
     select_portion = "[[\"" + spart_one + "\", \"" + spart_two + "\", \"" + spart_three + "\"]]"
 
     # Develop the Parameter Values.
-    parameter_vals = {"From": from_portion, "Select": select_portion}
+    parameter_vals = "{\"From\": " + from_portion + ", \"Select\": " + select_portion + "}"
 
     try:
         # Make the request and see the response code.
         response = requests.delete(PROTOCOL + host + ":" + port + "/", data = repr(parameter_vals))
         print(response)
+        print(response.content)
     except requests.exceptions.ConnectionError:
         print("A connection error has occured.")
     except Exception as e:
