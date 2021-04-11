@@ -382,6 +382,7 @@ public class MatchaDbTable {
 
         try {
             Object selection = searchForData(query.getFromQuery(), this.table);
+            logger.info("Selection Used: " + selection);
 
             // Next, perform the subset query
             if (selection instanceof List finalListselection) {
@@ -390,6 +391,12 @@ public class MatchaDbTable {
                     if (meetsQueryRequirement(value, query.getSelectQuery())) {
                         ((ArrayList) valuesToReturn).add(value);
                     }
+                }
+
+                // Given that we get no values, we will set valuesToReturn back to null so that the
+                // service which called the getData method can react appropriately.
+                if (((List) valuesToReturn).isEmpty()) {
+                    valuesToReturn = null;
                 }     
             } else if (selection instanceof HashMap finalHashmapSelection) {
                 valuesToReturn = new HashMap<>();
@@ -401,6 +408,12 @@ public class MatchaDbTable {
                     if (meetsQueryRequirement(value, query.getSelectQuery())) {
                         ((HashMap) valuesToReturn).put(key, value);
                     }
+                }
+
+                // Given that we get no values, we will set valuesToReturn back to null so that the
+                // service which called the getData method can react appropriately.
+                if (((HashMap) valuesToReturn).isEmpty()) {
+                    valuesToReturn = null;
                 }
             } else {
                 if (meetsQueryRequirement(selection, query.getSelectQuery())) {
@@ -444,9 +457,9 @@ public class MatchaDbTable {
                 } else if (selectionToInsertUpon instanceof List selectionAsList) {
                     selectionAsList.add(newItem);
                 }
-
             }
 
+            logger.info("Selection After Insert: " + selectionToInsertUpon);
         } catch (Exception e) {
             logger.error("An unidentified Exception has occurred:\n", e);
             return false;
@@ -600,11 +613,14 @@ public class MatchaDbTable {
                         }
                     }
                 }
-            }   
+            }
+
+            logger.info("Selection After Update: " + selection);   
         } catch (Exception e) {
             logger.error("An unidentified Exception has occurred:\n", e);
             return false;
         }
+
 
         this.lastUpdateTimeInMillis = System.currentTimeMillis();
         logger.info("updateData ran successfully.");
@@ -679,7 +695,6 @@ public class MatchaDbTable {
                 }
             }
         } else {
-            logger.error("Came here! " +  tablePortion);
             if (tablePortion instanceof List tablePortionAsList) {
                 for (Iterator tablePortionAsListIterator = tablePortionAsList.iterator(); 
                     tablePortionAsListIterator.hasNext();) {
@@ -699,6 +714,8 @@ public class MatchaDbTable {
                     }
                 }
             }
+            
+            logger.info("Table Portion After Delete: " + tablePortion);
         }
     }
 
@@ -811,7 +828,6 @@ public class MatchaDbTable {
     private boolean meetsQueryRequirement(Object value, String[][] selectQueryContents) {
         HashMap<String, Object> valueMap = ((HashMap) value);
         List<Boolean> queryResults = new ArrayList<>();
-        System.out.println(valueMap);
 
         // Run each subquery, and if all match, finish the method by returning true.
         // Otherwise, return false promptly.

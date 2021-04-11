@@ -268,8 +268,9 @@ public class MatchaDbTableTest {
             matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
             
             // Show the item is not there (get)
-            matchaDbTable.getData(matchaQueryGetFancyHat);
-            if (((List)matchaDbTable.getData(matchaQueryGetFancyHat)).size() > 0) {
+            Object noFancyHatQueryResults = matchaDbTable.getData(matchaQueryGetFancyHat);
+            if (noFancyHatQueryResults != null 
+                && ((List)matchaDbTable.getData(matchaQueryGetFancyHat)).size() > 0) {
                 Assert.fail();
             }
 
