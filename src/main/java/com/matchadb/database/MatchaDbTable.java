@@ -7,11 +7,13 @@ import com.matchadb.models.query.MatchaPostQuery;
 import com.matchadb.models.query.MatchaUpdateQuery;
 import com.matchadb.models.query.MatchaDeleteQuery;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
 import java.lang.NumberFormatException;
+import java.lang.System;
 import java.lang.instrument.Instrumentation;
 
 import java.util.ArrayList;
@@ -46,6 +48,12 @@ public class MatchaDbTable {
     // The JSONParser object used to parse through provided JSON file data.
     private JSONParser parser;
 
+    // A constant for the property name for where the database data will come from.
+    private final String DATABASE_FILE = "databaseFile";
+
+    // A constatnt for the property name for where the database name will come from.
+    private final String DATABASE_NAME = "databaseName";
+
     // The path to where data is to be dropped off.
     private String dropoffPath;
 
@@ -71,7 +79,7 @@ public class MatchaDbTable {
     private final int OBJECT_TO_INSERT_INDEX = 0;
 
     // The position of the Key that should be updated.
-    private final int QUERY_UPDATED_KEY_POSITION = 1;
+    private final int QUERY_UPDATED_KEY_POSITION = 0;
 
     // The postion of the Value to be updated.
     private final int QUERY_UPDATED_VALUE_POSITION = 2;
@@ -126,6 +134,19 @@ public class MatchaDbTable {
             logger.error("No dropoffPath supplied, will not save DB contents on shutdown.");
         }
         this.parser = new JSONParser();
+
+        if (System.getProperty(DATABASE_FILE) != null) {
+            String databaseFile = System.getProperty(DATABASE_FILE);
+            String databaseName = System.getProperty(DATABASE_NAME);
+            try {
+                loadData(
+                    new FileReader(databaseFile), 
+                    databaseName != null ? databaseName : ""
+                );
+            } catch (FileNotFoundException fnfe) {
+                logger.error(String.format("File %s was not found.", databaseFile), fnfe);
+            }
+        }
 
         logger.info("MatchaDbTable Loaded!");
     }
@@ -361,6 +382,7 @@ public class MatchaDbTable {
 
         try {
             Object selection = searchForData(query.getFromQuery(), this.table);
+            logger.info("Selection Used: " + selection);
 
             // Next, perform the subset query
             if (selection instanceof List finalListselection) {
@@ -369,6 +391,12 @@ public class MatchaDbTable {
                     if (meetsQueryRequirement(value, query.getSelectQuery())) {
                         ((ArrayList) valuesToReturn).add(value);
                     }
+                }
+
+                // Given that we get no values, we will set valuesToReturn back to null so that the
+                // service which called the getData method can react appropriately.
+                if (((List) valuesToReturn).isEmpty()) {
+                    valuesToReturn = null;
                 }     
             } else if (selection instanceof HashMap finalHashmapSelection) {
                 valuesToReturn = new HashMap<>();
@@ -380,6 +408,12 @@ public class MatchaDbTable {
                     if (meetsQueryRequirement(value, query.getSelectQuery())) {
                         ((HashMap) valuesToReturn).put(key, value);
                     }
+                }
+
+                // Given that we get no values, we will set valuesToReturn back to null so that the
+                // service which called the getData method can react appropriately.
+                if (((HashMap) valuesToReturn).isEmpty()) {
+                    valuesToReturn = null;
                 }
             } else {
                 if (meetsQueryRequirement(selection, query.getSelectQuery())) {
@@ -409,10 +443,13 @@ public class MatchaDbTable {
             Object selectionToInsertUpon = searchForData(query.getFromQuery(), this.table);
 
             for (String[] insertQuery : query.getInsertQuery()) {
-                HashMap<String, Object> newItem = 
-                    interpretJSONObject(
-                        (JSONObject) this.parser.parse(insertQuery[OBJECT_TO_INSERT_INDEX])
-                    );
+                // Build the object
+                HashMap<String, Object> newItem = new HashMap<>();
+                for (String entry : insertQuery) {
+                    String[] components = entry.split("="); // Split on an equals sign
+                    newItem.put(components[0], determineDataType(components[1]));
+                }
+
                 if (selectionToInsertUpon instanceof HashMap selectionAsHashMap) {
                     selectionAsHashMap.put(
                         query.getFromQuery()[query.getFromQuery().length - 1], newItem
@@ -420,12 +457,9 @@ public class MatchaDbTable {
                 } else if (selectionToInsertUpon instanceof List selectionAsList) {
                     selectionAsList.add(newItem);
                 }
-
             }
 
-        } catch (ParseException pe) {
-            logger.error("A Parse Exception has occurred:\n", pe);
-            return false;
+            logger.info("Selection After Insert: " + selectionToInsertUpon);
         } catch (Exception e) {
             logger.error("An unidentified Exception has occurred:\n", e);
             return false;
@@ -434,6 +468,38 @@ public class MatchaDbTable {
         this.lastUpdateTimeInMillis = System.currentTimeMillis();
         logger.info("postData ran successfully.");
         return true;
+    }
+
+    /**
+     * Determines the data type of a value such that it can properly be inserted into an entry.
+     *
+     * @param value The value to interpret.
+     *
+     * @return A value in the data type of best fit. 
+     */
+    private Object determineDataType(String value) {
+        try {
+            return Integer.valueOf(value);
+        } catch (Exception e) {
+            logger.error("Could not interpret as an integer.", e);
+        }
+
+        try {
+            return Double.valueOf(value);
+        } catch (Exception e) {
+            logger.error("Could not interpret as a double.", e);
+        }
+
+        if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
+            try { 
+                return Boolean.valueOf(value);
+            } catch (Exception e) {
+                logger.error("Could not interpret as a boolean.", e);
+            }
+        }
+        // Given that we couldn't get any other data type interpreted from the value, we'll just
+        // return it back as a String.
+        return value;
     }
 
     /**
@@ -547,11 +613,14 @@ public class MatchaDbTable {
                         }
                     }
                 }
-            }   
+            }
+
+            logger.info("Selection After Update: " + selection);   
         } catch (Exception e) {
             logger.error("An unidentified Exception has occurred:\n", e);
             return false;
         }
+
 
         this.lastUpdateTimeInMillis = System.currentTimeMillis();
         logger.info("updateData ran successfully.");
@@ -592,6 +661,7 @@ public class MatchaDbTable {
                                        Object tablePortion) {
         if (fromQuery.length > 0) {
             for (String fromQueryPortion : fromQuery) {
+                // Given that we have a Select All query, move through the entire
                 if (SELECT_ALL.equals(fromQueryPortion)) {
                     if (tablePortion instanceof List tablePortionAsList) {
                         for (Object tablePortionAsListPortion : tablePortionAsList) {
@@ -609,6 +679,18 @@ public class MatchaDbTable {
                                 tablePortionAsHashMap.get(key)
                             );
                         }
+                    }
+                } else {
+                    if (tablePortion instanceof List tablePortionAsList) {
+                        deleteDataFromDbTable(
+                            Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery,
+                            tablePortionAsList.get(tablePortionAsList.indexOf(fromQueryPortion))
+                        );
+                    } else if (tablePortion instanceof HashMap tablePortionAsHashMap) {
+                        deleteDataFromDbTable(
+                            Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery,
+                            tablePortionAsHashMap.get(fromQueryPortion)
+                        );
                     }
                 }
             }
@@ -632,6 +714,8 @@ public class MatchaDbTable {
                     }
                 }
             }
+            
+            logger.info("Table Portion After Delete: " + tablePortion);
         }
     }
 

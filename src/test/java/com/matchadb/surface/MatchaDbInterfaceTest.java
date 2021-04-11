@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import com.matchadb.database.MatchaDbTable;
 import com.matchadb.enums.MatchaDbRequestType;
 import com.matchadb.models.request.MatchaDbRawRequestObject;
 import com.matchadb.models.response.MatchaDbResponseObject;
@@ -46,6 +47,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = MatchaDbInterface.class)
 public class MatchaDbInterfaceTest {  
+
+    @MockBean
+    MatchaDbTable matchaDbTable;
 
     @MockBean
     private MatchaDbRequestParser matchaDbRequestParser;

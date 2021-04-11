@@ -2,13 +2,9 @@
 
 **Summary**: _A simple DB implementation that can take in a json doc and develop an API from said JSON doc._
 
-**Status**: 83% to Beta v1
+**Status**: At Beta v1
 
 **Recent Updates**:
-
-2021/01/16 - Formatting changes for MatchaDbTable and related classes
-
-2021/02/02 - Implemented basic Request Service
 
 2021/02/17 - Implemented basic Parsing Service
 
@@ -17,6 +13,8 @@
 2021/03/20 - Implemented basic Whisk Application
 
 2021/03/28 - Implemented basic logging functionality
+
+2021/04/11 - At Betav1!
 
 **System Requirements**
 
@@ -43,3 +41,10 @@ Gradle:
     - Ant:          Apache Ant(TM) version 1.10.8 compiled on May 10 2020
 
     - JVM:          14.0.1 (Oracle Corporation 14.0.1+7)
+
+
+**Instructions on Running MatchaDB**
+
+Upon building, run the following command:
+    
+    java -jar --enable-preview -DdatabaseFile=path/to/yourjsonfile.json -DdatabaseName="Your DB Name" build/libs/MatchaDB-<version>-SNAPSHOT.war

@@ -1,4 +1,5 @@
 <configuration>
+    <!--Log "File" Configuration-->
     <property name="HOME_LOG" value="./logs"/>
 
     <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -16,5 +17,16 @@
 
     <logger name="com.matchadb" level="debug">
         <appender-ref ref="FILE-ROLLING"/>
+    </logger>
+
+    <!--Log "Console" Configuration-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.matchadb" level="debug">
+        <appender-ref ref="STDOUT"/>
     </logger>
 </configuration>

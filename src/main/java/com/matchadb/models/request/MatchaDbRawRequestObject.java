@@ -34,4 +34,13 @@ public class MatchaDbRawRequestObject {
         return this.requestString;
     }
 
+    /**
+     * Returns a String representing the contents of the raw request.
+     *
+     * @return a String representing the contents of the raw request.
+     */
+    public String toString() {
+        return 
+            "{\"Type\": " + this.requestType + ", \"Request String\": " + this.requestString + "}";
+    }
 }

@@ -45,24 +45,24 @@ def help_command():
         print("This command allows users to retrieve data from the DB.")
         print("Below are the promts provided with the GET command:")
         print("From: Provide the name of the table in the database you would like data from.")
-        print("Select: A query separated by spaces in the format \"key\" \"operation\" \"value\"")
+        print("Select: A query of format \"key\" \"operation\" \"value\", given over three inputs.")
     elif (selected_command == POST):
         print("This command allows users to insert data into the DB.")
         print("Below are the promts provided with the POST command:")
         print("From: Provide the name of the table in the database you would like to insert data.")
-        print("Select: A query separated by spaces in the format \"key\" \"operation\" \"value\"")
-        print("Insert: The action to update the DB in a standard JSON format") 
+        print("Select: A query of format \"key\" \"operation\" \"value\", given over three inputs.")
+        print("Insert: An item to insert, in key-value pairs provided in 2D arrays in one 2D array") 
     elif (selected_command == UPDATE):
         print("This command allows users to update data in the DB.")
         print("Below are the promts provided with the UPDATE command:")
         print("From: Provide the name of the table in the database you would like to update.")
-        print("Select: A query separated by spaces in the format \"key\" \"operation\" \"value\"")
-        print("Update: The action to update the DB in the format \"key\" \"operation\" \"value\"")        
+        print("Select: A query of format \"key\" \"operation\" \"value\", given over three inputs")
+        print("Update: An update action of format \"key\" \"operation\" \"value\" in three inputs")        
     elif (selected_command == DELETE):
         print("This command allows users to remove data from the DB.")
         print("Below are the promts provided with the DELETE command:")
         print("From: Provide the name of the table in the database you would remove data from.")
-        print("Select: A query separated by spaces in the format \"key\" \"operation\" \"value\"")
+        print("Select: A query of format \"key\" \"operation\" \"value\", given over three inputs")
     elif (selected_command == HELP):
         print("After typing help in any casing, when prompted, provide the command of interest.")
     elif (selected_command == EXIT):
@@ -75,10 +75,12 @@ def get_command():
     and prints the response code. It will also print exceptions, given that they occur.
     '''
     # Gather the From portion of the command.
-    from_portion = "\"" + input("From: ") + "\""
+    from_portion = "[\"" + input("From: ") + "\"]"
 
     # Gather the Select portion of the command.
-    spart_one, spart_two, spart_three = input("Select: ").split()
+    spart_one = input("Select (key): ")
+    spart_two = input("Select (operation): ")
+    spart_three = input("Select (value): ")
     select_portion = "[[\"" + spart_one + "\", \"" + spart_two + "\", \"" + spart_three + "\"]]"
 
     # Develop the Parameter Values.
@@ -88,6 +90,7 @@ def get_command():
         # Make the request and see the response code.
         response = requests.get(PROTOCOL + host + ":" + port + "/", data = repr(parameter_vals))
         print(response)
+        print(response.content)
     except requests.exceptions.ConnectionError:
         print("A connection error has occured.")
     except Exception as e:
@@ -100,22 +103,27 @@ def post_command():
     MatchaDB, and prints the response code. It will also print exceptions, given that they occur.
     '''
     # Gather the From portion of the command.
-    from_portion = "\'" + input("From: ") + "\""
+    from_portion = "[\"" + input("From: ") + "\"]"
 
     # Gather the Select portion of the command.
-    spart_one, spart_two, spart_three = input("Select: ").split()
+    spart_one = input("Select (key): ")
+    spart_two = input("Select (operation): ")
+    spart_three = input("Select (value): ")
     select_portion = "[[\"" + spart_one + "\", \"" + spart_two + "\", \"" + spart_three + "\"]]"
 
     # Gather the Insert portion of the command.
     insert_portion = input("Insert: ")
 
     # Develop the Parameter Values.
-    parameter_vals = {"From": from_portion, "Select": select_portion, "Insert": insert_portion}
+    parameter_vals = "{\"From\": " + from_portion \
+                    + ", \"Select\": " + select_portion \
+                    + ", \"Insert\": " + insert_portion + "}"
 
     try:
         # Make the request and see the response code.
         response = requests.post(PROTOCOL + host + ":" + port + "/", data = repr(parameter_vals))
         print(response)
+        print(response.content)
     except requests.exceptions.ConnectionError:
         print("A connection error has occured.")
     except Exception as e:
@@ -129,23 +137,30 @@ def update_command():
     occur.
     '''
     # Gather the From portion of the command.
-    from_portion = input("From: ")
+    from_portion = "[\"" + input("From: ") + "\"]"
 
     # Gather the Select portion of the command.
-    spart_one, spart_two, spart_three = input("Select: ").split()
+    spart_one = input("Select (key): ")
+    spart_two = input("Select (operation): ")
+    spart_three = input("Select (value): ")
     select_portion = "[[\"" + spart_one + "\", \"" + spart_two + "\", \"" + spart_three + "\"]]"
 
     # Gather the Update portion of the command.
-    upart_one, upart_two, upart_three = input("Update: ").split()
+    upart_one = input("Update (key): ")
+    upart_two = input("Update (operation): ")
+    upart_three = input("Update (value): ")
     update_portion = "[[\"" + upart_one + "\", \"" + upart_two + "\", \"" + upart_three + "\"]]"
 
     # Develop the Parameter Values.
-    parameter_vals = {"From": from_portion, "Select": select_portion, "Update": update_portion}
+    parameter_vals = "{\"From\": " + from_portion \
+                    + ", \"Select\": " + select_portion \
+                    + ", \"Update\": " + update_portion + "}"
 
     try:
         # Make the request and see the response code.
         response = requests.put(PROTOCOL + host + ":" + port + "/", data = repr(parameter_vals))
         print(response)
+        print(response.content)
     except requests.exceptions.ConnectionError:
         print("A connection error has occured.")
     except Exception as e:
@@ -158,19 +173,22 @@ def delete_command():
     MatchaDB, and prints the response code. It will also print exceptions, given that they occur.
     '''   
     # Gather the From portion of the command.
-    from_portion = input("From: ")
+    from_portion = "[\"" + input("From: ") + "\"]"
 
     # Gather the Select portion of the command.
-    spart_one, spart_two, spart_three = input("Select: ").split()
+    spart_one = input("Select (key): ")
+    spart_two = input("Select (operation): ")
+    spart_three = input("Select (value): ")
     select_portion = "[[\"" + spart_one + "\", \"" + spart_two + "\", \"" + spart_three + "\"]]"
 
     # Develop the Parameter Values.
-    parameter_vals = {"From": from_portion, "Select": select_portion}
+    parameter_vals = "{\"From\": " + from_portion + ", \"Select\": " + select_portion + "}"
 
     try:
         # Make the request and see the response code.
         response = requests.delete(PROTOCOL + host + ":" + port + "/", data = repr(parameter_vals))
         print(response)
+        print(response.content)
     except requests.exceptions.ConnectionError:
         print("A connection error has occured.")
     except Exception as e:

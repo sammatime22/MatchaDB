@@ -15,3 +15,4 @@ Updates List:
 2021/03/13 - Implemented basic DB Interface
 2021/03/20 - Implemented basic Whisk Application
 2021/03/28 - Implemented basic logging functionality
+2021/04/11 - At Betav1!
