@@ -236,6 +236,14 @@ public class MatchaDbTableTest {
         }
     }
 
+    // Implement a "Get Data" test where we do not get data back
+
+    // Implement a "Get Data" test where the searchForData method errors unexpectantly
+
+    // Implement a "Get Data" test where we would get back a HashMap
+
+    // Implement a "Get Data" test where we would get back a single value
+
     /**
      * Tests the system to post data from a specific portion of 
      * memory.
@@ -307,6 +315,14 @@ public class MatchaDbTableTest {
             Assert.fail();            
         }
     }
+
+    // Implement a "Post Data" test where we provide no data to be inserted
+
+    // Implement a "Post Data" test where the searchForData method errors unexpectantly
+
+    // Implement a "Post Data" test where we would put in multiple items
+
+    // Implement a "Post Data" test where we would put in a non key-value paired item
 
     /**
      * Tests the system to update data from a specific portion of 
@@ -387,6 +403,14 @@ public class MatchaDbTableTest {
         }
     }
 
+    // Implement a "Update Data" test where we provide no data to be updated
+
+    // Implement a "Update Data" test where the searchForData method errors unexpectantly
+
+    // Implement a "Update Data" test where we would update multiple items
+
+    // Implement a "Update Data" test where we would put in a non key-value paired item in a table
+
     /**
      * Tests the system to delete data from a specific portion of 
      * memory.
@@ -462,6 +486,16 @@ public class MatchaDbTableTest {
         }
 
     }
+
+    // Implement a "Delete Data" test where no data gets deleted
+
+    // Implement a "Delete Data" test where the searchForData method errors unexpectantly
+
+    // Implement a "Delete Data" test where we would delete multiple items
+
+    // Implement a "Delete Data" test where we would delete a non key-value pair
+
+    // Implement a "Delete Data" tests where we delete the entire table
 
     /**
      * Develops the test directory given a test path. If the directory does not
