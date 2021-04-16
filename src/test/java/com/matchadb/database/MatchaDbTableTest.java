@@ -236,13 +236,39 @@ public class MatchaDbTableTest {
         }
     }
 
-    // Implement a "Get Data" test where we do not get data back
+    /**
+     * Tests that upon attempting to retrieve data, we do not get any data back.
+     */
+    @Test
+    public void testGetDataNothingReturned() {
 
-    // Implement a "Get Data" test where the searchForData method errors unexpectantly
+    }
 
-    // Implement a "Get Data" test where we would get back a HashMap
+    /**
+     * Tests that when we get an unexpected error on searchForData via getData, we don't break
+     * the MatchaDbTable class.
+     */
+    @Test
+    public void testGetDataDoesntBreakInFaultySearchForData() {
+
+    }
+
+    /**
+     * Tests that we get a Hashmap back when we would expect during a call of getData.
+     */
+    @Test
+    public void testGetDataReturnsAHashmap() {
+
+    }
 
     // Implement a "Get Data" test where we would get back a single value
+    /**
+     * Tests that we will get a single value back when expected during a call of getData.
+     */
+    @Test
+    public void testGetDataGetsSingleValueBack() {
+        
+    }
 
     /**
      * Tests the system to post data from a specific portion of 
