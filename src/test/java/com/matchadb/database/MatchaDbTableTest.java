@@ -261,13 +261,12 @@ public class MatchaDbTableTest {
 
     }
 
-    // Implement a "Get Data" test where we would get back a single value
     /**
      * Tests that we will get a single value back when expected during a call of getData.
      */
     @Test
     public void testGetDataGetsSingleValueBack() {
-        
+
     }
 
     /**
