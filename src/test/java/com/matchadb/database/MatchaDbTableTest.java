@@ -241,7 +241,27 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testGetDataNothingReturned() {
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
 
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            MatchaGetQuery getNoItemsQuery = new MatchaGetQuery(new String[]{ALL_TABLES},
+                new String[][]{{ITEM_NAME, IS_OPERATION, "Scarf"}}
+            );
+
+            List<HashMap<String, Object>> actualObjects = 
+                (List<HashMap<String, Object>>) matchaDbTable.getData(getNoItemsQuery);
+
+            expectedVersusActualClothingWebsiteAPICheck(
+                new ArrayList<HashMap<String, Object>>(), actualObjects
+            );
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+            Assert.fail();
+        }
     }
 
     /**
