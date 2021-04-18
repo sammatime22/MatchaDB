@@ -269,8 +269,26 @@ public class MatchaDbTableTest {
      * the MatchaDbTable class.
      */
     @Test
-    public void testGetDataDoesntBreakInFaultySearchForData() {
+    public void testGetDataDoesntBreakTableClassInFaultySearchForDataCall() {
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
 
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE);
+
+            MatchaGetQuery getWillClearlyFailQuery = new MatchaGetQuery(new String[]{ALL_TABLES},
+                new String[][] {{ITEM_NAME, LESS_THAN, "food"}}
+            );
+
+            List<HashMap<String, Object>> actualObjects = 
+                (List<HashMap<String, Object>>) matchaDbTable.getData(getWillClearlyFailQuery);
+
+            Assert.assertNull(actualObjects);
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+            Assert.fail();
+        }
     }
 
     /**
