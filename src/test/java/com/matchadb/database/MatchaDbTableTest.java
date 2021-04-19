@@ -49,6 +49,8 @@ public class MatchaDbTableTest {
 
     private final String HATS_TABLE = "Hats";
 
+    private final String STORE_INFO = "Store Info";
+
     // Different table operators.
     private final String HAS_OPERATION = "has";
 
@@ -275,7 +277,7 @@ public class MatchaDbTableTest {
         matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
 
         try {
-            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE);
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
 
             MatchaGetQuery getWillClearlyFailQuery = new MatchaGetQuery(new String[]{ALL_TABLES},
                 new String[][] {{ITEM_NAME, LESS_THAN, "food"}}
@@ -296,7 +298,30 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testGetDataReturnsAHashmap() {
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
 
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            MatchaGetQuery getStoreInfoQuery = new MatchaGetQuery(
+                new String[]{STORE_INFO}, new String[][]{{}}
+            );
+
+            Object actualObject = matchaDbTable.getData(getStoreInfoQuery);
+
+            if (actualObject instanceof HashMap actualObjectAsHashmap) {
+                if (((int) actualObjectAsHashmap.get("Buy X Items Get One Free Number")) != 2) {
+                    Assert.fail("Did not have expected values");
+                }
+            } else {
+                Assert.fail("Was not a HashMap.");
+            }
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+            Assert.fail();
+        }
     }
 
     /**

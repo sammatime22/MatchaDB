@@ -91,5 +91,8 @@
             "Item Brand" : "zxcvb",
             "Item Description" : "So warm..."
         }
-    ]
+    ],
+    "Store Info": {
+        "Buy X Items Get One Free Number": 2
+    }
 }
