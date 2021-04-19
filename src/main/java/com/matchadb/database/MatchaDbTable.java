@@ -784,6 +784,7 @@ public class MatchaDbTable {
                     }
 
                     if (indexOfInterest != INDEX_NONEXISTANT) {
+                        logger.error("here here here");
                         returnedSelection = listSelection.get(indexOfInterest);
                     } else {
                         // If this entry didn't exist, we'll just return an empty list
@@ -791,6 +792,7 @@ public class MatchaDbTable {
                     }
                 } else if (returnedSelection instanceof HashMap hashmapSelection) {
                     if (hashmapSelection.containsKey(fromQueryPortion)) {
+                        logger.error("here here here");
                         returnedSelection = hashmapSelection.get(fromQueryPortion);
                     } else {
                         return new ArrayList<>();

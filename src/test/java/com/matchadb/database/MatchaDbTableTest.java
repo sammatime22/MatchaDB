@@ -311,6 +311,8 @@ public class MatchaDbTableTest {
 
             Object actualObject = matchaDbTable.getData(getStoreInfoQuery);
 
+            System.out.println("Wubba" + actualObject);
+
             if (actualObject instanceof HashMap actualObjectAsHashmap) {
                 if (((int) actualObjectAsHashmap.get("Buy X Items Get One Free Number")) != 2) {
                     Assert.fail("Did not have expected values");
