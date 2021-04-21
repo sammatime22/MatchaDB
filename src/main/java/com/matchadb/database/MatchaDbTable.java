@@ -400,14 +400,20 @@ public class MatchaDbTable {
                 }     
             } else if (selection instanceof HashMap finalHashmapSelection) {
                 valuesToReturn = new HashMap<>();
-                for (Iterator finalHashmapSelectionIterator 
-                        = finalHashmapSelection.keySet().iterator(); 
-                    finalHashmapSelectionIterator.hasNext();) {
-                    String key = (String) finalHashmapSelectionIterator.next();
-                    Object value = finalHashmapSelection.get(key);
-                    if (meetsQueryRequirement(value, query.getSelectQuery())) {
-                        ((HashMap) valuesToReturn).put(key, value);
+                if (query.getSelectQuery().length > 0) {
+                    System.out.println(query.getSelectQuery().length);
+                    for (Iterator finalHashmapSelectionIterator 
+                            = finalHashmapSelection.keySet().iterator(); 
+                        finalHashmapSelectionIterator.hasNext();) {
+                        String key = (String) finalHashmapSelectionIterator.next();
+                        Object value = finalHashmapSelection.get(key);
+                        if (meetsQueryRequirement(value, query.getSelectQuery())) {
+                            ((HashMap) valuesToReturn).put(key, value);
+                        }
                     }
+                } else {
+                    // If we don't have a select query, we will just return the HashMap as is.
+                    valuesToReturn = selection;
                 }
 
                 // Given that we get no values, we will set valuesToReturn back to null so that the
