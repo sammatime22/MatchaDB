@@ -400,7 +400,10 @@ public class MatchaDbTable {
                 }     
             } else if (selection instanceof HashMap finalHashmapSelection) {
                 valuesToReturn = new HashMap<>();
-                if (query.getSelectQuery().length > 0) {
+
+                // If our first select query entry has no length, then we know that the select 
+                // query is empty, and we can return the selection gathered.
+                if (query.getSelectQuery()[0].length > 0) {
                     System.out.println(query.getSelectQuery().length);
                     for (Iterator finalHashmapSelectionIterator 
                             = finalHashmapSelection.keySet().iterator(); 
