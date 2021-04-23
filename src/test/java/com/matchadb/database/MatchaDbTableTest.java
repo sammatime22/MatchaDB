@@ -194,7 +194,7 @@ public class MatchaDbTableTest {
             failed = true;
         }
         // Remove the test directory
-        deleteTestDirectory(testDirectory);
+        //deleteTestDirectory(testDirectory);
 
         if (failed) {
             Assert.fail();

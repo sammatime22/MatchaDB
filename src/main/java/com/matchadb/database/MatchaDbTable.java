@@ -149,6 +149,7 @@ public class MatchaDbTable {
         }
 
         logger.info("MatchaDbTable Loaded!");
+        System.out.println(this.table);
     }
 
     /**
