@@ -149,7 +149,6 @@ public class MatchaDbTable {
         }
 
         logger.info("MatchaDbTable Loaded!");
-        System.out.println(this.table);
     }
 
     /**
@@ -182,6 +181,8 @@ public class MatchaDbTable {
             logger.error("An unidentified Exception occurred:\n", e);
             this.databaseCorrupted = true;
         }
+
+        System.out.println(this.table);
     }    
 
     /**
@@ -334,6 +335,7 @@ public class MatchaDbTable {
                 jsonArray.add(gatherJSONObjectFromTable(objectAsHashMap));
             } else {
                 // Here we will put anything that would be generic data
+                // Put in variable type check
                 jsonArray.add(object);
             }
         }
@@ -362,6 +364,7 @@ public class MatchaDbTable {
                 jsonObject.put(objectKey, gatherJSONObjectFromTable(objectAsHashMap));
             } else {
                 // Here we will put anything that would be generic data
+                // put in variable type check
                 jsonObject.put(objectKey, object);
             }
         }

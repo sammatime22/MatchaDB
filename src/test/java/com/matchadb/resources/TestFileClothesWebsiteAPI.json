@@ -21,7 +21,11 @@
             "Item Brand" : "zxcvb",
             "Item Description" : "Your arms can move so much more!"
         }
-    ], 
+    ],
+    "Store Name": "George Washington's Tshirt",
+    "Store Info": {
+        "Buy X Items Get One Free Number" : 2
+    },
     "Pants" : [
         {
             "Item Name" : "Work Pants",
@@ -91,9 +95,5 @@
             "Item Brand" : "zxcvb",
             "Item Description" : "So warm..."
         }
-    ],
-    "Store Info": {
-        "Buy X Items Get One Free Number": 2
-    }, 
-    "Store Name": "George Washington's Tshirt"
+    ]
 }
