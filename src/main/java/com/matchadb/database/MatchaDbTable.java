@@ -335,8 +335,19 @@ public class MatchaDbTable {
                 jsonArray.add(gatherJSONObjectFromTable(objectAsHashMap));
             } else {
                 // Here we will put anything that would be generic data
-                // Put in variable type check
-                jsonArray.add(object);
+                if (object instanceof Boolean objectAsBoolean) {
+                    jsonArray.add(objectAsBoolean);
+                } else if (object instanceof Integer objectAsInteger) {
+                    jsonArray.add(objectAsInteger);
+                } else if (object instanceof Double objectAsDouble) {
+                    jsonArray.add(objectAsDouble);
+                } else if (object instanceof String objectAsString) {
+                    jsonArray.add(objectAsString);
+                } else {
+                    // If we couldn't figure out the type, we will just turn the object into
+                    // a string.
+                    jsonArray.add(object.toString());
+                }
             }
         }
         
@@ -364,8 +375,19 @@ public class MatchaDbTable {
                 jsonObject.put(objectKey, gatherJSONObjectFromTable(objectAsHashMap));
             } else {
                 // Here we will put anything that would be generic data
-                // put in variable type check
-                jsonObject.put(objectKey, object);
+                if (object instanceof Boolean objectAsBoolean) {
+                    jsonObject.put(objectKey, objectAsBoolean);
+                } else if (object instanceof Integer objectAsInteger) {
+                    jsonObject.put(objectKey, objectAsInteger);
+                } else if (object instanceof Double objectAsDouble) {
+                    jsonObject.put(objectKey, objectAsDouble);
+                } else if (object instanceof String objectAsString) {
+                    jsonObject.put(objectKey, objectAsString);
+                } else {
+                    // If we couldn't figure out the type, we will just turn the object into
+                    // a string.
+                    jsonObject.put(objectKey, object.toString());
+                }
             }
         }
         
