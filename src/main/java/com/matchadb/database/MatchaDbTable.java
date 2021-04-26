@@ -296,10 +296,10 @@ public class MatchaDbTable {
             try (FileWriter fileWriter = new FileWriter(getSaveDataFilename())) {
                 if (tableInJSONForm != null) {
                     fileWriter.write(tableInJSONForm.toString());
-                    logger.info("MatchaDbTable contents have been written to file.");
+                    logger.info("MatchaDbTable contents have been written to disk.");
                 } else {
                     fileWriter.write("");
-                    logger.info("Empty contents have been written to file.");
+                    logger.info("Empty contents have been written to disk.");
                 }
             } catch (IOException ioe) {
                 logger.error("An IO Exception has occurred:\n ", ioe);
