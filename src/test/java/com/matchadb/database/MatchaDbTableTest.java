@@ -194,7 +194,7 @@ public class MatchaDbTableTest {
             failed = true;
         }
         // Remove the test directory
-        //deleteTestDirectory(testDirectory);
+        deleteTestDirectory(testDirectory);
 
         if (failed) {
             Assert.fail();
@@ -314,9 +314,7 @@ public class MatchaDbTableTest {
             System.out.println("Wubba" + actualObject);
 
             if (actualObject instanceof HashMap actualObjectAsHashmap) {
-                if (Integer.valueOf(
-                        (String) actualObjectAsHashmap
-                            .get("Buy X Items Get One Free Number")) != 2) {
+                if (((long) actualObjectAsHashmap.get("Buy X Items Get One Free Number")) != 2) {
                     Assert.fail("Did not have expected values");
                 }
             } else {

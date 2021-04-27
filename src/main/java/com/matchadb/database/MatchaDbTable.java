@@ -222,8 +222,8 @@ public class MatchaDbTable {
                 // it in the following branching statements
                 if (nextObject instanceof Boolean nextObjectAsBoolean) { 
                     jsonArrayTableComponent.add(nextObjectAsBoolean);
-                } else if (nextObject instanceof Integer nextObjectAsInteger) {
-                    jsonArrayTableComponent.add(nextObjectAsInteger);
+                } else if (nextObject instanceof Long nextObjectAsLong) {
+                    jsonArrayTableComponent.add(nextObjectAsLong);
                 } else if (nextObject instanceof Double nextObjectAsDouble) {
                     jsonArrayTableComponent.add(nextObjectAsDouble);
                 } else if (nextObject instanceof String nextObjectAsString) {
@@ -252,6 +252,10 @@ public class MatchaDbTable {
         for (Iterator keyIterator = jsonObject.keySet().iterator(); 
                 keyIterator.hasNext();) {
             String key = (String) keyIterator.next();
+
+            if (key.equals("Buy X Items Get One Free Number")) {
+                System.out.println("uh " + jsonObject.get(key).toString() + " vlass " + jsonObject.get(key).getClass());
+            }
             if (jsonObject.get(key) instanceof JSONObject jsonObjectsValueAsJsonObject) {
                 jsonObjectTableComponent.put(key, 
                     interpretJSONObject(jsonObjectsValueAsJsonObject));
@@ -262,8 +266,8 @@ public class MatchaDbTable {
                 // it in the following branching statements
                 if (jsonObject.get(key) instanceof Boolean jsonObjectsValueAsBoolean) { 
                     jsonObjectTableComponent.put(key, jsonObjectsValueAsBoolean);
-                } else if (jsonObject.get(key) instanceof Integer jsonObjectsValueAsInteger) {
-                    jsonObjectTableComponent.put(key, jsonObjectsValueAsInteger);
+                } else if (jsonObject.get(key) instanceof Long jsonObjectsValueAsLong) {
+                    jsonObjectTableComponent.put(key, jsonObjectsValueAsLong);
                 } else if (jsonObject.get(key) instanceof Double jsonObjectsValueAsDouble) {
                     jsonObjectTableComponent.put(key, jsonObjectsValueAsDouble);
                 } else if (jsonObject.get(key) instanceof String jsonObjectsValueAsString) {
@@ -337,8 +341,8 @@ public class MatchaDbTable {
                 // Here we will put anything that would be generic data
                 if (object instanceof Boolean objectAsBoolean) {
                     jsonArray.add(objectAsBoolean);
-                } else if (object instanceof Integer objectAsInteger) {
-                    jsonArray.add(objectAsInteger);
+                } else if (object instanceof Long objectAsLong) {
+                    jsonArray.add(objectAsLong);
                 } else if (object instanceof Double objectAsDouble) {
                     jsonArray.add(objectAsDouble);
                 } else if (object instanceof String objectAsString) {
@@ -369,6 +373,9 @@ public class MatchaDbTable {
             objectKeyIterator.hasNext();) {
             String objectKey = (String) objectKeyIterator.next();
             Object object = tableObject.get(objectKey);
+            if (objectKey.equals("Buy X Items Get One Free Number")) {
+                System.out.println("uh " + object.toString() + " vlass " + object.getClass());
+            }
             if (object instanceof List objectAsList) {
                 jsonObject.put(objectKey, gatherJSONArrayFromTable(objectAsList));
             } else if (object instanceof HashMap objectAsHashMap) {
@@ -377,8 +384,8 @@ public class MatchaDbTable {
                 // Here we will put anything that would be generic data
                 if (object instanceof Boolean objectAsBoolean) {
                     jsonObject.put(objectKey, objectAsBoolean);
-                } else if (object instanceof Integer objectAsInteger) {
-                    jsonObject.put(objectKey, objectAsInteger);
+                } else if (object instanceof Long objectAsLong) {
+                    jsonObject.put(objectKey, objectAsLong);
                 } else if (object instanceof Double objectAsDouble) {
                     jsonObject.put(objectKey, objectAsDouble);
                 } else if (object instanceof String objectAsString) {
