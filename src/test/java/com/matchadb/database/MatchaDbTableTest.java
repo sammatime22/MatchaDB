@@ -230,7 +230,7 @@ public class MatchaDbTableTest {
 
             // Find the matching object from our mock data, and check to see that the contents 
             // match.
-            expectedVersusActualClothingWebsiteAPICheck(expectedObjects, actualObjects);
+            expectedVersusActualClothingWebsiteAPICheckForClothesTables(expectedObjects, actualObjects);
         } catch (FileNotFoundException fnfe) {
             // If a FileNotFoundException comes up, fail the test.
             fnfe.printStackTrace();
@@ -257,7 +257,7 @@ public class MatchaDbTableTest {
             List<HashMap<String, Object>> actualObjects = 
                 (List<HashMap<String, Object>>) matchaDbTable.getData(getNoItemsQuery);
 
-            expectedVersusActualClothingWebsiteAPICheck(
+            expectedVersusActualClothingWebsiteAPICheckForClothesTables(
                 new ArrayList<HashMap<String, Object>>(), actualObjects
             );
         } catch (FileNotFoundException fnfe) {
@@ -448,7 +448,7 @@ public class MatchaDbTableTest {
 
             // Find the matching object from our mock data, and check to see that the contents 
             // match.
-            expectedVersusActualClothingWebsiteAPICheck(expectedObjects, actualObjects);
+            expectedVersusActualClothingWebsiteAPICheckForClothesTables(expectedObjects, actualObjects);
 
             // Update items
             // Let's say for all items with a price greater than $16.00 but less than $20.00, 
@@ -544,7 +544,7 @@ public class MatchaDbTableTest {
 
             // Find the matching object from our mock data, and check to see that the contents 
             // match.  
-            expectedVersusActualClothingWebsiteAPICheck(allItems, actualObjects);            
+            expectedVersusActualClothingWebsiteAPICheckForClothesTables(allItems, actualObjects);            
 
             // Delete all items of the brand "zxcvb"
             if (!matchaDbTable.deleteData(matchaDeleteQuery)) {
@@ -645,17 +645,22 @@ public class MatchaDbTableTest {
      * @param expectedObjects The objects expected to be returned
      * @param actualObjects The actual objects returned
      */
-    public void expectedVersusActualClothingWebsiteAPICheck(
+    public void expectedVersusActualClothingWebsiteAPICheckForClothesTables(
         List<HashMap<String, Object>> expectedObjects, 
         List<HashMap<String, Object>> actualObjects) {
-            for (HashMap expectedObject : expectedObjects) {
-                boolean success = false;
-                for (HashMap actualObject : actualObjects) {
-                    if (expectedObject.get(ITEM_NAME).equals(actualObject.get(ITEM_NAME))) {
-                        if (expectedObject.get(ITEM_PRICE).equals(actualObject.get(ITEM_PRICE)) 
-                            && expectedObject.get(ITEM_BRAND).equals(actualObject.get(ITEM_BRAND))
+
+        for (HashMap expectedObject : expectedObjects) {
+            boolean success = false;
+            for (Object actualObject : actualObjects) {
+                if (actualObject instanceof HashMap actualObjectAsHashmaap) {
+                    if (expectedObject.get(ITEM_NAME)
+                            .equals(actualObjectAsHashmaap.get(ITEM_NAME))) {
+                        if (expectedObject.get(ITEM_PRICE)
+                                .equals(actualObjectAsHashmaap.get(ITEM_PRICE)) 
+                            && expectedObject.get(ITEM_BRAND)
+                                .equals(actualObjectAsHashmaap.get(ITEM_BRAND))
                             && expectedObject.get(ITEM_DESCRIPTION)
-                                .equals(actualObject.get(ITEM_DESCRIPTION))) {
+                                .equals(actualObjectAsHashmaap.get(ITEM_DESCRIPTION))) {
                             success = true;
                             break;
                         } else {
@@ -664,11 +669,12 @@ public class MatchaDbTableTest {
                         }
                     }
                 }
-
-                // We didn't find the expected object
-                if (!success) {
-                    Assert.fail();
-                }
             }
+
+            // We didn't find the expected object
+            if (!success) {
+                Assert.fail();
+            }
+        }
     }
 }
