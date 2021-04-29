@@ -51,6 +51,8 @@ public class MatchaDbTableTest {
 
     private final String STORE_INFO = "Store Info";
 
+    private final String STORE_NAME = "Store Name";
+
     // Different table operators.
     private final String HAS_OPERATION = "has";
 
@@ -311,8 +313,6 @@ public class MatchaDbTableTest {
 
             Object actualObject = matchaDbTable.getData(getStoreInfoQuery);
 
-            System.out.println("Wubba" + actualObject);
-
             if (actualObject instanceof HashMap actualObjectAsHashmap) {
                 if (((long) actualObjectAsHashmap.get("Buy X Items Get One Free Number")) != 2) {
                     Assert.fail("Did not have expected values");
@@ -331,7 +331,30 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testGetDataGetsSingleValueBack() {
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
 
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            MatchaGetQuery getSingleValueQuery = new MatchaGetQuery(
+                new String[]{STORE_NAME}, new String[][]{{}}
+            );
+
+            Object actualObject = matchaDbTable.getData(getSingleValueQuery);
+
+            if (actualObject instanceof String storeNameAsString) {
+                if (!storeNameAsString.equals("George Washington's Tshirt")) {
+                    Assert.fail("The expected store name was not returned.");
+                }
+            } else {
+                Assert.fail("The returned item was not a String.");
+            }
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+            Assert.fail();
+        }
     }
 
     /**
@@ -407,6 +430,10 @@ public class MatchaDbTableTest {
     }
 
     // Implement a "Post Data" test where we provide no data to be inserted
+    @Test
+    public void testPostDataWithNoDataToBeInserted() {
+
+    }
 
     // Implement a "Post Data" test where the searchForData method errors unexpectantly
 
