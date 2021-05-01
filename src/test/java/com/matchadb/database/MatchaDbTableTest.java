@@ -384,7 +384,6 @@ public class MatchaDbTableTest {
         String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
 
         try {
-            // Maybe consider a before method..?
             // Load in the data for the DB
             matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
             
@@ -432,7 +431,37 @@ public class MatchaDbTableTest {
     // Implement a "Post Data" test where we provide no data to be inserted
     @Test
     public void testPostDataWithNoDataToBeInserted() {
+        MatchaGetQuery getAllHats = new MatchaGetQuery(new String[] {HATS_TABLE},
+            new String[][]{{}}
+        );
 
+        MatchaPostQuery postNothingToHats = new MatchaPostQuery(new String[] {HATS_TABLE},
+            new String[][]{{}}, new String[][]{{}}
+        );
+
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            List<HashMap<String, Object>> hatsTableBeforeInsert 
+                = (List<HashMap<String, Object>>) matchaDbTable.getData(getAllHats);
+
+            if (!matchaDbTable.postData(postNothingToHats)) {
+                Assert.fail();
+            }
+
+            List<HashMap<String, Object>> hatsTableAfterInsert 
+                = (List<HashMap<String, Object>>) matchaDbTable.getData(getAllHats);
+
+            expectedVersusActualClothingWebsiteAPICheckForClothesTables(
+                hatsTableBeforeInsert, hatsTableAfterInsert
+            );
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+            Assert.fail();
+        }
     }
 
     // Implement a "Post Data" test where the searchForData method errors unexpectantly
