@@ -872,93 +872,94 @@ public class MatchaDbTable {
     private boolean meetsQueryRequirement(Object value, String[][] selectQueryContents) {
         if (value instanceof HashMap valueMap) {
             List<Boolean> queryResults = new ArrayList<>();
+            if (selectQueryContents[0].length > 0) {
+                // Run each subquery, and if all match, finish the method by returning true.
+                // Otherwise, return false promptly.
+                try {
+                    for (String[] selectQuery : selectQueryContents) {
+                        // Has query is to be used
+                        if (HAS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
 
-            // Run each subquery, and if all match, finish the method by returning true.
-            // Otherwise, return false promptly.
-            try {
-                for (String[] selectQuery : selectQueryContents) {
-                    // Has query is to be used
-                    if (HAS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
+                            // Check to see if the queried value has the substring provided in the query
+                            if (!((String) (valueMap.get(selectQuery[QUERY_KEY_POSITION])))
+                                .contains(selectQuery[QUERY_VALUE_POSITION]
+                                .substring(1, selectQuery[QUERY_VALUE_POSITION].length() - 1)
+                            )) { 
+                                queryResults.add(false);
+                            } else {
+                                queryResults.add(true);
+                            }
+                        } 
 
-                        // Check to see if the queried value has the substring provided in the query
-                        if (!((String) (valueMap.get(selectQuery[QUERY_KEY_POSITION])))
-                            .contains(selectQuery[QUERY_VALUE_POSITION]
-                            .substring(1, selectQuery[QUERY_VALUE_POSITION].length() - 1)
-                        )) { 
-                            queryResults.add(false);
-                        } else {
-                            queryResults.add(true);
+                        // An "Is" query is to be used
+                        else if (IS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
+
+                            // Check to see if the provided string is a one-to-one match
+                            if (!((String) valueMap.get(selectQuery[QUERY_KEY_POSITION]))
+                                .equals(selectQuery[QUERY_VALUE_POSITION])) {
+                                queryResults.add(false);
+                            } else {
+                                queryResults.add(true);
+                            }
                         }
-                    } 
 
-                    // An "Is" query is to be used
-                    else if (IS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
+                        // Equals query is to be used
+                        else if (EQUALS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
 
-                        // Check to see if the provided string is a one-to-one match
-                        if (!((String) valueMap.get(selectQuery[QUERY_KEY_POSITION]))
-                            .equals(selectQuery[QUERY_VALUE_POSITION])) {
+                            // Check to see if the two values are equal
+                            if (valueMap.get(selectQuery[QUERY_KEY_POSITION]) 
+                                != Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
+                                queryResults.add(false);
+                            } else {
+                                queryResults.add(true);
+                            }
+                        } 
+
+                        // Greater than query is to be used
+                        else if (GREATER_THAN.equals(selectQuery[QUERY_CHECK_TYPE_POSITION]) 
+                            && canBeInterpretedAsDouble(selectQuery[QUERY_VALUE_POSITION])
+                            && canBeInterpretedAsDouble(
+                                valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
+
+                            // Check to see if the table value is larger than the provided value
+                            if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) 
+                                > Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
+                                queryResults.add(true);
+                            } else {
+                                queryResults.add(false);
+                            }
+                        }
+
+                        // Less than query is to be used 
+                        else if (LESS_THAN.equals(selectQuery[QUERY_CHECK_TYPE_POSITION]) 
+                            && canBeInterpretedAsDouble(selectQuery[QUERY_VALUE_POSITION])
+                            && canBeInterpretedAsDouble(
+                                valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
+
+                            // Check to see if the table value is smaller than the provided value
+                            if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) 
+                                < Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
+                                queryResults.add(true);
+                            } else {
+                                queryResults.add(false);
+                            }
+                        }
+
+                        else {
+                            // For whatever the reason, the query returned no expected results
                             queryResults.add(false);
-                        } else {
-                            queryResults.add(true);
                         }
                     }
 
-                    // Equals query is to be used
-                    else if (EQUALS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
-
-                        // Check to see if the two values are equal
-                        if (valueMap.get(selectQuery[QUERY_KEY_POSITION]) 
-                            != Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
-                            queryResults.add(false);
-                        } else {
-                            queryResults.add(true);
-                        }
-                    } 
-
-                    // Greater than query is to be used
-                    else if (GREATER_THAN.equals(selectQuery[QUERY_CHECK_TYPE_POSITION]) 
-                        && canBeInterpretedAsDouble(selectQuery[QUERY_VALUE_POSITION])
-                        && canBeInterpretedAsDouble(
-                            valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
-
-                        // Check to see if the table value is larger than the provided value
-                        if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) 
-                            > Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
-                            queryResults.add(true);
-                        } else {
-                            queryResults.add(false);
+                    for (Boolean queryResult : queryResults) {
+                        if (!queryResult) {
+                            return false;
                         }
                     }
-
-                    // Less than query is to be used 
-                    else if (LESS_THAN.equals(selectQuery[QUERY_CHECK_TYPE_POSITION]) 
-                        && canBeInterpretedAsDouble(selectQuery[QUERY_VALUE_POSITION])
-                        && canBeInterpretedAsDouble(
-                            valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
-
-                        // Check to see if the table value is smaller than the provided value
-                        if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) 
-                            < Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
-                            queryResults.add(true);
-                        } else {
-                            queryResults.add(false);
-                        }
-                    }
-
-                    else {
-                        // For whatever the reason, the query returned no expected results
-                        queryResults.add(false);
-                    }
-                }
-
-                for (Boolean queryResult : queryResults) {
-                    if (!queryResult) {
+                } catch (NullPointerException npe) {
+                        logger.error("Got a Null Pointer Exception upon assessment.", npe);
                         return false;
-                    }
                 }
-            } catch (NullPointerException npe) {
-                    logger.error("Got a Null Pointer Exception upon assessment.", npe);
-                    return false;
             }
 
             return true;
