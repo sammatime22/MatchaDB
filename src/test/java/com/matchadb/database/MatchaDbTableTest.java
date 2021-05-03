@@ -12,6 +12,7 @@ import java.io.FilenameFilter;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -464,15 +465,38 @@ public class MatchaDbTableTest {
         }
     }
 
-    // Implement a "Post Data" test where the searchForData method errors unexpectantly
+    /**
+     * This test sees that when the searchForData call doesn't find the target table, that it will
+     * then construct the new table.
+     */
+    @Test
+    public void testPostDataConstructsNewTable() {
+
+        List<HashMap<String, Object>> expectedObject 
+            = Arrays.asList(
+                    MatchaDbGenerateData.buildClothesObject(
+                        "Earring", "shine", "Wow bozanga bro", 200000000000.99
+                    )
+            );
+
+        // try {
+        //     // run a get on the DB, see that the table doesn't exist
+
+        //     // post the new table
+
+        //     // see that in the DB the new table exists
+
+        // } catch (FileNotFoundException fnfe) {
+        //     Assert.fail();
+        // }
+    }
 
     // Implement a "Post Data" test where we would put in multiple items
 
     // Implement a "Post Data" test where we would put in a non key-value paired item
 
     /**
-     * Tests the system to update data from a specific portion of 
-     * memory.
+     * Tests the system to update data from a specific portion of memory.
      */
     @Test
     public void testUpdateData() {

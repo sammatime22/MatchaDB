@@ -166,7 +166,7 @@ public class MatchaDbGenerateData {
      *
      * @return A clothes object
      */
-    private static HashMap<String, Object> buildClothesObject(String name, String brand,
+    public static HashMap<String, Object> buildClothesObject(String name, String brand,
         String description, double price) {
         HashMap<String, Object> clothesObject = new HashMap<String, Object>() {{
             put("Item Name", name);
