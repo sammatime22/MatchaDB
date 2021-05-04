@@ -50,6 +50,8 @@ public class MatchaDbTableTest {
 
     private final String HATS_TABLE = "Hats";
 
+    private final String EARRINGS_TABLE = "Earrings";
+
     private final String STORE_INFO = "Store Info";
 
     private final String STORE_NAME = "Store Name";
@@ -472,23 +474,38 @@ public class MatchaDbTableTest {
     @Test
     public void testPostDataConstructsNewTable() {
 
-        List<HashMap<String, Object>> expectedObject 
-            = Arrays.asList(
-                    MatchaDbGenerateData.buildClothesObject(
-                        "Earring", "shine", "Wow bozanga bro", 200000000000.99
-                    )
-            );
+        // List<HashMap<String, Object>> expectedObject 
+        //     = Arrays.asList(
+        //             MatchaDbGenerateData.buildClothesObject(
+        //                 "Earring", "shine", "Wow bozanga bro", 200000000000.99
+        //             )
+        //     );
 
-        // try {
-        //     // run a get on the DB, see that the table doesn't exist
+        String[][] earring = MatchaDbGenerateData.generateObjectForMatchaPostQuery();
 
-        //     // post the new table
+        MatchaGetQuery getFromEarringsTable
+            = new MatchaGetQuery(new String[] {EARRINGS_TABLE}, new String[][] {{}});
 
-        //     // see that in the DB the new table exists
+        MatchaPostQuery postToEarringsTable
+            = new MatchaPostQuery(new String[] {EARRINGS_TABLE}, new String[][]{{}}, earring);
 
-        // } catch (FileNotFoundException fnfe) {
-        //     Assert.fail();
-        // }
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            // run a get on the DB, see that the table doesn't exist
+
+
+            // post the new table
+
+            // see that in the DB the new table exists
+
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
     }
 
     // Implement a "Post Data" test where we would put in multiple items

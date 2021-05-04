@@ -148,12 +148,24 @@ public class MatchaDbGenerateData {
      * @return a clothes items to insert in the form of a 2D String array for insert to the table.
      */
     public static String[][] newClothesItemToInsert() {
-        String[][] newClothingItem = new String[][]{{
+        String[][] newClothingItem = new String[][] {{
             "Item Name=Trendy Hat", "Item Brand=qwertu", 
             "Item Description=A hat with a feather for a feather.", "Item Price=9000000.95"
         }};
 
         return newClothingItem;
+    }
+
+    /**
+     * A generator to make an object for a MatchaPostQuery.
+     *
+     *
+     * @return an item to insert in the form of a 2D String array to insert via MatchaPostQuery.
+     */
+    public static String[][] generateObjectForMatchaPostQuery() {
+        return new String[][] {{
+
+        }};
     }
 
     /**
