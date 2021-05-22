@@ -497,12 +497,25 @@ public class MatchaDbTableTest {
             matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
 
             // run a get on the DB, see that the table doesn't exist
+            List<HashMap<String, Object>> emptyEarringsTable 
+                = (List<HashMap<String, Object>>) matchaDbTable.getData(getFromEarringsTable);
 
+            if (emptyEarringsTable.size() > 0) {
+                Assert.fail("The Earrings Table had items");
+            }
 
             // post the new table
+            if(!matchaDbTable.postData(postToEarringsTable)) {
+                Assert.fail("An error occured in developing the Earrings table");
+            }
 
             // see that in the DB the new table exists
+            List<HashMap<String, Object>> earringsTable 
+                = (List<HashMap<String, Object>>) matchaDbTable.getData(getFromEarringsTable);
 
+            if (earringsTable.size() != 1) {
+                Assert.fail("The earrings table was not developed correctly");
+            }
         } catch (FileNotFoundException fnfe) {
             Assert.fail();
         }
