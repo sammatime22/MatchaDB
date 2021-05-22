@@ -473,14 +473,6 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testPostDataConstructsNewTable() {
-
-        // List<HashMap<String, Object>> expectedObject 
-        //     = Arrays.asList(
-        //             MatchaDbGenerateData.buildClothesObject(
-        //                 "Earring", "shine", "Wow bozanga bro", 200000000000.99
-        //             )
-        //     );
-
         String[][] earring = MatchaDbGenerateData.generateObjectForMatchaPostQuery();
 
         MatchaGetQuery getFromEarringsTable
@@ -500,7 +492,7 @@ public class MatchaDbTableTest {
             List<HashMap<String, Object>> emptyEarringsTable 
                 = (List<HashMap<String, Object>>) matchaDbTable.getData(getFromEarringsTable);
 
-            if (emptyEarringsTable.size() > 0) {
+            if (emptyEarringsTable != null && emptyEarringsTable.size() > 0) {
                 Assert.fail("The Earrings Table had items");
             }
 
@@ -513,7 +505,7 @@ public class MatchaDbTableTest {
             List<HashMap<String, Object>> earringsTable 
                 = (List<HashMap<String, Object>>) matchaDbTable.getData(getFromEarringsTable);
 
-            if (earringsTable.size() != 1) {
+            if (earringsTable == null || earringsTable.size() != 1) {
                 Assert.fail("The earrings table was not developed correctly");
             }
         } catch (FileNotFoundException fnfe) {

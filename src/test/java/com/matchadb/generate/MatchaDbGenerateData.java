@@ -164,7 +164,8 @@ public class MatchaDbGenerateData {
      */
     public static String[][] generateObjectForMatchaPostQuery() {
         return new String[][] {{
-
+            "Item Name=Moon Earring", "Item Brand=Ceetz",
+            "Item Description=You are gonna like the way your ears look", "Item Price=9000000000.1"
         }};
     }
 

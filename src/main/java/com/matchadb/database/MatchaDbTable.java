@@ -484,6 +484,16 @@ public class MatchaDbTable {
         try {
             Object selectionToInsertUpon = searchForData(query.getFromQuery(), this.table);
 
+            // If our selection is empty, we will make a new table for said selection
+            if (selectionToInsertUpon == null || ((List) selectionToInsertUpon).isEmpty()) {
+                selectionToInsertUpon = developNewTable(query.getFromQuery(), this.table);
+
+                if (selectionToInsertUpon == null) {
+                    logger.error("Could not develop new subtable");
+                    return false;
+                }
+            }
+
             for (String[] insertQuery : query.getInsertQuery()) {
                 // Build the object
                 HashMap<String, Object> newItem = new HashMap<>();
@@ -510,6 +520,57 @@ public class MatchaDbTable {
         this.lastUpdateTimeInMillis = System.currentTimeMillis();
         logger.info("postData ran successfully.");
         return true;
+    }
+
+    /**
+     * This method can be used to develop a table, given that it did not exist on the table yet.
+     *
+     * @param fromQuery The From Query, defining where in the table the data is coming from.
+     * @param selection The selection of the table to be searched upon.
+     * 
+     * @return The new subtable, as a List, which points to a reference on the parent table.
+     */
+    public Object developNewTable(String[] fromQuery, Object selection) {
+        Object returnedSelection = selection;
+
+        for (String fromQueryPortion : fromQuery) {
+            if (returnedSelection instanceof List listSelection) {
+                int indexOfInterest;
+
+                if (canBeInterpretedAsInteger(fromQueryPortion)) {
+                    indexOfInterest = Integer.parseInt(fromQueryPortion);
+                } else {
+                    indexOfInterest = listSelection.indexOf(fromQueryPortion);
+                }
+
+                if (indexOfInterest != INDEX_NONEXISTANT) {
+                    returnedSelection = listSelection.get(indexOfInterest);
+                } else {
+                    // If this entry didn't exist, we'll add it to the table
+                    returnedSelection = new HashMap<>(){{
+                        put(fromQueryPortion, new ArrayList<>());
+                    }};
+                    listSelection.add(returnedSelection);
+                }
+            } else if (returnedSelection instanceof HashMap hashmapSelection) {
+                if (hashmapSelection.containsKey(fromQueryPortion)) {
+                    returnedSelection = hashmapSelection.get(fromQueryPortion);
+                } else {
+                    returnedSelection = new HashMap<>();
+                    hashmapSelection.put(fromQueryPortion, returnedSelection);
+                }
+            } else {
+                // If our table is empty, it is possible it is not instantiated.
+                if (selection == null) {
+                    selection = new HashMap<String, Object>();
+                    returnedSelection = selection;
+                } else {
+                    returnedSelection = null;
+                }
+            }
+        }
+
+        return returnedSelection;
     }
 
     /**
@@ -826,7 +887,6 @@ public class MatchaDbTable {
                     }
 
                     if (indexOfInterest != INDEX_NONEXISTANT) {
-                        logger.error("here here here");
                         returnedSelection = listSelection.get(indexOfInterest);
                     } else {
                         // If this entry didn't exist, we'll just return an empty list
@@ -834,7 +894,6 @@ public class MatchaDbTable {
                     }
                 } else if (returnedSelection instanceof HashMap hashmapSelection) {
                     if (hashmapSelection.containsKey(fromQueryPortion)) {
-                        logger.error("here here here");
                         returnedSelection = hashmapSelection.get(fromQueryPortion);
                     } else {
                         return new ArrayList<>();
