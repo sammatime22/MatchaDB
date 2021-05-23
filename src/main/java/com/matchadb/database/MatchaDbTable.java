@@ -519,6 +519,8 @@ public class MatchaDbTable {
 
         this.lastUpdateTimeInMillis = System.currentTimeMillis();
         logger.info("postData ran successfully.");
+
+        System.out.println(this.table + " the table");
         return true;
     }
 
@@ -556,7 +558,7 @@ public class MatchaDbTable {
                 if (hashmapSelection.containsKey(fromQueryPortion)) {
                     returnedSelection = hashmapSelection.get(fromQueryPortion);
                 } else {
-                    returnedSelection = new HashMap<>();
+                    returnedSelection = new ArrayList<>();
                     hashmapSelection.put(fromQueryPortion, returnedSelection);
                 }
             } else {
