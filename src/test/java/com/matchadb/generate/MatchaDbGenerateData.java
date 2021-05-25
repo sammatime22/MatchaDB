@@ -169,6 +169,35 @@ public class MatchaDbGenerateData {
         }};
     }
 
+    
+    /**
+     * A generation method for four clothings items for the multi insert.
+     * Two items are for the hats table, and then another two are for a new Earrings table.
+     *
+     * @return four clothings items to be inserted, as described above.
+     */
+    public static String[][] generateFourClothingsItemsToInsert() {
+        return new String[][] {
+            {
+                "Item Name=Bear Hat", "Item Brand=Howdy There", 
+                "Item Description=Have you seen this hat?", "Item Price=12.45"
+            },
+            {
+                "Item Name=Elephant Hat", "Item Brand=Howdy There", 
+                "Item Description=Lets go to the beach", "Item Price=12.45"
+            },
+            {
+                "Item Name=Diamond Earrings", "Item Brand=Howdy There", 
+                "Item Description=Shine bright like a diamond", "Item Price=102.45"
+            },
+            {
+                "Item Name=Pearl Earring", "Item Brand=Howdy There", 
+                "Item Description=Have you seen this hat?", "Item Price=120.45"
+            }
+        }
+    }
+
+
     /**
      * A helper method to build a clothes object.
      *

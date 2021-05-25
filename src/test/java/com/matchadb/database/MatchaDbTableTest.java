@@ -518,7 +518,24 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testPostDataIncludeMultipleItems() {
+        MatchaGetQuery getMultipleItems = new MatchaGetQuery(
+            new String[] {HATS_TABLE, EARRINGS_TABLE},
+            new String[][] {{ITEM_PRICE, GREATER_THAN, "20.00"}}
+        );
 
+
+        // Here we will add 
+        MatchaPostQuery postMultipleItems = new MatchaPostQuery(
+            new String[] {},
+            new String[][] {{}},
+            MatchaDbGenerateData.generateFourClothingsItemsToInsert()
+        );
+
+        try {
+
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
     }
 
 
