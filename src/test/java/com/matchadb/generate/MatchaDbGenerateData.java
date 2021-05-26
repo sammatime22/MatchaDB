@@ -194,7 +194,7 @@ public class MatchaDbGenerateData {
                 "Item Name=Pearl Earring", "Item Brand=Howdy There", 
                 "Item Description=Have you seen this hat?", "Item Price=120.45"
             }
-        }
+        };
     }
 
 

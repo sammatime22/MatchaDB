@@ -518,9 +518,18 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testPostDataIncludeMultipleItems() {
+        List<String> expectedItems = new ArrayList<String>(){{
+            add("Bear Hat");
+            add("Elephant Hat");
+            add("Diamond Earring");
+            add("Pearl Earring");
+        }};
+
+        String brandName = "Howdy There";
+
         MatchaGetQuery getMultipleItems = new MatchaGetQuery(
             new String[] {HATS_TABLE, EARRINGS_TABLE},
-            new String[][] {{ITEM_PRICE, GREATER_THAN, "20.00"}}
+            new String[][] {{ITEM_BRAND, IS_OPERATION, brandName}}
         );
 
 
@@ -531,7 +540,32 @@ public class MatchaDbTableTest {
             MatchaDbGenerateData.generateFourClothingsItemsToInsert()
         );
 
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+
         try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            List<HashMap<String, Object>> emptyList 
+                = (List<HashMap<String, Object>>) matchaDbTable.getData(getMultipleItems);
+
+            if (emptyList != null && !emptyList.isEmpty()) {
+                Assert.fail("It found items we were to post prior to posting them.");
+            }
+
+            if (!matchaDbTable.postData(postMultipleItems)) {
+                Assert.fail("Failed to insert items");
+            }
+
+            List<HashMap<String, Object>> howdyThereList 
+                = (List<HashMap<String, Object>>) matchaDbTable.getData(getMultipleItems);
+
+            for (HashMap item : howdyThereList) {
+                if (!brandName.equals(item.get(ITEM_BRAND)) 
+                    || !expectedItems.contains(item.get(ITEM_NAME))) {
+                    Assert.fail("Something was wrong collecting the Howdy There items");
+                }
+            }
 
         } catch (FileNotFoundException fnfe) {
             Assert.fail();
