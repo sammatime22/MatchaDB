@@ -185,14 +185,6 @@ public class MatchaDbGenerateData {
             {
                 "Item Name=Elephant Hat", "Item Brand=Howdy There", 
                 "Item Description=Lets go to the beach", "Item Price=12.45"
-            },
-            {
-                "Item Name=Diamond Earrings", "Item Brand=Howdy There", 
-                "Item Description=Shine bright like a diamond", "Item Price=102.45"
-            },
-            {
-                "Item Name=Pearl Earring", "Item Brand=Howdy There", 
-                "Item Description=Have you seen this hat?", "Item Price=120.45"
             }
         };
     }

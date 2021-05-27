@@ -521,21 +521,19 @@ public class MatchaDbTableTest {
         List<String> expectedItems = new ArrayList<String>(){{
             add("Bear Hat");
             add("Elephant Hat");
-            add("Diamond Earring");
-            add("Pearl Earring");
         }};
 
         String brandName = "Howdy There";
 
         MatchaGetQuery getMultipleItems = new MatchaGetQuery(
-            new String[] {HATS_TABLE, EARRINGS_TABLE},
+            new String[] {HATS_TABLE},
             new String[][] {{ITEM_BRAND, IS_OPERATION, brandName}}
         );
 
 
         // Here we will add 
         MatchaPostQuery postMultipleItems = new MatchaPostQuery(
-            new String[] {},
+            new String[] {HATS_TABLE},
             new String[][] {{}},
             MatchaDbGenerateData.generateFourClothingsItemsToInsert()
         );

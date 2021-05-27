@@ -468,6 +468,7 @@ public class MatchaDbTable {
         }
 
         logger.info("getData ran successfully.");
+        System.out.println(this.table);
         return valuesToReturn;
     }
 
