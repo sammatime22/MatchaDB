@@ -572,11 +572,36 @@ public class MatchaDbTableTest {
 
 
     /** 
-     * This test shows that we could put in a non key-value paired item.
+     * This test shows that we could put in a non object item.
      */
     @Test
-    public void testPostDataIncludeNonKeyValuePairItem() {
+    public void testPostDataIncludeNonObjectItem() {
+        MatchaGetQuery getSingleItem = new MatchaGetQuery(
+            new String[] {"Phone"},
+            new String[][] {{}}
+        );
 
+        MatchaPostQuery postSingleItem = new MatchaPostQuery(
+            new String[] {},
+            new String[][] {{}},
+            new String[][] {{"Phone=8887774321"}}
+        );
+
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+        MatchaDbTable matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+
+        try {
+            matchaDbTable.loadData(FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            // Get and ensure we don't have the Phone Number yet
+
+            // Post the phone number
+
+            // See to it that we have the phone number
+        
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
     }
 
 
