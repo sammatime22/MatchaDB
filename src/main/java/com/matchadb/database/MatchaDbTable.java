@@ -497,10 +497,42 @@ public class MatchaDbTable {
 
             for (String[] insertQuery : query.getInsertQuery()) {
                 // Build the object
-                HashMap<String, Object> newItem = new HashMap<>();
+                Object newItem = null;
                 for (String entry : insertQuery) {
                     String[] components = entry.split("="); // Split on an equals sign
-                    newItem.put(components[0], determineDataType(components[1]));
+
+                    // Hashmap
+                    if (components.length >= 2) {
+                        if (newItem == null) {
+                            newItem = new HashMap<String, Object>();
+                        }
+
+                        ((HashMap<String, Object>) newItem)
+                            .put(components[0], determineDataType(components[1]));
+                    }
+
+                    // List
+                    else if (insertQuery.length > 1) {
+                        if (newItem == null) {
+                            newItem = new ArrayList<Object>();
+                        }
+                        ((List) newItem).add(determineDataType(components[0]));
+                    }
+
+                    // Other
+                    else {
+                        // If we only have one single item (not a list or hashmap), we can 
+                        // conclude that the selection is simply a single "key-value" pair.
+                        String[] fromQuerySubquery 
+                            = Arrays.copyOfRange(
+                                query.getFromQuery(), 0, query.getFromQuery().length - 1);
+                        String newKey = query.getFromQuery()[query.getFromQuery().length - 1];
+                        selectionToInsertUpon = developNewTable(fromQuerySubquery, this.table);
+                        newItem = determineDataType(components[0]);
+                        ((HashMap) selectionToInsertUpon)
+                            .put(newKey, newItem);
+                        break;
+                    }
                 }
 
                 if (selectionToInsertUpon instanceof HashMap selectionAsHashMap) {

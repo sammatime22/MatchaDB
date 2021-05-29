@@ -584,7 +584,7 @@ public class MatchaDbTableTest {
         MatchaPostQuery postSingleItem = new MatchaPostQuery(
             new String[] {"Phone"},
             new String[][] {{}},
-            new String[][] {{"8887774321"}}
+            new String[][] {{"(888)-777-4321"}}
         );
 
         String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
@@ -609,7 +609,8 @@ public class MatchaDbTableTest {
             Object phoneNumber = matchaDbTable.getData(getSingleItem);
 
             if (phoneNumber != null) {
-                
+                System.out.println(phoneNumber);
+                Assert.assertTrue("(888)-777-4321".equals(phoneNumber.toString()));
             } else {
                 Assert.fail();
             }
@@ -833,14 +834,6 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testDeleteDataWhereNonKeyValuePairIsDeleted() {
-
-    }
-
-    /** 
-     * A "Delete Data" tests where we delete the entire table.
-     */
-    @Test
-    public void testDeleteDataWhereEntireTableIsDeleted() {
 
     }
 
