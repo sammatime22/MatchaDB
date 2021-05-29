@@ -582,23 +582,37 @@ public class MatchaDbTableTest {
         );
 
         MatchaPostQuery postSingleItem = new MatchaPostQuery(
-            new String[] {},
+            new String[] {"Phone"},
             new String[][] {{}},
-            new String[][] {{"Phone=8887774321"}}
+            new String[][] {{"8887774321"}}
         );
 
         String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
         MatchaDbTable matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
 
         try {
-            matchaDbTable.loadData(FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
 
             // Get and ensure we don't have the Phone Number yet
+            Object nothingReturned = matchaDbTable.getData(getSingleItem);
+
+            if (nothingReturned != null) {
+                Assert.fail();
+            }
 
             // Post the phone number
+            if (!matchaDbTable.postData(postSingleItem)) {
+                Assert.fail();
+            }
 
             // See to it that we have the phone number
-        
+            Object phoneNumber = matchaDbTable.getData(getSingleItem);
+
+            if (phoneNumber != null) {
+                
+            } else {
+                Assert.fail();
+            }
         } catch (FileNotFoundException fnfe) {
             Assert.fail();
         }
