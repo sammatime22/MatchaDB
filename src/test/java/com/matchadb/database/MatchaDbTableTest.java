@@ -59,6 +59,8 @@ public class MatchaDbTableTest {
     // Different table operators.
     private final String HAS_OPERATION = "has";
 
+    private final String EQUALS_OPERATION = "equals";
+
     private final String IS_OPERATION = "is";
 
     private final String LESS_THAN = "<";
@@ -374,11 +376,6 @@ public class MatchaDbTableTest {
             new String[][] {{ITEM_NAME, HAS_OPERATION, "Trendy Hat"}}
         );
 
-        // Query to insert item, which in JSON might come in as...
-        // "Place": "To Hats", 
-        // "Insert": ""{ \"Item Name\": \"Trendy Hat\", \"Item Brand\": \"qwertu\"," +
-        //        "\"Item Description\": \"A hat with a feather for a feather.\", 
-        // \"Item Price\": 9000000.95 }""
         MatchaPostQuery matchaQueryInsertFancyHat = new MatchaPostQuery(new String[] {HATS_TABLE},
             new String[][] {{}},
             fancyHatToAddAs2DArray
@@ -703,22 +700,56 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testUpdateDataWithNoDataToUpdate() {
+        MatchaGetQuery getAllHats = new MatchaGetQuery(
+            new String[] {HATS_TABLE}, 
+            new String[][] {{ITEM_PRICE, EQUALS_OPERATION, "1.00"}}
+        );
 
+        MatchaUpdateQuery updateAllABCDHatsToOneDollar = new MatchaUpdateQuery(
+            new String[] {HATS_TABLE}, 
+            new String[][] {{ITEM_BRAND, IS_OPERATION, "ABCD"}},
+            new String[][] {{ITEM_PRICE, TO, "1.00"}}
+        );
+
+        MatchaDbTable matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            if (matchaDbTable.getData(getAllHats) != null) {
+                Assert.fail();
+            }
+
+            if (!matchaDbTable.updateData(updateAllABCDHatsToOneDollar)) {
+                Assert.fail();
+            }
+
+            if (matchaDbTable.getData(getAllHats) != null) {
+                Assert.fail();
+            }
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
     }
 
     /** 
-     * A test where the searchForData method errors unexpectantly in the updateData method.
+     * A test where the searchForData method updates all items in one table.
      */
     @Test
-    public void testUpdateDataSearchForDataErrorsOut() {
+    public void testUpdateDataUpdateAllItemsInOneTable() {
 
+        try {
+
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
     }
 
     /**
-     * An "Update Data" test where we would update multiple items.
+     * An "Update Data" test where we would update multiple items across several tables.
      */
     @Test
-    public void testUpdateDataUpdateMultipleItems() {
+    public void testUpdateDataUpdateMultipleItemsAcrossTables() {
 
     }
 
@@ -814,10 +845,10 @@ public class MatchaDbTableTest {
     }
 
     /**
-     * A "Delete Data" test where the searchForData method errors unexpectantly.
+     * A "Delete Data" test where an entire subtable is deleted.
      */
     @Test
-    public void testDeleteDataWhereSearchForDataErrorsOut() {
+    public void testDeleteDataWhereEntireSubtableIsDeleted() {
 
     }
 
