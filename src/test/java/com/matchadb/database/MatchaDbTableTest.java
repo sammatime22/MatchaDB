@@ -51,6 +51,8 @@ public class MatchaDbTableTest {
     private final String HATS_TABLE = "Hats";
 
     private final String EARRINGS_TABLE = "Earrings";
+    
+    private final String SHOES_TABLE = "Shoes";
 
     private final String STORE_INFO = "Store Info";
 
@@ -737,9 +739,49 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testUpdateDataUpdateAllItemsInOneTable() {
+        MatchaGetQuery getShoes = new MatchaGetQuery(
+            new String[] {SHOES_TABLE}, new String[][] {{}}
+        );
+
+        String newPrice = "24.55";
+
+        MatchaUpdateQuery updateShoesTable = new MatchaUpdateQuery(
+            new String[] {SHOES_TABLE},
+            new String[][] {{}},
+            new String[][] {{ITEM_PRICE, TO, newPrice}}
+        );
+
+        List<HashMap<String, Object>> expectedShoesTableContents
+            = MatchaDbGenerateData
+                .getClothesWebsiteItemsViaQueryParams(null, null, null, null, null, "Shoes");
+
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+        MatchaDbTable matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
 
         try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
 
+            List<HashMap<String, Object>> shoesTableContents 
+                = (List<HashMap<String, Object>>) matchaDbTable.getData(getShoes);
+            expectedVersusActualClothingWebsiteAPICheckForClothesTables(
+                expectedShoesTableContents,
+                shoesTableContents
+            );
+
+            if (!matchaDbTable.updateData(updateShoesTable)) {
+                Assert.fail();
+            }
+
+            shoesTableContents = (List<HashMap<String, Object>>) matchaDbTable.getData(getShoes);
+            
+            for (HashMap<String, Object> shoe : shoesTableContents) {
+                if (!Double.valueOf(newPrice)
+                        .equals(Double.valueOf((String) shoe.get(ITEM_PRICE)))) {
+                    // The shoe was not at the correct price
+                    System.out.println("Item: " + shoe.get(ITEM_NAME) + " " + shoe.get(ITEM_PRICE));
+                    Assert.fail();
+                }
+            }
         } catch (FileNotFoundException fnfe) {
             Assert.fail();
         }
