@@ -792,7 +792,46 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testUpdateDataUpdateMultipleItemsAcrossTables() {
+        String newBrand = "dfghj";
 
+        MatchaGetQuery getShoesAndHats = new MatchaGetQuery(
+            new String[] {SHOES_TABLE, HATS_TABLE}, new String[][] {{}}
+        );
+
+        MatchaUpdateQuery updateShoesAndHats = new MatchaUpdateQuery(
+            new String[] {SHOES_TABLE, HATS_TABLE},
+            new String[][] {{}},
+            new String[][] {{ITEM_BRAND, TO, newBrand}}
+        );
+
+        MatchaDbTable matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+
+        List<HashMap<String, Object>> expectedContents 
+            = new ArrayList<HashMap<String, Object>>() {{
+            addAll(MatchaDbGenerateData
+                    .getClothesWebsiteItemsViaQueryParams(null, null, null, null, null, "Shoes"));
+            addAll(MatchaDbGenerateData
+                    .getClothesWebsiteItemsViaQueryParams(null, null, null, null, null, "Hats"));
+        }};
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            List<HashMap<String, Object>> retrievedContents 
+                = (List<HashMap<String, Object>>) matchaDbTable.getData(getShoesAndHats);
+
+            expectedVersusActualClothingWebsiteAPICheckForClothesTables(
+                expectedContents, 
+                retrievedContents
+            );
+
+            // Update table
+
+            // Check that all items have new brand
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
     }
 
     /** 
