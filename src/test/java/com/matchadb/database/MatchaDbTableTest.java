@@ -818,12 +818,18 @@ public class MatchaDbTableTest {
         try {
             matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
 
-            List<HashMap<String, Object>> retrievedContents 
-                = (List<HashMap<String, Object>>) matchaDbTable.getData(getShoesAndHats);
+            HashMap<String,List<HashMap<String, Object>>> retrievedContents 
+                = (HashMap<String,List<HashMap<String, Object>>>) matchaDbTable.getData(getShoesAndHats);
+
+            List<HashMap<String, Object>> retrievedContentsInBigList
+                = new ArrayList<HashMap<String, Object>>() {{
+                addAll((List<HashMap<String, Object>>) retrievedContents.get("Shirts"));
+                addAll((List<HashMap<String, Object>>) retrievedContents.get("Hats"));
+            }};
 
             expectedVersusActualClothingWebsiteAPICheckForClothesTables(
                 expectedContents, 
-                retrievedContents
+                retrievedContentsInBigList
             );
 
             // Update table
