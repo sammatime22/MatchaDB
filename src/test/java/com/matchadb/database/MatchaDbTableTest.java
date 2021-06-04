@@ -46,6 +46,8 @@ public class MatchaDbTableTest {
     private final String ITEM_DESCRIPTION = "Item Description";
 
     // Table names within the Clothing website API.
+    private final String SELECT_ALL = "*";
+
     private final String SHIRTS_TABLE = "Shirts";
 
     private final String HATS_TABLE = "Hats";
@@ -794,12 +796,12 @@ public class MatchaDbTableTest {
     public void testUpdateDataUpdateMultipleItemsAcrossTables() {
         String newBrand = "dfghj";
 
-        MatchaGetQuery getShoesAndHats = new MatchaGetQuery(
-            new String[] {SHOES_TABLE, HATS_TABLE}, new String[][] {{}}
+        MatchaGetQuery getItems = new MatchaGetQuery(
+            new String[] {SELECT_ALL}, new String[][] {{}}
         );
 
         MatchaUpdateQuery updateShoesAndHats = new MatchaUpdateQuery(
-            new String[] {SHOES_TABLE, HATS_TABLE},
+            new String[] {SELECT_ALL},
             new String[][] {{}},
             new String[][] {{ITEM_BRAND, TO, newBrand}}
         );
@@ -808,28 +810,19 @@ public class MatchaDbTableTest {
         String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
 
         List<HashMap<String, Object>> expectedContents 
-            = new ArrayList<HashMap<String, Object>>() {{
-            addAll(MatchaDbGenerateData
-                    .getClothesWebsiteItemsViaQueryParams(null, null, null, null, null, "Shoes"));
-            addAll(MatchaDbGenerateData
-                    .getClothesWebsiteItemsViaQueryParams(null, null, null, null, null, "Hats"));
-        }};
+            = MatchaDbGenerateData
+                    .getClothesWebsiteItemsViaQueryParams(null, null, null, null, null, "Shoes");
 
         try {
             matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
 
-            HashMap<String,List<HashMap<String, Object>>> retrievedContents 
-                = (HashMap<String,List<HashMap<String, Object>>>) matchaDbTable.getData(getShoesAndHats);
+            List<HashMap<String, Object>> retrievedContents 
+                = (List<HashMap<String, Object>>) matchaDbTable.getData(getItems);
 
-            List<HashMap<String, Object>> retrievedContentsInBigList
-                = new ArrayList<HashMap<String, Object>>() {{
-                addAll((List<HashMap<String, Object>>) retrievedContents.get("Shirts"));
-                addAll((List<HashMap<String, Object>>) retrievedContents.get("Hats"));
-            }};
 
             expectedVersusActualClothingWebsiteAPICheckForClothesTables(
                 expectedContents, 
-                retrievedContentsInBigList
+                retrievedContents
             );
 
             // Update table
