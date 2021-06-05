@@ -835,12 +835,15 @@ public class MatchaDbTableTest {
 
             for (Object item : retrievedContents) {
                 if (item instanceof HashMap itemAsHashmap) {
-                    if (!newBrand.equals(itemAsHashmap.get(ITEM_BRAND))) {
-                        Assert.fail();
-                    }
-                    if () {
-                        // Wee only want items that previously had the Item Brand attribute to be 
+                    if (itemAsHashmap.get(ITEM_NAME) == null) {
+                        // We only want items that previously had the Item Brand attribute to be 
                         // updated in this update.
+                        if (newBrand.equals(itemAsHashmap.get(ITEM_BRAND))) {
+                            Assert.fail();
+                        }
+                        continue;
+                    }
+                    if (!newBrand.equals(itemAsHashmap.get(ITEM_BRAND))) {
                         Assert.fail();
                     }
                 }
@@ -856,6 +859,12 @@ public class MatchaDbTableTest {
     @Test
     public void testUpdateDataOfNonKeyValuePair() {
 
+        
+        try {
+
+        } catch (FileNotFoundException fnfe) {
+
+        }
     }
 
     /**

@@ -659,10 +659,12 @@ public class MatchaDbTable {
                     if (meetsQueryRequirement(value, query.getSelectQuery())) {
                         for (String[] update : query.getUpdateQuery()) {
                             if (value instanceof HashMap valueAsHashMap) {
-                                valueAsHashMap.put(
-                                    update[QUERY_UPDATED_KEY_POSITION], 
-                                    update[QUERY_UPDATED_VALUE_POSITION]
-                                );
+                                if (valueAsHashMap.get(update[QUERY_UPDATED_KEY_POSITION]) != null) {
+                                    valueAsHashMap.put(
+                                        update[QUERY_UPDATED_KEY_POSITION], 
+                                        update[QUERY_UPDATED_VALUE_POSITION]
+                                    );
+                                }
                             } else if (value instanceof ArrayList valueAsArrayList) {
                                 if (canBeInterpretedAsInteger(update[QUERY_UPDATED_KEY_POSITION])) {
                                     valueAsArrayList.set(
@@ -695,10 +697,12 @@ public class MatchaDbTable {
                     if (meetsQueryRequirement(value, query.getSelectQuery())) {
                         for (String[] update : query.getUpdateQuery()) {
                             if (value instanceof HashMap valueAsHashMap) {
-                                valueAsHashMap.put(
-                                    update[QUERY_UPDATED_KEY_POSITION], 
-                                    update[QUERY_UPDATED_VALUE_POSITION]
-                                );
+                                if (valueAsHashMap.get(update[QUERY_UPDATED_KEY_POSITION]) != null) {
+                                    valueAsHashMap.put(
+                                        update[QUERY_UPDATED_KEY_POSITION], 
+                                        update[QUERY_UPDATED_VALUE_POSITION]
+                                    );
+                                }
                             } else if (value instanceof ArrayList valueAsArrayList) {
                                 if (canBeInterpretedAsInteger(update[QUERY_UPDATED_KEY_POSITION])) {
                                     valueAsArrayList.set(
@@ -725,10 +729,13 @@ public class MatchaDbTable {
                 if (meetsQueryRequirement(selection, query.getSelectQuery())) {
                     for (String[] update : query.getUpdateQuery()) {
                         if (selection instanceof HashMap selectionAsHashMap) {
-                            selectionAsHashMap.put(
-                                update[QUERY_UPDATED_KEY_POSITION], 
-                                update[QUERY_UPDATED_VALUE_POSITION]
-                            );
+                            if (selectionAsHashMap
+                                .get(update[QUERY_UPDATED_KEY_POSITION]) != null) {
+                                selectionAsHashMap.put(
+                                    update[QUERY_UPDATED_KEY_POSITION], 
+                                    update[QUERY_UPDATED_VALUE_POSITION]
+                                );
+                            }
                         } else if (selection instanceof ArrayList selectionAsArrayList) {
                             if (canBeInterpretedAsInteger(update[QUERY_UPDATED_KEY_POSITION])) {
                                 selectionAsArrayList.set(
