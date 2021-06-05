@@ -800,7 +800,7 @@ public class MatchaDbTableTest {
             new String[] {SELECT_ALL}, new String[][] {{}}
         );
 
-        MatchaUpdateQuery updateShoesAndHats = new MatchaUpdateQuery(
+        MatchaUpdateQuery updateItemsToNewBrand = new MatchaUpdateQuery(
             new String[] {SELECT_ALL},
             new String[][] {{}},
             new String[][] {{ITEM_BRAND, TO, newBrand}}
@@ -826,8 +826,25 @@ public class MatchaDbTableTest {
             );
 
             // Update table
+            if (!matchaDbTable.updateData(updateItemsToNewBrand)) {
+                Assert.fail();
+            }
 
             // Check that all items have new brand
+            retrievedContents = (List<HashMap<String, Object>>) matchaDbTable.getData(getItems);
+
+            for (Object item : retrievedContents) {
+                if (item instanceof HashMap itemAsHashmap) {
+                    if (!newBrand.equals(itemAsHashmap.get(ITEM_BRAND))) {
+                        Assert.fail();
+                    }
+                    if () {
+                        // Wee only want items that previously had the Item Brand attribute to be 
+                        // updated in this update.
+                        Assert.fail();
+                    }
+                }
+            }
         } catch (FileNotFoundException fnfe) {
             Assert.fail();
         }
