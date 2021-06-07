@@ -752,7 +752,7 @@ public class MatchaDbTable {
                         }
                         else {
                             // For all other instances, I think we are just literally seting 
-                            // "value"to a new value that's coming in the 2nd slot of the 
+                            // "value" to a new value that's coming in the 2nd slot of the 
                             // updateQuery.
                             selection = update[QUERY_UPDATED_VALUE_POSITION];
                         }

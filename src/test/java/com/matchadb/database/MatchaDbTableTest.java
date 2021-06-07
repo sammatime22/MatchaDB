@@ -858,10 +858,36 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testUpdateDataOfNonKeyValuePair() {
+        MatchaGetQuery getStoreName = new MatchaGetQuery(
+            new String[] {"Store Name"},
+            new String[][] {{}}
+        );
 
-        
+        String oldStoreName = "George Washington's Tshirt";
+        String newStoreName = "George's T";
+
+        MatchaUpdateQuery updateStoreName = new MatchaUpdateQuery(
+            new String[] {"Store Name"},
+            new String[][] {{}},
+            new String[][] {{"Update Value", TO, newStoreName}}
+        );
+
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
         try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
 
+            if (!oldStoreName.equals((String) matchaDbTable.getData(getStoreName))) {
+                Assert.fail();
+            }
+
+            if (!matchaDbTable.updateData(updateStoreName)) {
+                Assert.fail();
+            }
+
+            if (!newStoreName.equals((String) matchaDbTable.getData(getStoreName))) {
+                Assert.fail();
+            }
         } catch (FileNotFoundException fnfe) {
 
         }
