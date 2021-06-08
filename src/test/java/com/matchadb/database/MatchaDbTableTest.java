@@ -56,6 +56,8 @@ public class MatchaDbTableTest {
     
     private final String SHOES_TABLE = "Shoes";
 
+    private final String PANTS_TABLE = "Pants";
+
     private final String STORE_INFO = "Store Info";
 
     private final String STORE_NAME = "Store Name";
@@ -973,7 +975,36 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testDeleteDataNoDataDeleted() {
+        MatchaGetQuery getPants = new MatchaGetQuery(
+            new String[] {PANTS_TABLE}, 
+            new String[][] {{}}
+        );
 
+        MatchaDeleteQuery deleteBubbaPants = new MatchaDeleteQuery(
+            new String[] {PANTS_TABLE},
+            new String[][] {{ITEM_BRAND, IS_OPERATION, "bubba"}}
+        );
+
+        List<HashMap<String, Object>> expectedItems 
+            = MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams(
+                null, null, null, null, null, PANTS_TABLE
+            );
+
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            // Gather all pants
+
+            // Delete pants of brand bubba
+
+            // Chevk that all pants arre there
+
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
     }
 
     /**
