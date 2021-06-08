@@ -753,8 +753,18 @@ public class MatchaDbTable {
                         else {
                             // For all other instances, I think we are just literally seting 
                             // "value" to a new value that's coming in the 2nd slot of the 
-                            // updateQuery.
-                            selection = update[QUERY_UPDATED_VALUE_POSITION];
+                            // updateQuery. TODO: Implement for embedded lists as well.
+                            selection = this.table;
+
+                            for (int i = 0; i < query.getFromQuery().length - 1; i++) {
+                                selection 
+                                    = ((HashMap<String, Object>) selection)
+                                        .get(query.getFromQuery()[i]);
+                            }
+
+                            ((HashMap<String, Object>) selection)
+                                .put(query.getFromQuery()[query.getFromQuery().length - 1],
+                                    update[QUERY_VALUE_POSITION]);
                         }
                     }
                 }
