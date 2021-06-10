@@ -997,11 +997,22 @@ public class MatchaDbTableTest {
             matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
 
             // Gather all pants
+            List<HashMap<String, Object>> actualPantsData 
+                = (List<HashMap<String, Object>>) matchaDbTable.getData(getPants);
+            expectedVersusActualClothingWebsiteAPICheckForClothesTables(
+                expectedItems, actualPantsData
+            );
 
             // Delete pants of brand bubba
+            if (!matchaDbTable.deleteData(deleteBubbaPants)) {
+                Assert.fail();
+            }
 
             // Chevk that all pants arre there
-
+            actualPantsData = (List<HashMap<String, Object>>) matchaDbTable.getData(getPants);
+            expectedVersusActualClothingWebsiteAPICheckForClothesTables(
+                expectedItems, actualPantsData
+            );
         } catch (FileNotFoundException fnfe) {
             Assert.fail();
         }
