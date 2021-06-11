@@ -1023,7 +1023,35 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testDeleteDataWhereEntireSubtableIsDeleted() {
+        MatchaGetQuery getShoes = new MatchaGetQuery(
+            new String[] {SHOES_TABLE}, new String[][] {{}}
+        );
 
+        MatchaDeleteQuery deleteAllShoes = new MatchaDeleteQuery(
+            new String[] {SHOES_TABLE}, new String[][] {{}}
+        );
+
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+            Object shoesTable = matchaDbTable.getData(getShoes);
+
+            if (shoesTable == null) {
+                Assert.fail();
+            }
+
+            if (!matchaDbTable.deleteData(deleteAllShoes)) {
+                Assert.fail();
+            }
+
+            if (matchaDbTable.getData(getShoes) != null) {
+                Assert.fail();
+            }
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
     }
 
     /** 
