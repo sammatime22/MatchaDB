@@ -182,7 +182,7 @@ public class MatchaDbTable {
             this.databaseCorrupted = true;
         }
 
-        logger.debug(this.table);
+        logger.debug(this.table.toString());
     }    
 
     /**
@@ -833,7 +833,7 @@ public class MatchaDbTable {
                         );
                     } else if (tablePortion instanceof HashMap tablePortionAsHashMap) {
                         if (!(tablePortionAsHashMap.get(fromQueryPortion) instanceof HashMap) 
-                            || !(tablePortionAsHashMap.get(fromQueryPortion) instanceof List)) {
+                            && !(tablePortionAsHashMap.get(fromQueryPortion) instanceof ArrayList)) {
                             tablePortionAsHashMap.remove(fromQueryPortion);
                         } else {
                             deleteDataFromDbTable(
