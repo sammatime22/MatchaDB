@@ -1059,7 +1059,33 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testDeleteDataWhereMultipleItemsAreDeleted() {
+        MatchaGetQuery getAllGHJKL = new MatchaGetQuery(
+            new String[] {ALL_TABLES}, new String[][] {{ITEM_BRAND, IS_OPERATION, "ghjkl"}}
+        );
 
+        MatchaDeleteQuery deleteAllGHJKL = new MatchaDeleteQuery(
+            new String[] {ALL_TABLES}, new String[][] {{ITEM_BRAND, IS_OPERATION, "ghjkl"}}
+        );
+
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            if (matchaDbTable.getData(getAllGHJKL) == null) {
+                Assert.fail();
+            }
+
+            if (!matchaDbTable.deleteData(deleteAllGHJKL)) {
+                Assert.fail();
+            }
+
+            if (matchaDbTable.getData(getAllGHJKL) != null) {
+                Assert.fail();
+            }
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
     }
 
     /** 
@@ -1067,7 +1093,33 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testDeleteDataWhereNonKeyValuePairIsDeleted() {
+        MatchaGetQuery getStoreName = new MatchaGetQuery(
+            new String[] {STORE_NAME}, new String[][] {{}}
+        );
 
+        MatchaDeleteQuery deleteStoreName = new MatchaDeleteQuery(
+            new String[] {STORE_NAME}, new String[][] {{}}
+        );
+
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            if (matchaDbTable.getData(getStoreName) == null) {
+                Assert.fail();
+            }
+
+            if (!matchaDbTable.deleteData(deleteStoreName)) {
+                Assert.fail();
+            }
+
+            if (matchaDbTable.getData(getStoreName) != null) {
+                Assert.fail();
+            }
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
     }
 
     /**
