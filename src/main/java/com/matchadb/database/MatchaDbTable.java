@@ -182,7 +182,7 @@ public class MatchaDbTable {
             this.databaseCorrupted = true;
         }
 
-        System.out.println(this.table);
+        logger.debug(this.table);
     }    
 
     /**
@@ -253,9 +253,6 @@ public class MatchaDbTable {
                 keyIterator.hasNext();) {
             String key = (String) keyIterator.next();
 
-            if (key.equals("Buy X Items Get One Free Number")) {
-                System.out.println("uh " + jsonObject.get(key).toString() + " vlass " + jsonObject.get(key).getClass());
-            }
             if (jsonObject.get(key) instanceof JSONObject jsonObjectsValueAsJsonObject) {
                 jsonObjectTableComponent.put(key, 
                     interpretJSONObject(jsonObjectsValueAsJsonObject));
@@ -373,9 +370,6 @@ public class MatchaDbTable {
             objectKeyIterator.hasNext();) {
             String objectKey = (String) objectKeyIterator.next();
             Object object = tableObject.get(objectKey);
-            if (objectKey.equals("Buy X Items Get One Free Number")) {
-                System.out.println("uh " + object.toString() + " vlass " + object.getClass());
-            }
             if (object instanceof List objectAsList) {
                 jsonObject.put(objectKey, gatherJSONArrayFromTable(objectAsList));
             } else if (object instanceof HashMap objectAsHashMap) {
@@ -437,7 +431,6 @@ public class MatchaDbTable {
                 // If our first select query entry has no length, then we know that the select 
                 // query is empty, and we can return the selection gathered.
                 if (query.getSelectQuery()[0].length > 0) {
-                    System.out.println(query.getSelectQuery().length);
                     for (Iterator finalHashmapSelectionIterator 
                             = finalHashmapSelection.keySet().iterator(); 
                         finalHashmapSelectionIterator.hasNext();) {
@@ -468,7 +461,6 @@ public class MatchaDbTable {
         }
 
         logger.info("getData ran successfully.");
-        System.out.println(this.table);
         return valuesToReturn;
     }
 
@@ -552,8 +544,6 @@ public class MatchaDbTable {
 
         this.lastUpdateTimeInMillis = System.currentTimeMillis();
         logger.info("postData ran successfully.");
-
-        System.out.println(this.table + " the table");
         return true;
     }
 

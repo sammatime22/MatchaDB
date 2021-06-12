@@ -612,7 +612,6 @@ public class MatchaDbTableTest {
             Object phoneNumber = matchaDbTable.getData(getSingleItem);
 
             if (phoneNumber != null) {
-                System.out.println(phoneNumber);
                 Assert.assertTrue("(888)-777-4321".equals(phoneNumber.toString()));
             } else {
                 Assert.fail();
@@ -782,7 +781,6 @@ public class MatchaDbTableTest {
                 if (!Double.valueOf(newPrice)
                         .equals(Double.valueOf((String) shoe.get(ITEM_PRICE)))) {
                     // The shoe was not at the correct price
-                    System.out.println("Item: " + shoe.get(ITEM_NAME) + " " + shoe.get(ITEM_PRICE));
                     Assert.fail();
                 }
             }
