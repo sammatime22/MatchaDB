@@ -842,10 +842,15 @@ public class MatchaDbTable {
                             tablePortionAsList.get(tablePortionAsList.indexOf(fromQueryPortion))
                         );
                     } else if (tablePortion instanceof HashMap tablePortionAsHashMap) {
-                        deleteDataFromDbTable(
-                            Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery,
-                            tablePortionAsHashMap.get(fromQueryPortion)
-                        );
+                        if (!(tablePortionAsHashMap.get(fromQueryPortion) instanceof HashMap) 
+                            || !(tablePortionAsHashMap.get(fromQueryPortion) instanceof List)) {
+                            tablePortionAsHashMap.remove(fromQueryPortion);
+                        } else {
+                            deleteDataFromDbTable(
+                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery,
+                                tablePortionAsHashMap.get(fromQueryPortion)
+                            );
+                        }
                     }
                 }
             }
