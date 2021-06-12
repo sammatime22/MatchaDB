@@ -148,13 +148,47 @@ public class MatchaDbGenerateData {
      * @return a clothes items to insert in the form of a 2D String array for insert to the table.
      */
     public static String[][] newClothesItemToInsert() {
-        String[][] newClothingItem = new String[][]{{
+        String[][] newClothingItem = new String[][] {{
             "Item Name=Trendy Hat", "Item Brand=qwertu", 
             "Item Description=A hat with a feather for a feather.", "Item Price=9000000.95"
         }};
 
         return newClothingItem;
     }
+
+    /**
+     * A generator to make an object for a MatchaPostQuery.
+     *
+     *
+     * @return an item to insert in the form of a 2D String array to insert via MatchaPostQuery.
+     */
+    public static String[][] generateObjectForMatchaPostQuery() {
+        return new String[][] {{
+            "Item Name=Moon Earring", "Item Brand=Ceetz",
+            "Item Description=You are gonna like the way your ears look", "Item Price=9000000000.1"
+        }};
+    }
+
+    
+    /**
+     * A generation method for four clothings items for the multi insert.
+     * Two items are for the hats table, and then another two are for a new Earrings table.
+     *
+     * @return four clothings items to be inserted, as described above.
+     */
+    public static String[][] generateFourClothingsItemsToInsert() {
+        return new String[][] {
+            {
+                "Item Name=Bear Hat", "Item Brand=Howdy There", 
+                "Item Description=Have you seen this hat?", "Item Price=12.45"
+            },
+            {
+                "Item Name=Elephant Hat", "Item Brand=Howdy There", 
+                "Item Description=Lets go to the beach", "Item Price=12.45"
+            }
+        };
+    }
+
 
     /**
      * A helper method to build a clothes object.
@@ -166,7 +200,7 @@ public class MatchaDbGenerateData {
      *
      * @return A clothes object
      */
-    private static HashMap<String, Object> buildClothesObject(String name, String brand,
+    public static HashMap<String, Object> buildClothesObject(String name, String brand,
         String description, double price) {
         HashMap<String, Object> clothesObject = new HashMap<String, Object>() {{
             put("Item Name", name);

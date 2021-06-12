@@ -181,6 +181,8 @@ public class MatchaDbTable {
             logger.error("An unidentified Exception occurred:\n", e);
             this.databaseCorrupted = true;
         }
+
+        logger.debug(this.table.toString());
     }    
 
     /**
@@ -220,8 +222,8 @@ public class MatchaDbTable {
                 // it in the following branching statements
                 if (nextObject instanceof Boolean nextObjectAsBoolean) { 
                     jsonArrayTableComponent.add(nextObjectAsBoolean);
-                } else if (nextObject instanceof Integer nextObjectAsInteger) {
-                    jsonArrayTableComponent.add(nextObjectAsInteger);
+                } else if (nextObject instanceof Long nextObjectAsLong) {
+                    jsonArrayTableComponent.add(nextObjectAsLong);
                 } else if (nextObject instanceof Double nextObjectAsDouble) {
                     jsonArrayTableComponent.add(nextObjectAsDouble);
                 } else if (nextObject instanceof String nextObjectAsString) {
@@ -250,6 +252,7 @@ public class MatchaDbTable {
         for (Iterator keyIterator = jsonObject.keySet().iterator(); 
                 keyIterator.hasNext();) {
             String key = (String) keyIterator.next();
+
             if (jsonObject.get(key) instanceof JSONObject jsonObjectsValueAsJsonObject) {
                 jsonObjectTableComponent.put(key, 
                     interpretJSONObject(jsonObjectsValueAsJsonObject));
@@ -260,8 +263,8 @@ public class MatchaDbTable {
                 // it in the following branching statements
                 if (jsonObject.get(key) instanceof Boolean jsonObjectsValueAsBoolean) { 
                     jsonObjectTableComponent.put(key, jsonObjectsValueAsBoolean);
-                } else if (jsonObject.get(key) instanceof Integer jsonObjectsValueAsInteger) {
-                    jsonObjectTableComponent.put(key, jsonObjectsValueAsInteger);
+                } else if (jsonObject.get(key) instanceof Long jsonObjectsValueAsLong) {
+                    jsonObjectTableComponent.put(key, jsonObjectsValueAsLong);
                 } else if (jsonObject.get(key) instanceof Double jsonObjectsValueAsDouble) {
                     jsonObjectTableComponent.put(key, jsonObjectsValueAsDouble);
                 } else if (jsonObject.get(key) instanceof String jsonObjectsValueAsString) {
@@ -294,10 +297,10 @@ public class MatchaDbTable {
             try (FileWriter fileWriter = new FileWriter(getSaveDataFilename())) {
                 if (tableInJSONForm != null) {
                     fileWriter.write(tableInJSONForm.toString());
-                    logger.info("MatchaDbTable contents have been written to file.");
+                    logger.info("MatchaDbTable contents have been written to disk.");
                 } else {
                     fileWriter.write("");
-                    logger.info("Empty contents have been written to file.");
+                    logger.info("Empty contents have been written to disk.");
                 }
             } catch (IOException ioe) {
                 logger.error("An IO Exception has occurred:\n ", ioe);
@@ -333,7 +336,19 @@ public class MatchaDbTable {
                 jsonArray.add(gatherJSONObjectFromTable(objectAsHashMap));
             } else {
                 // Here we will put anything that would be generic data
-                jsonArray.add(object);
+                if (object instanceof Boolean objectAsBoolean) {
+                    jsonArray.add(objectAsBoolean);
+                } else if (object instanceof Long objectAsLong) {
+                    jsonArray.add(objectAsLong);
+                } else if (object instanceof Double objectAsDouble) {
+                    jsonArray.add(objectAsDouble);
+                } else if (object instanceof String objectAsString) {
+                    jsonArray.add(objectAsString);
+                } else {
+                    // If we couldn't figure out the type, we will just turn the object into
+                    // a string.
+                    jsonArray.add(object.toString());
+                }
             }
         }
         
@@ -361,7 +376,19 @@ public class MatchaDbTable {
                 jsonObject.put(objectKey, gatherJSONObjectFromTable(objectAsHashMap));
             } else {
                 // Here we will put anything that would be generic data
-                jsonObject.put(objectKey, object);
+                if (object instanceof Boolean objectAsBoolean) {
+                    jsonObject.put(objectKey, objectAsBoolean);
+                } else if (object instanceof Long objectAsLong) {
+                    jsonObject.put(objectKey, objectAsLong);
+                } else if (object instanceof Double objectAsDouble) {
+                    jsonObject.put(objectKey, objectAsDouble);
+                } else if (object instanceof String objectAsString) {
+                    jsonObject.put(objectKey, objectAsString);
+                } else {
+                    // If we couldn't figure out the type, we will just turn the object into
+                    // a string.
+                    jsonObject.put(objectKey, object.toString());
+                }
             }
         }
         
@@ -400,14 +427,22 @@ public class MatchaDbTable {
                 }     
             } else if (selection instanceof HashMap finalHashmapSelection) {
                 valuesToReturn = new HashMap<>();
-                for (Iterator finalHashmapSelectionIterator 
-                        = finalHashmapSelection.keySet().iterator(); 
-                    finalHashmapSelectionIterator.hasNext();) {
-                    String key = (String) finalHashmapSelectionIterator.next();
-                    Object value = finalHashmapSelection.get(key);
-                    if (meetsQueryRequirement(value, query.getSelectQuery())) {
-                        ((HashMap) valuesToReturn).put(key, value);
+
+                // If our first select query entry has no length, then we know that the select 
+                // query is empty, and we can return the selection gathered.
+                if (query.getSelectQuery()[0].length > 0) {
+                    for (Iterator finalHashmapSelectionIterator 
+                            = finalHashmapSelection.keySet().iterator(); 
+                        finalHashmapSelectionIterator.hasNext();) {
+                        String key = (String) finalHashmapSelectionIterator.next();
+                        Object value = finalHashmapSelection.get(key);
+                        if (meetsQueryRequirement(value, query.getSelectQuery())) {
+                            ((HashMap) valuesToReturn).put(key, value);
+                        }
                     }
+                } else {
+                    // If we don't have a select query, we will just return the HashMap as is.
+                    valuesToReturn = selection;
                 }
 
                 // Given that we get no values, we will set valuesToReturn back to null so that the
@@ -442,12 +477,54 @@ public class MatchaDbTable {
         try {
             Object selectionToInsertUpon = searchForData(query.getFromQuery(), this.table);
 
+            // If our selection is empty, we will make a new table for said selection
+            if (selectionToInsertUpon == null || ((List) selectionToInsertUpon).isEmpty()) {
+                selectionToInsertUpon = developNewTable(query.getFromQuery(), this.table);
+
+                if (selectionToInsertUpon == null) {
+                    logger.error("Could not develop new subtable");
+                    return false;
+                }
+            }
+
             for (String[] insertQuery : query.getInsertQuery()) {
                 // Build the object
-                HashMap<String, Object> newItem = new HashMap<>();
+                Object newItem = null;
                 for (String entry : insertQuery) {
                     String[] components = entry.split("="); // Split on an equals sign
-                    newItem.put(components[0], determineDataType(components[1]));
+
+                    // Hashmap
+                    if (components.length >= 2) {
+                        if (newItem == null) {
+                            newItem = new HashMap<String, Object>();
+                        }
+
+                        ((HashMap<String, Object>) newItem)
+                            .put(components[0], determineDataType(components[1]));
+                    }
+
+                    // List
+                    else if (insertQuery.length > 1) {
+                        if (newItem == null) {
+                            newItem = new ArrayList<Object>();
+                        }
+                        ((List) newItem).add(determineDataType(components[0]));
+                    }
+
+                    // Other
+                    else {
+                        // If we only have one single item (not a list or hashmap), we can 
+                        // conclude that the selection is simply a single "key-value" pair.
+                        String[] fromQuerySubquery 
+                            = Arrays.copyOfRange(
+                                query.getFromQuery(), 0, query.getFromQuery().length - 1);
+                        String newKey = query.getFromQuery()[query.getFromQuery().length - 1];
+                        selectionToInsertUpon = developNewTable(fromQuerySubquery, this.table);
+                        newItem = determineDataType(components[0]);
+                        ((HashMap) selectionToInsertUpon)
+                            .put(newKey, newItem);
+                        break;
+                    }
                 }
 
                 if (selectionToInsertUpon instanceof HashMap selectionAsHashMap) {
@@ -468,6 +545,57 @@ public class MatchaDbTable {
         this.lastUpdateTimeInMillis = System.currentTimeMillis();
         logger.info("postData ran successfully.");
         return true;
+    }
+
+    /**
+     * This method can be used to develop a table, given that it did not exist on the table yet.
+     *
+     * @param fromQuery The From Query, defining where in the table the data is coming from.
+     * @param selection The selection of the table to be searched upon.
+     * 
+     * @return The new subtable, as a List, which points to a reference on the parent table.
+     */
+    public Object developNewTable(String[] fromQuery, Object selection) {
+        Object returnedSelection = selection;
+
+        for (String fromQueryPortion : fromQuery) {
+            if (returnedSelection instanceof List listSelection) {
+                int indexOfInterest;
+
+                if (canBeInterpretedAsInteger(fromQueryPortion)) {
+                    indexOfInterest = Integer.parseInt(fromQueryPortion);
+                } else {
+                    indexOfInterest = listSelection.indexOf(fromQueryPortion);
+                }
+
+                if (indexOfInterest != INDEX_NONEXISTANT) {
+                    returnedSelection = listSelection.get(indexOfInterest);
+                } else {
+                    // If this entry didn't exist, we'll add it to the table
+                    returnedSelection = new HashMap<>(){{
+                        put(fromQueryPortion, new ArrayList<>());
+                    }};
+                    listSelection.add(returnedSelection);
+                }
+            } else if (returnedSelection instanceof HashMap hashmapSelection) {
+                if (hashmapSelection.containsKey(fromQueryPortion)) {
+                    returnedSelection = hashmapSelection.get(fromQueryPortion);
+                } else {
+                    returnedSelection = new ArrayList<>();
+                    hashmapSelection.put(fromQueryPortion, returnedSelection);
+                }
+            } else {
+                // If our table is empty, it is possible it is not instantiated.
+                if (selection == null) {
+                    selection = new HashMap<String, Object>();
+                    returnedSelection = selection;
+                } else {
+                    returnedSelection = null;
+                }
+            }
+        }
+
+        return returnedSelection;
     }
 
     /**
@@ -521,10 +649,12 @@ public class MatchaDbTable {
                     if (meetsQueryRequirement(value, query.getSelectQuery())) {
                         for (String[] update : query.getUpdateQuery()) {
                             if (value instanceof HashMap valueAsHashMap) {
-                                valueAsHashMap.put(
-                                    update[QUERY_UPDATED_KEY_POSITION], 
-                                    update[QUERY_UPDATED_VALUE_POSITION]
-                                );
+                                if (valueAsHashMap.get(update[QUERY_UPDATED_KEY_POSITION]) != null) {
+                                    valueAsHashMap.put(
+                                        update[QUERY_UPDATED_KEY_POSITION], 
+                                        update[QUERY_UPDATED_VALUE_POSITION]
+                                    );
+                                }
                             } else if (value instanceof ArrayList valueAsArrayList) {
                                 if (canBeInterpretedAsInteger(update[QUERY_UPDATED_KEY_POSITION])) {
                                     valueAsArrayList.set(
@@ -557,10 +687,12 @@ public class MatchaDbTable {
                     if (meetsQueryRequirement(value, query.getSelectQuery())) {
                         for (String[] update : query.getUpdateQuery()) {
                             if (value instanceof HashMap valueAsHashMap) {
-                                valueAsHashMap.put(
-                                    update[QUERY_UPDATED_KEY_POSITION], 
-                                    update[QUERY_UPDATED_VALUE_POSITION]
-                                );
+                                if (valueAsHashMap.get(update[QUERY_UPDATED_KEY_POSITION]) != null) {
+                                    valueAsHashMap.put(
+                                        update[QUERY_UPDATED_KEY_POSITION], 
+                                        update[QUERY_UPDATED_VALUE_POSITION]
+                                    );
+                                }
                             } else if (value instanceof ArrayList valueAsArrayList) {
                                 if (canBeInterpretedAsInteger(update[QUERY_UPDATED_KEY_POSITION])) {
                                     valueAsArrayList.set(
@@ -587,10 +719,13 @@ public class MatchaDbTable {
                 if (meetsQueryRequirement(selection, query.getSelectQuery())) {
                     for (String[] update : query.getUpdateQuery()) {
                         if (selection instanceof HashMap selectionAsHashMap) {
-                            selectionAsHashMap.put(
-                                update[QUERY_UPDATED_KEY_POSITION], 
-                                update[QUERY_UPDATED_VALUE_POSITION]
-                            );
+                            if (selectionAsHashMap
+                                .get(update[QUERY_UPDATED_KEY_POSITION]) != null) {
+                                selectionAsHashMap.put(
+                                    update[QUERY_UPDATED_KEY_POSITION], 
+                                    update[QUERY_UPDATED_VALUE_POSITION]
+                                );
+                            }
                         } else if (selection instanceof ArrayList selectionAsArrayList) {
                             if (canBeInterpretedAsInteger(update[QUERY_UPDATED_KEY_POSITION])) {
                                 selectionAsArrayList.set(
@@ -607,9 +742,19 @@ public class MatchaDbTable {
                         }
                         else {
                             // For all other instances, I think we are just literally seting 
-                            // "value"to a new value that's coming in the 2nd slot of the 
-                            // updateQuery.
-                            selection = update[QUERY_UPDATED_VALUE_POSITION];
+                            // "value" to a new value that's coming in the 2nd slot of the 
+                            // updateQuery. TODO: Implement for embedded lists as well.
+                            selection = this.table;
+
+                            for (int i = 0; i < query.getFromQuery().length - 1; i++) {
+                                selection 
+                                    = ((HashMap<String, Object>) selection)
+                                        .get(query.getFromQuery()[i]);
+                            }
+
+                            ((HashMap<String, Object>) selection)
+                                .put(query.getFromQuery()[query.getFromQuery().length - 1],
+                                    update[QUERY_VALUE_POSITION]);
                         }
                     }
                 }
@@ -687,10 +832,15 @@ public class MatchaDbTable {
                             tablePortionAsList.get(tablePortionAsList.indexOf(fromQueryPortion))
                         );
                     } else if (tablePortion instanceof HashMap tablePortionAsHashMap) {
-                        deleteDataFromDbTable(
-                            Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery,
-                            tablePortionAsHashMap.get(fromQueryPortion)
-                        );
+                        if (!(tablePortionAsHashMap.get(fromQueryPortion) instanceof HashMap) 
+                            && !(tablePortionAsHashMap.get(fromQueryPortion) instanceof ArrayList)) {
+                            tablePortionAsHashMap.remove(fromQueryPortion);
+                        } else {
+                            deleteDataFromDbTable(
+                                Arrays.copyOfRange(fromQuery, 1, fromQuery.length), selectQuery,
+                                tablePortionAsHashMap.get(fromQueryPortion)
+                            );
+                        }
                     }
                 }
             }
@@ -826,93 +976,110 @@ public class MatchaDbTable {
      * @return A boolean describing if our value meets our query requirements.
      */
     private boolean meetsQueryRequirement(Object value, String[][] selectQueryContents) {
-        HashMap<String, Object> valueMap = ((HashMap) value);
-        List<Boolean> queryResults = new ArrayList<>();
+        if (value instanceof HashMap valueMap) {
+            List<Boolean> queryResults = new ArrayList<>();
+            if (selectQueryContents[0].length > 0) {
+                // Run each subquery, and if all match, finish the method by returning true.
+                // Otherwise, return false promptly.
+                try {
+                    for (String[] selectQuery : selectQueryContents) {
+                        // Has query is to be used
+                        if (HAS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
 
-        // Run each subquery, and if all match, finish the method by returning true.
-        // Otherwise, return false promptly.
-        for (String[] selectQuery : selectQueryContents) {
+                            // Check to see if the queried value has the substring provided in the query
+                            if (!((String) (valueMap.get(selectQuery[QUERY_KEY_POSITION])))
+                                .contains(selectQuery[QUERY_VALUE_POSITION]
+                                .substring(1, selectQuery[QUERY_VALUE_POSITION].length() - 1)
+                            )) { 
+                                queryResults.add(false);
+                            } else {
+                                queryResults.add(true);
+                            }
+                        } 
 
-            // Has query is to be used
-            if (HAS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
+                        // An "Is" query is to be used
+                        else if (IS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
 
-                // Check to see if the queried value has the substring provided in the query
-                if (!((String) (valueMap.get(selectQuery[QUERY_KEY_POSITION])))
-                    .contains(selectQuery[QUERY_VALUE_POSITION]
-                    .substring(1, selectQuery[QUERY_VALUE_POSITION].length() - 1)
-                )) { 
-                    queryResults.add(false);
-                } else {
-                    queryResults.add(true);
-                }
-            } 
+                            // Check to see if the provided string is a one-to-one match
+                            if (!((String) valueMap.get(selectQuery[QUERY_KEY_POSITION]))
+                                .equals(selectQuery[QUERY_VALUE_POSITION])) {
+                                queryResults.add(false);
+                            } else {
+                                queryResults.add(true);
+                            }
+                        }
 
-            // An "Is" query is to be used
-            else if (IS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
+                        // Equals query is to be used
+                        else if (EQUALS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
 
-                // Check to see if the provided string is a one-to-one match
-                if (!((String) valueMap.get(selectQuery[QUERY_KEY_POSITION]))
-                    .equals(selectQuery[QUERY_VALUE_POSITION])) {
-                    queryResults.add(false);
-                } else {
-                    queryResults.add(true);
+                            // Check to see if the two values are equal
+                            if (valueMap.get(selectQuery[QUERY_KEY_POSITION]) 
+                                != Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
+                                queryResults.add(false);
+                            } else {
+                                queryResults.add(true);
+                            }
+                        } 
+
+                        // Greater than query is to be used
+                        else if (GREATER_THAN.equals(selectQuery[QUERY_CHECK_TYPE_POSITION]) 
+                            && canBeInterpretedAsDouble(selectQuery[QUERY_VALUE_POSITION])
+                            && canBeInterpretedAsDouble(
+                                valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
+
+                            // Check to see if the table value is larger than the provided value
+                            if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) 
+                                > Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
+                                queryResults.add(true);
+                            } else {
+                                queryResults.add(false);
+                            }
+                        }
+
+                        // Less than query is to be used 
+                        else if (LESS_THAN.equals(selectQuery[QUERY_CHECK_TYPE_POSITION]) 
+                            && canBeInterpretedAsDouble(selectQuery[QUERY_VALUE_POSITION])
+                            && canBeInterpretedAsDouble(
+                                valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
+
+                            // Check to see if the table value is smaller than the provided value
+                            if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) 
+                                < Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
+                                queryResults.add(true);
+                            } else {
+                                queryResults.add(false);
+                            }
+                        }
+
+                        else {
+                            // For whatever the reason, the query returned no expected results
+                            queryResults.add(false);
+                        }
+                    }
+
+                    for (Boolean queryResult : queryResults) {
+                        if (!queryResult) {
+                            return false;
+                        }
+                    }
+                } catch (NullPointerException npe) {
+                        logger.error("Got a Null Pointer Exception upon assessment.", npe);
+                        return false;
                 }
             }
 
-            // Equals query is to be used
-            else if (EQUALS.equals(selectQuery[QUERY_CHECK_TYPE_POSITION])) {
-
-                // Check to see if the two values are equal
-                if (valueMap.get(selectQuery[QUERY_KEY_POSITION]) 
-                    != Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
-                    queryResults.add(false);
-                } else {
-                    queryResults.add(true);
-                }
-            } 
-
-            // Greater than query is to be used
-            else if (GREATER_THAN.equals(selectQuery[QUERY_CHECK_TYPE_POSITION]) 
-                && canBeInterpretedAsDouble(selectQuery[QUERY_VALUE_POSITION])
-                && canBeInterpretedAsDouble(
-                    valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
-
-                // Check to see if the table value is larger than the provided value
-                if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) 
-                    > Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
-                    queryResults.add(true);
-                } else {
-                    queryResults.add(false);
-                }
-            }
-
-            // Less than query is to be used 
-            else if (LESS_THAN.equals(selectQuery[QUERY_CHECK_TYPE_POSITION]) 
-                && canBeInterpretedAsDouble(selectQuery[QUERY_VALUE_POSITION])
-                && canBeInterpretedAsDouble(
-                    valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString())) {
-
-                // Check to see if the table value is smaller than the provided value
-                if (Double.valueOf(valueMap.get(selectQuery[QUERY_KEY_POSITION]).toString()) 
-                    < Double.valueOf(selectQuery[QUERY_VALUE_POSITION])) {
-                    queryResults.add(true);
-                } else {
-                    queryResults.add(false);
-                }
-            }
-            else {
-                // For whatever the reason, the query returned no expected results
-                queryResults.add(false);
-            }
-        }
-
-        for (Boolean queryResult : queryResults) {
-            if (!queryResult) {
+            return true;
+        } else {
+            /**
+             * Given that we have gotten a single value, if the select query contents are empty, we
+             * can simply return true that we can add the item.
+             */
+            if (selectQueryContents == null || selectQueryContents[0].length == 0) {
+                return true;
+            } else {
                 return false;
             }
         }
-
-        return true;
     }
 
     /**

@@ -12,6 +12,7 @@ import java.io.FilenameFilter;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,12 +46,26 @@ public class MatchaDbTableTest {
     private final String ITEM_DESCRIPTION = "Item Description";
 
     // Table names within the Clothing website API.
+    private final String SELECT_ALL = "*";
+
     private final String SHIRTS_TABLE = "Shirts";
 
     private final String HATS_TABLE = "Hats";
 
+    private final String EARRINGS_TABLE = "Earrings";
+    
+    private final String SHOES_TABLE = "Shoes";
+
+    private final String PANTS_TABLE = "Pants";
+
+    private final String STORE_INFO = "Store Info";
+
+    private final String STORE_NAME = "Store Name";
+
     // Different table operators.
     private final String HAS_OPERATION = "has";
+
+    private final String EQUALS_OPERATION = "equals";
 
     private final String IS_OPERATION = "is";
 
@@ -228,9 +243,126 @@ public class MatchaDbTableTest {
 
             // Find the matching object from our mock data, and check to see that the contents 
             // match.
-            expectedVersusActualClothingWebsiteAPICheck(expectedObjects, actualObjects);
+            expectedVersusActualClothingWebsiteAPICheckForClothesTables(expectedObjects, actualObjects);
         } catch (FileNotFoundException fnfe) {
             // If a FileNotFoundException comes up, fail the test.
+            fnfe.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Tests that upon attempting to retrieve data, we do not get any data back.
+     */
+    @Test
+    public void testGetDataNothingReturned() {
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            MatchaGetQuery getNoItemsQuery = new MatchaGetQuery(new String[]{ALL_TABLES},
+                new String[][]{{ITEM_NAME, IS_OPERATION, "Scarf"}}
+            );
+
+            List<HashMap<String, Object>> actualObjects = 
+                (List<HashMap<String, Object>>) matchaDbTable.getData(getNoItemsQuery);
+
+            expectedVersusActualClothingWebsiteAPICheckForClothesTables(
+                new ArrayList<HashMap<String, Object>>(), actualObjects
+            );
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Tests that when we get an unexpected error on searchForData via getData, we don't break
+     * the MatchaDbTable class.
+     */
+    @Test
+    public void testGetDataDoesntBreakTableClassInFaultySearchForDataCall() {
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            MatchaGetQuery getWillClearlyFailQuery = new MatchaGetQuery(new String[]{ALL_TABLES},
+                new String[][] {{ITEM_NAME, LESS_THAN, "food"}}
+            );
+
+            List<HashMap<String, Object>> actualObjects = 
+                (List<HashMap<String, Object>>) matchaDbTable.getData(getWillClearlyFailQuery);
+
+            Assert.assertNull(actualObjects);
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Tests that we get a Hashmap back when we would expect during a call of getData.
+     */
+    @Test
+    public void testGetDataReturnsAHashmap() {
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            MatchaGetQuery getStoreInfoQuery = new MatchaGetQuery(
+                new String[]{STORE_INFO}, new String[][]{{}}
+            );
+
+            Object actualObject = matchaDbTable.getData(getStoreInfoQuery);
+
+            if (actualObject instanceof HashMap actualObjectAsHashmap) {
+                if (((long) actualObjectAsHashmap.get("Buy X Items Get One Free Number")) != 2) {
+                    Assert.fail("Did not have expected values");
+                }
+            } else {
+                Assert.fail("Was not a HashMap.");
+            }
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Tests that we will get a single value back when expected during a call of getData.
+     */
+    @Test
+    public void testGetDataGetsSingleValueBack() {
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            MatchaGetQuery getSingleValueQuery = new MatchaGetQuery(
+                new String[]{STORE_NAME}, new String[][]{{}}
+            );
+
+            Object actualObject = matchaDbTable.getData(getSingleValueQuery);
+
+            if (actualObject instanceof String storeNameAsString) {
+                if (!storeNameAsString.equals("George Washington's Tshirt")) {
+                    Assert.fail("The expected store name was not returned.");
+                }
+            } else {
+                Assert.fail("The returned item was not a String.");
+            }
+        } catch (FileNotFoundException fnfe) {
             fnfe.printStackTrace();
             Assert.fail();
         }
@@ -250,11 +382,6 @@ public class MatchaDbTableTest {
             new String[][] {{ITEM_NAME, HAS_OPERATION, "Trendy Hat"}}
         );
 
-        // Query to insert item, which in JSON might come in as...
-        // "Place": "To Hats", 
-        // "Insert": ""{ \"Item Name\": \"Trendy Hat\", \"Item Brand\": \"qwertu\"," +
-        //        "\"Item Description\": \"A hat with a feather for a feather.\", 
-        // \"Item Price\": 9000000.95 }""
         MatchaPostQuery matchaQueryInsertFancyHat = new MatchaPostQuery(new String[] {HATS_TABLE},
             new String[][] {{}},
             fancyHatToAddAs2DArray
@@ -263,7 +390,6 @@ public class MatchaDbTableTest {
         String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
 
         try {
-            // Maybe consider a before method..?
             // Load in the data for the DB
             matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
             
@@ -308,9 +434,196 @@ public class MatchaDbTableTest {
         }
     }
 
+    // Implement a "Post Data" test where we provide no data to be inserted
+    @Test
+    public void testPostDataWithNoDataToBeInserted() {
+        MatchaGetQuery getAllHats = new MatchaGetQuery(new String[] {HATS_TABLE},
+            new String[][]{{}}
+        );
+
+        MatchaPostQuery postNothingToHats = new MatchaPostQuery(new String[] {HATS_TABLE},
+            new String[][]{{}}, new String[][]{{}}
+        );
+
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            List<HashMap<String, Object>> hatsTableBeforeInsert 
+                = (List<HashMap<String, Object>>) matchaDbTable.getData(getAllHats);
+
+            if (!matchaDbTable.postData(postNothingToHats)) {
+                Assert.fail();
+            }
+
+            List<HashMap<String, Object>> hatsTableAfterInsert 
+                = (List<HashMap<String, Object>>) matchaDbTable.getData(getAllHats);
+
+            expectedVersusActualClothingWebsiteAPICheckForClothesTables(
+                hatsTableBeforeInsert, hatsTableAfterInsert
+            );
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+            Assert.fail();
+        }
+    }
+
     /**
-     * Tests the system to update data from a specific portion of 
-     * memory.
+     * This test sees that when the searchForData call doesn't find the target table, that it will
+     * then construct the new table.
+     */
+    @Test
+    public void testPostDataConstructsNewTable() {
+        String[][] earring = MatchaDbGenerateData.generateObjectForMatchaPostQuery();
+
+        MatchaGetQuery getFromEarringsTable
+            = new MatchaGetQuery(new String[] {EARRINGS_TABLE}, new String[][] {{}});
+
+        MatchaPostQuery postToEarringsTable
+            = new MatchaPostQuery(new String[] {EARRINGS_TABLE}, new String[][]{{}}, earring);
+
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            // run a get on the DB, see that the table doesn't exist
+            List<HashMap<String, Object>> emptyEarringsTable 
+                = (List<HashMap<String, Object>>) matchaDbTable.getData(getFromEarringsTable);
+
+            if (emptyEarringsTable != null && emptyEarringsTable.size() > 0) {
+                Assert.fail("The Earrings Table had items");
+            }
+
+            // post the new table
+            if(!matchaDbTable.postData(postToEarringsTable)) {
+                Assert.fail("An error occured in developing the Earrings table");
+            }
+
+            // see that in the DB the new table exists
+            List<HashMap<String, Object>> earringsTable 
+                = (List<HashMap<String, Object>>) matchaDbTable.getData(getFromEarringsTable);
+
+            if (earringsTable == null || earringsTable.size() != 1) {
+                Assert.fail("The earrings table was not developed correctly");
+            }
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
+    }
+
+    /**
+     * This test checks to see that we can move multiple items into our table.
+     */
+    @Test
+    public void testPostDataIncludeMultipleItems() {
+        List<String> expectedItems = new ArrayList<String>(){{
+            add("Bear Hat");
+            add("Elephant Hat");
+        }};
+
+        String brandName = "Howdy There";
+
+        MatchaGetQuery getMultipleItems = new MatchaGetQuery(
+            new String[] {HATS_TABLE},
+            new String[][] {{ITEM_BRAND, IS_OPERATION, brandName}}
+        );
+
+
+        // Here we will add 
+        MatchaPostQuery postMultipleItems = new MatchaPostQuery(
+            new String[] {HATS_TABLE},
+            new String[][] {{}},
+            MatchaDbGenerateData.generateFourClothingsItemsToInsert()
+        );
+
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            List<HashMap<String, Object>> emptyList 
+                = (List<HashMap<String, Object>>) matchaDbTable.getData(getMultipleItems);
+
+            if (emptyList != null && !emptyList.isEmpty()) {
+                Assert.fail("It found items we were to post prior to posting them.");
+            }
+
+            if (!matchaDbTable.postData(postMultipleItems)) {
+                Assert.fail("Failed to insert items");
+            }
+
+            List<HashMap<String, Object>> howdyThereList 
+                = (List<HashMap<String, Object>>) matchaDbTable.getData(getMultipleItems);
+
+            for (HashMap item : howdyThereList) {
+                if (!brandName.equals(item.get(ITEM_BRAND)) 
+                    || !expectedItems.contains(item.get(ITEM_NAME))) {
+                    Assert.fail("Something was wrong collecting the Howdy There items");
+                }
+            }
+
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
+    }
+
+
+    /** 
+     * This test shows that we could put in a non object item.
+     */
+    @Test
+    public void testPostDataIncludeNonObjectItem() {
+        MatchaGetQuery getSingleItem = new MatchaGetQuery(
+            new String[] {"Phone"},
+            new String[][] {{}}
+        );
+
+        MatchaPostQuery postSingleItem = new MatchaPostQuery(
+            new String[] {"Phone"},
+            new String[][] {{}},
+            new String[][] {{"(888)-777-4321"}}
+        );
+
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+        MatchaDbTable matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            // Get and ensure we don't have the Phone Number yet
+            Object nothingReturned = matchaDbTable.getData(getSingleItem);
+
+            if (nothingReturned != null) {
+                Assert.fail();
+            }
+
+            // Post the phone number
+            if (!matchaDbTable.postData(postSingleItem)) {
+                Assert.fail();
+            }
+
+            // See to it that we have the phone number
+            Object phoneNumber = matchaDbTable.getData(getSingleItem);
+
+            if (phoneNumber != null) {
+                Assert.assertTrue("(888)-777-4321".equals(phoneNumber.toString()));
+            } else {
+                Assert.fail();
+            }
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
+    }
+
+
+    /**
+     * Tests the system to update data from a specific portion of memory.
      */
     @Test
     public void testUpdateData() {
@@ -342,7 +655,7 @@ public class MatchaDbTableTest {
 
             // Find the matching object from our mock data, and check to see that the contents 
             // match.
-            expectedVersusActualClothingWebsiteAPICheck(expectedObjects, actualObjects);
+            expectedVersusActualClothingWebsiteAPICheckForClothesTables(expectedObjects, actualObjects);
 
             // Update items
             // Let's say for all items with a price greater than $16.00 but less than $20.00, 
@@ -388,8 +701,200 @@ public class MatchaDbTableTest {
     }
 
     /**
-     * Tests the system to delete data from a specific portion of 
-     * memory.
+     * Tests if we provide no data to be updated that nothing in turn is updated.
+     */
+    @Test
+    public void testUpdateDataWithNoDataToUpdate() {
+        MatchaGetQuery getAllHats = new MatchaGetQuery(
+            new String[] {HATS_TABLE}, 
+            new String[][] {{ITEM_PRICE, EQUALS_OPERATION, "1.00"}}
+        );
+
+        MatchaUpdateQuery updateAllABCDHatsToOneDollar = new MatchaUpdateQuery(
+            new String[] {HATS_TABLE}, 
+            new String[][] {{ITEM_BRAND, IS_OPERATION, "ABCD"}},
+            new String[][] {{ITEM_PRICE, TO, "1.00"}}
+        );
+
+        MatchaDbTable matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            if (matchaDbTable.getData(getAllHats) != null) {
+                Assert.fail();
+            }
+
+            if (!matchaDbTable.updateData(updateAllABCDHatsToOneDollar)) {
+                Assert.fail();
+            }
+
+            if (matchaDbTable.getData(getAllHats) != null) {
+                Assert.fail();
+            }
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
+    }
+
+    /** 
+     * A test where the searchForData method updates all items in one table.
+     */
+    @Test
+    public void testUpdateDataUpdateAllItemsInOneTable() {
+        MatchaGetQuery getShoes = new MatchaGetQuery(
+            new String[] {SHOES_TABLE}, new String[][] {{}}
+        );
+
+        String newPrice = "24.55";
+
+        MatchaUpdateQuery updateShoesTable = new MatchaUpdateQuery(
+            new String[] {SHOES_TABLE},
+            new String[][] {{}},
+            new String[][] {{ITEM_PRICE, TO, newPrice}}
+        );
+
+        List<HashMap<String, Object>> expectedShoesTableContents
+            = MatchaDbGenerateData
+                .getClothesWebsiteItemsViaQueryParams(null, null, null, null, null, "Shoes");
+
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+        MatchaDbTable matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            List<HashMap<String, Object>> shoesTableContents 
+                = (List<HashMap<String, Object>>) matchaDbTable.getData(getShoes);
+            expectedVersusActualClothingWebsiteAPICheckForClothesTables(
+                expectedShoesTableContents,
+                shoesTableContents
+            );
+
+            if (!matchaDbTable.updateData(updateShoesTable)) {
+                Assert.fail();
+            }
+
+            shoesTableContents = (List<HashMap<String, Object>>) matchaDbTable.getData(getShoes);
+            
+            for (HashMap<String, Object> shoe : shoesTableContents) {
+                if (!Double.valueOf(newPrice)
+                        .equals(Double.valueOf((String) shoe.get(ITEM_PRICE)))) {
+                    // The shoe was not at the correct price
+                    Assert.fail();
+                }
+            }
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
+    }
+
+    /**
+     * An "Update Data" test where we would update multiple items across several tables.
+     */
+    @Test
+    public void testUpdateDataUpdateMultipleItemsAcrossTables() {
+        String newBrand = "dfghj";
+
+        MatchaGetQuery getItems = new MatchaGetQuery(
+            new String[] {SELECT_ALL}, new String[][] {{}}
+        );
+
+        MatchaUpdateQuery updateItemsToNewBrand = new MatchaUpdateQuery(
+            new String[] {SELECT_ALL},
+            new String[][] {{}},
+            new String[][] {{ITEM_BRAND, TO, newBrand}}
+        );
+
+        MatchaDbTable matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+
+        List<HashMap<String, Object>> expectedContents 
+            = MatchaDbGenerateData
+                    .getClothesWebsiteItemsViaQueryParams(null, null, null, null, null, "Shoes");
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            List<HashMap<String, Object>> retrievedContents 
+                = (List<HashMap<String, Object>>) matchaDbTable.getData(getItems);
+
+
+            expectedVersusActualClothingWebsiteAPICheckForClothesTables(
+                expectedContents, 
+                retrievedContents
+            );
+
+            // Update table
+            if (!matchaDbTable.updateData(updateItemsToNewBrand)) {
+                Assert.fail();
+            }
+
+            // Check that all items have new brand
+            retrievedContents = (List<HashMap<String, Object>>) matchaDbTable.getData(getItems);
+
+            for (Object item : retrievedContents) {
+                if (item instanceof HashMap itemAsHashmap) {
+                    if (itemAsHashmap.get(ITEM_NAME) == null) {
+                        // We only want items that previously had the Item Brand attribute to be 
+                        // updated in this update.
+                        if (newBrand.equals(itemAsHashmap.get(ITEM_BRAND))) {
+                            Assert.fail();
+                        }
+                        continue;
+                    }
+                    if (!newBrand.equals(itemAsHashmap.get(ITEM_BRAND))) {
+                        Assert.fail();
+                    }
+                }
+            }
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
+    }
+
+    /** 
+     * An "Update Data" test where we would update a non key-value paired item in a table.
+     */
+    @Test
+    public void testUpdateDataOfNonKeyValuePair() {
+        MatchaGetQuery getStoreName = new MatchaGetQuery(
+            new String[] {"Store Name"},
+            new String[][] {{}}
+        );
+
+        String oldStoreName = "George Washington's Tshirt";
+        String newStoreName = "George's T";
+
+        MatchaUpdateQuery updateStoreName = new MatchaUpdateQuery(
+            new String[] {"Store Name"},
+            new String[][] {{}},
+            new String[][] {{"Update Value", TO, newStoreName}}
+        );
+
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            if (!oldStoreName.equals((String) matchaDbTable.getData(getStoreName))) {
+                Assert.fail();
+            }
+
+            if (!matchaDbTable.updateData(updateStoreName)) {
+                Assert.fail();
+            }
+
+            if (!newStoreName.equals((String) matchaDbTable.getData(getStoreName))) {
+                Assert.fail();
+            }
+        } catch (FileNotFoundException fnfe) {
+
+        }
+    }
+
+    /**
+     * Tests the system to delete data from a specific portion of memory.
      */
     @Test
     public void testDeleteData() {
@@ -430,7 +935,7 @@ public class MatchaDbTableTest {
 
             // Find the matching object from our mock data, and check to see that the contents 
             // match.  
-            expectedVersusActualClothingWebsiteAPICheck(allItems, actualObjects);            
+            expectedVersusActualClothingWebsiteAPICheckForClothesTables(allItems, actualObjects);            
 
             // Delete all items of the brand "zxcvb"
             if (!matchaDbTable.deleteData(matchaDeleteQuery)) {
@@ -461,6 +966,158 @@ public class MatchaDbTableTest {
             Assert.fail();
         }
 
+    }
+
+    /** 
+     * A "Delete Data" test where no data gets deleted.
+     */
+    @Test
+    public void testDeleteDataNoDataDeleted() {
+        MatchaGetQuery getPants = new MatchaGetQuery(
+            new String[] {PANTS_TABLE}, 
+            new String[][] {{}}
+        );
+
+        MatchaDeleteQuery deleteBubbaPants = new MatchaDeleteQuery(
+            new String[] {PANTS_TABLE},
+            new String[][] {{ITEM_BRAND, IS_OPERATION, "bubba"}}
+        );
+
+        List<HashMap<String, Object>> expectedItems 
+            = MatchaDbGenerateData.getClothesWebsiteItemsViaQueryParams(
+                null, null, null, null, null, PANTS_TABLE
+            );
+
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            // Gather all pants
+            List<HashMap<String, Object>> actualPantsData 
+                = (List<HashMap<String, Object>>) matchaDbTable.getData(getPants);
+            expectedVersusActualClothingWebsiteAPICheckForClothesTables(
+                expectedItems, actualPantsData
+            );
+
+            // Delete pants of brand bubba
+            if (!matchaDbTable.deleteData(deleteBubbaPants)) {
+                Assert.fail();
+            }
+
+            // Chevk that all pants arre there
+            actualPantsData = (List<HashMap<String, Object>>) matchaDbTable.getData(getPants);
+            expectedVersusActualClothingWebsiteAPICheckForClothesTables(
+                expectedItems, actualPantsData
+            );
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
+    }
+
+    /**
+     * A "Delete Data" test where an entire subtable is deleted.
+     */
+    @Test
+    public void testDeleteDataWhereEntireSubtableIsDeleted() {
+        MatchaGetQuery getShoes = new MatchaGetQuery(
+            new String[] {SHOES_TABLE}, new String[][] {{}}
+        );
+
+        MatchaDeleteQuery deleteAllShoes = new MatchaDeleteQuery(
+            new String[] {SHOES_TABLE}, new String[][] {{}}
+        );
+
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+            Object shoesTable = matchaDbTable.getData(getShoes);
+
+            if (shoesTable == null) {
+                Assert.fail();
+            }
+
+            if (!matchaDbTable.deleteData(deleteAllShoes)) {
+                Assert.fail();
+            }
+
+            if (matchaDbTable.getData(getShoes) != null) {
+                Assert.fail();
+            }
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
+    }
+
+    /** 
+     * A "Delete Data" test where we would delete multiple items.
+     */
+    @Test
+    public void testDeleteDataWhereMultipleItemsAreDeleted() {
+        MatchaGetQuery getAllGHJKL = new MatchaGetQuery(
+            new String[] {ALL_TABLES}, new String[][] {{ITEM_BRAND, IS_OPERATION, "ghjkl"}}
+        );
+
+        MatchaDeleteQuery deleteAllGHJKL = new MatchaDeleteQuery(
+            new String[] {ALL_TABLES}, new String[][] {{ITEM_BRAND, IS_OPERATION, "ghjkl"}}
+        );
+
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            if (matchaDbTable.getData(getAllGHJKL) == null) {
+                Assert.fail();
+            }
+
+            if (!matchaDbTable.deleteData(deleteAllGHJKL)) {
+                Assert.fail();
+            }
+
+            if (matchaDbTable.getData(getAllGHJKL) != null) {
+                Assert.fail();
+            }
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
+    }
+
+    /** 
+     * A "Delete Data" test where we would delete a non key-value pair.
+     */
+    @Test
+    public void testDeleteDataWhereNonKeyValuePairIsDeleted() {
+        MatchaGetQuery getStoreName = new MatchaGetQuery(
+            new String[] {STORE_NAME}, new String[][] {{}}
+        );
+
+        MatchaDeleteQuery deleteStoreName = new MatchaDeleteQuery(
+            new String[] {STORE_NAME}, new String[][] {{}}
+        );
+
+        matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
+        String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
+        try {
+            matchaDbTable.loadData(new FileReader(filename), TEST_FILE_CLOTHES_WEBSITE_API);
+
+            if (matchaDbTable.getData(getStoreName) == null) {
+                Assert.fail();
+            }
+
+            if (!matchaDbTable.deleteData(deleteStoreName)) {
+                Assert.fail();
+            }
+
+            if (matchaDbTable.getData(getStoreName) != null) {
+                Assert.fail();
+            }
+        } catch (FileNotFoundException fnfe) {
+            Assert.fail();
+        }
     }
 
     /**
@@ -521,17 +1178,22 @@ public class MatchaDbTableTest {
      * @param expectedObjects The objects expected to be returned
      * @param actualObjects The actual objects returned
      */
-    public void expectedVersusActualClothingWebsiteAPICheck(
+    public void expectedVersusActualClothingWebsiteAPICheckForClothesTables(
         List<HashMap<String, Object>> expectedObjects, 
         List<HashMap<String, Object>> actualObjects) {
-            for (HashMap expectedObject : expectedObjects) {
-                boolean success = false;
-                for (HashMap actualObject : actualObjects) {
-                    if (expectedObject.get(ITEM_NAME).equals(actualObject.get(ITEM_NAME))) {
-                        if (expectedObject.get(ITEM_PRICE).equals(actualObject.get(ITEM_PRICE)) 
-                            && expectedObject.get(ITEM_BRAND).equals(actualObject.get(ITEM_BRAND))
+
+        for (HashMap expectedObject : expectedObjects) {
+            boolean success = false;
+            for (Object actualObject : actualObjects) {
+                if (actualObject instanceof HashMap actualObjectAsHashmaap) {
+                    if (expectedObject.get(ITEM_NAME)
+                            .equals(actualObjectAsHashmaap.get(ITEM_NAME))) {
+                        if (expectedObject.get(ITEM_PRICE)
+                                .equals(actualObjectAsHashmaap.get(ITEM_PRICE)) 
+                            && expectedObject.get(ITEM_BRAND)
+                                .equals(actualObjectAsHashmaap.get(ITEM_BRAND))
                             && expectedObject.get(ITEM_DESCRIPTION)
-                                .equals(actualObject.get(ITEM_DESCRIPTION))) {
+                                .equals(actualObjectAsHashmaap.get(ITEM_DESCRIPTION))) {
                             success = true;
                             break;
                         } else {
@@ -540,11 +1202,12 @@ public class MatchaDbTableTest {
                         }
                     }
                 }
-
-                // We didn't find the expected object
-                if (!success) {
-                    Assert.fail();
-                }
             }
+
+            // We didn't find the expected object
+            if (!success) {
+                Assert.fail();
+            }
+        }
     }
 }
