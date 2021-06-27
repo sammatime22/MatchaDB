@@ -148,8 +148,8 @@ public class MatchaDbInterface {
             );
         
         if (MatchaDbConstants.SUCCESSFUL_DELETE_INFO.equals(response.getInfo())) {
-            // Given that we could remove the item from the DB, return a 200
-            return new ResponseEntity(HttpStatus.OK);
+            // Given that we could remove the item from the DB, return a 204
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
         } else if (MatchaDbConstants.UNSUCCESSFUL_DELETE_INFO.equals(response.getInfo())) {
             // If the request was unsuccessful, return a 409
             return new ResponseEntity(HttpStatus.CONFLICT);

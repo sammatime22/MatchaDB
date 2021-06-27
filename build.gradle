@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.matchadb'
-version = 'betav1-SNAPSHOT'
+version = 'betav1.0.2-SNAPSHOT'
 sourceCompatibility = '14'
 
 repositories {

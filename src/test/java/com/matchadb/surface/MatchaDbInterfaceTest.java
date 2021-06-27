@@ -335,7 +335,7 @@ public class MatchaDbInterfaceTest {
         MvcResult result = mockMvc.perform(request).andReturn();
 
         Assert.assertTrue(rawRequestString.equals(result.getRequest().getContentAsString()));
-        Assert.assertTrue(HttpStatus.OK.value() == result.getResponse().getStatus());
+        Assert.assertTrue(HttpStatus.NO_CONTENT.value() == result.getResponse().getStatus());
     }
 
     /**
