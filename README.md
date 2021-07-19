@@ -1,4 +1,4 @@
-!(https://github.com/sammatime22/MatchaDB/actions/workflows/gradle.yml/badge.svg)
+![MatchaDB Build Status](https://github.com/sammatime22/MatchaDB/actions/workflows/gradle.yml/badge.svg)
 
 
 
