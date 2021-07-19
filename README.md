@@ -1,3 +1,7 @@
+![MatchaDB Status](https://github.com/sammatime22/MatchaDB/actions/workflows/gradle.yml/badge.svg)
+
+
+
 **Project Name**: MatchaDB
 
 **Summary**: _A simple DB implementation that can take in a json doc and develop an API from said JSON doc._
