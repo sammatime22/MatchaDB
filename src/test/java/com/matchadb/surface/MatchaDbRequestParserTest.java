@@ -50,7 +50,7 @@ public class MatchaDbRequestParserTest {
         Assert.assertTrue(
             response.toString().equals(
                 String.format(
-                    "{\"info\": %s, \"responseValue\": %s}", 
+                    "{\"Info\": %s, \"Response Value\": %s}", 
                     "\"Command could not be parsed...\"", "\"\""
                 )
             )
