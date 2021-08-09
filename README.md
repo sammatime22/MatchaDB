@@ -10,15 +10,15 @@
 
 **Recent Updates**:
 
-2021/03/20 - Implemented basic Whisk Application
-
-2021/03/28 - Implemented basic logging functionality
-
 2021/04/11 - At Betav1!
 
 2021/06/12 - Set up new tests for MatchaDbTable class
 
 2021/06/27 - Switched response code for Delete from OK (200) to NO_CONTENT (204)
+
+2021/07/18 - Added in status badge
+
+2021/08/08 - Ensured all Model "toString" methods use similar formatting
 
 **System Requirements**
 
