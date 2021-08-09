@@ -27,7 +27,7 @@ public class MatchaDbResponseObject {
 
     public String toString() {
         return String.format(
-            "{\"info\": \"%s\", \"responseValue\": \"%s\"}", info, responseValue
+            "{\"Info\": \"%s\", \"Response Value\": \"%s\"}", info, responseValue
         );
     }
 }
