@@ -112,7 +112,7 @@ public class MatchaDbRequestParser {
                     MatchaDbRequestType.POST,
                     gather1DArrayPortion((JSONArray) requestContents.get("From")),
                     selectPortionForInsert,
-                    gather2DArrayPortion((JSONArray) requestContents.get("Insert")),
+                    gatherInsertJsonObject(requestContents.get("Insert")),
                     null
                 );                
             } else if (rawRequest.getRequestType() == MatchaDbRequestType.UPDATE) {
@@ -185,5 +185,25 @@ public class MatchaDbRequestParser {
 
         String[][] selectPortionAsArray = new String[selectPortionAsList.size()][];
         return selectPortionAsList.toArray(selectPortionAsArray);
+    }
+
+    /**
+     * Gathers any object type from the "Insert" portion of a POST request and turns it into something
+     * usable by the MatchaDB system.
+     *
+     * @param jsonObjectToInsert A JSON object to insert, in a JSON format, Array, Object, or otherwise.
+     *
+     * @return A 2D array of String.
+     */
+    private String[][] gatherInsertJsonObject(Object jsonObjectToInsert) {
+        if (jsonObjectToInsert instanceof JSONArray jsonObjectToInsertAsJsonArray) {
+            // ...dostuff...
+        } else if (jsonObjectToInsert instanceof JSONObject jsonObjectToInsertAsJsonObject) {
+            // ...dostuff...
+        } else {
+            //... dostuff and consider the object as one big string to insert
+        }
+
+        return null;
     }
 }
