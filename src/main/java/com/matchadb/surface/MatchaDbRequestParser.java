@@ -193,17 +193,32 @@ public class MatchaDbRequestParser {
      *
      * @param jsonObjectToInsert A JSON object to insert, in a JSON format, Array, Object, or otherwise.
      *
-     * @return A 2D array of String.
+     * @return The MatchaDB interpretable version of the Object provided.
      */
-    private String[][] gatherInsertJsonObject(Object jsonObjectToInsert) {
-        if (jsonObjectToInsert instanceof JSONArray jsonObjectToInsertAsJsonArray) {
-            // ...dostuff...
-        } else if (jsonObjectToInsert instanceof JSONObject jsonObjectToInsertAsJsonObject) {
-            // ...dostuff...
-        } else {
-            //... dostuff and consider the object as one big string to insert
-        }
+    private Object gatherInsertJsonObject(Object jsonObjectToInsert) {
+        Object jsonObjectCollected = new Object();
+        boolean complete = false;
 
-        return null;
+        if (jsonObjectToInsert instanceof JSONArray jsonObjectToInsertAsJsonArray) {
+            // Given that we have been given an array, collect the elements into a List.
+            jsonObjectCollected = new List<Object>();
+            for (Iterator jsonArrayIterator = jsonArray.iterator(); jsonArrayIterator.hasNext();) {
+                Object nextObject = jsonArrayIterator.next();
+                jsonObjectToInsertAsJsonArray.add(gatherInsertJsonObject(nextObject));
+            }
+            return jsonObjectToInsertAsJsonArray;
+        } else if (jsonObjectToInsert instanceof JSONObject jsonObjectToInsertAsJsonObject) {
+            // Given that we have been given an array, collect the elements into a HashMap.
+            for (Iterator keyIterator = jsonObjectToInsertAsJsonObject.keySet().iterator(); 
+                    keyIterator.hasNext();) {
+                String key = (String) keyIterator.next();
+                jsonObjectToInsertAsJsonObject
+                    .put(key, gatherInsertJsonObject(jsonObjectToInsertAsJsonObject.get(key)));
+            }
+            return jsonObjectToInsertAsJsonObject;
+        } else {
+            // Given that we have gone all the way down to a value, just return the value.
+            return jsonObjectToInsert;
+        }
     }
 }
