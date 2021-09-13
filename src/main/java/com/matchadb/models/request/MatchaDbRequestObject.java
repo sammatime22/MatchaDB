@@ -101,7 +101,7 @@ public class MatchaDbRequestObject {
             }
         }
 
-        String insertQueryAsString = getInsertQuery().toString();
+        String insertQueryAsString = getInsertQuery() != null ? getInsertQuery().toString() : "";
 
         String updateQueryAsString = "";
 
