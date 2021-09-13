@@ -201,8 +201,8 @@ public class MatchaDbRequestParser {
 
         if (jsonObjectToInsert instanceof JSONArray jsonObjectToInsertAsJsonArray) {
             // Given that we have been given an array, collect the elements into a List.
-            jsonObjectCollected = new List<Object>();
-            for (Iterator jsonArrayIterator = jsonArray.iterator(); jsonArrayIterator.hasNext();) {
+            jsonObjectCollected = new ArrayList<Object>();
+            for (Iterator jsonArrayIterator = jsonObjectToInsertAsJsonArray.iterator(); jsonArrayIterator.hasNext();) {
                 Object nextObject = jsonArrayIterator.next();
                 jsonObjectToInsertAsJsonArray.add(gatherInsertJsonObject(nextObject));
             }
