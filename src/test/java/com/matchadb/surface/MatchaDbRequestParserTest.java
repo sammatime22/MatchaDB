@@ -127,7 +127,7 @@ public class MatchaDbRequestParserTest {
             capturedRequestObject.toString().equals(
                 String.format(
                     "{\"From\": [%s], \"Select\": [%s], \"Insert\": [%s], \"Update\": [%s]}",
-                    "['Cars']", "", "{\"Name\":\"F150\"}", ""
+                    "['Cars']", "", "{Name=F150}", ""
                 )
             )
         );

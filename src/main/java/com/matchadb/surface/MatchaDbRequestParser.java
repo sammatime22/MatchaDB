@@ -9,6 +9,7 @@ import com.matchadb.models.response.MatchaDbResponseObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.HashMap;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -196,26 +197,26 @@ public class MatchaDbRequestParser {
      * @return The MatchaDB interpretable version of the Object provided.
      */
     private Object gatherInsertJsonObject(Object jsonObjectToInsert) {
-        Object jsonObjectCollected = new Object();
         boolean complete = false;
 
         if (jsonObjectToInsert instanceof JSONArray jsonObjectToInsertAsJsonArray) {
             // Given that we have been given an array, collect the elements into a List.
-            jsonObjectCollected = new ArrayList<Object>();
+            List<Object> jsonObjectCollected = new ArrayList<Object>();
             for (Iterator jsonArrayIterator = jsonObjectToInsertAsJsonArray.iterator(); jsonArrayIterator.hasNext();) {
                 Object nextObject = jsonArrayIterator.next();
-                jsonObjectToInsertAsJsonArray.add(gatherInsertJsonObject(nextObject));
+                jsonObjectCollected.add(gatherInsertJsonObject(nextObject));
             }
-            return jsonObjectToInsertAsJsonArray;
+            return jsonObjectCollected;
         } else if (jsonObjectToInsert instanceof JSONObject jsonObjectToInsertAsJsonObject) {
             // Given that we have been given an array, collect the elements into a HashMap.
+            HashMap<String, Object> jsonObjectCollected = new HashMap<String, Object>();
             for (Iterator keyIterator = jsonObjectToInsertAsJsonObject.keySet().iterator(); 
                     keyIterator.hasNext();) {
                 String key = (String) keyIterator.next();
-                jsonObjectToInsertAsJsonObject
+                jsonObjectCollected
                     .put(key, gatherInsertJsonObject(jsonObjectToInsertAsJsonObject.get(key)));
             }
-            return jsonObjectToInsertAsJsonObject;
+            return jsonObjectCollected;
         } else {
             // Given that we have gone all the way down to a value, just return the value.
             return jsonObjectToInsert;

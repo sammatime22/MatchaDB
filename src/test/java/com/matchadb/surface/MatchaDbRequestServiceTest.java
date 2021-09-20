@@ -48,7 +48,14 @@ public class MatchaDbRequestServiceTest {
         new String[] {"Eggs"}, new String[][] {{"Shell Color", "is", "Green"}}, null, null);
     MatchaDbRequestObject postRequestObject = new MatchaDbRequestObject(MatchaDbRequestType.POST, 
         new String[] {"Customer 4"}, null, 
-        new String[][] {{"Order", "Earl Grey"}, {"Order", "Matcha"}}, null);
+        new ArrayList<Object>(){{
+            add(new HashMap<String, Object>(){{
+                put("Order", "Earl Grey");
+            }});
+            add(new HashMap<String, Object>(){{
+                put("Order", "Matcha");
+            }});
+        }}, null);
     MatchaDbRequestObject updateRequestObject = new MatchaDbRequestObject(
         MatchaDbRequestType.UPDATE, new String[] {"Employee"}, 
         new String[][] {{"Name", "is", "Prince"}}, null,
@@ -61,7 +68,14 @@ public class MatchaDbRequestServiceTest {
     MatchaGetQuery getGreenEggsQuery = new MatchaGetQuery(new String[] {"Eggs"},
         new String[][] {{"Shell Color", "is", "Green"}});
     MatchaPostQuery postTwoCupsOfTeaQuery = new MatchaPostQuery(new String[] {"Customer 4"},
-        null, new String[][] {{"Order", "Earl Grey"}, {"Order", "Matcha"}});
+        null, new ArrayList<Object>(){{
+            add(new HashMap<String, Object>(){{
+                put("Order", "Earl Grey");
+            }});
+            add(new HashMap<String, Object>(){{
+                put("Order", "Matcha");
+            }});
+        }});
     MatchaUpdateQuery updateEmployeeSalaryQuery = new MatchaUpdateQuery(new String[] {"Employee"},
         new String[][] {{"Name", "is", "Prince"}}, 
         new String[][] {{"Update", "Salary", "$20/hr"}});
@@ -160,6 +174,8 @@ public class MatchaDbRequestServiceTest {
         // Run captor verifications
         verify(matchaDbTable).postData(matchaPostQueryCaptor.capture());
         MatchaPostQuery capturedMatchaPostQuery = matchaPostQueryCaptor.getValue();
+        System.out.println(capturedMatchaPostQuery.toString());
+        System.out.println(postTwoCupsOfTeaQuery.toString());
         Assert.assertTrue(capturedMatchaPostQuery.toString()
             .equals(postTwoCupsOfTeaQuery.toString()));
     }
