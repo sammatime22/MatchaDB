@@ -375,7 +375,7 @@ public class MatchaDbTableTest {
     @Test
     public void testPostData() {
         // Rewrite the data generator method
-        String[][] fancyHatToAddAs2DArray = MatchaDbGenerateData.newClothesItemToInsert();
+        Object fancyHatToAddAsObject = MatchaDbGenerateData.newClothesItemToInsert();
 
         // Query to get item
         MatchaGetQuery matchaQueryGetFancyHat = new MatchaGetQuery(new String[] {HATS_TABLE},
@@ -384,7 +384,7 @@ public class MatchaDbTableTest {
 
         MatchaPostQuery matchaQueryInsertFancyHat = new MatchaPostQuery(new String[] {HATS_TABLE},
             new String[][] {{}},
-            fancyHatToAddAs2DArray
+            fancyHatToAddAsObject
         );
         matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
         String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
@@ -408,7 +408,7 @@ public class MatchaDbTableTest {
             // Search (get) and see that it is where it is expected.
             List<HashMap<String,Object>> fancyHatQueryResults = 
                 (List<HashMap<String, Object>>) matchaDbTable.getData(matchaQueryGetFancyHat);
-            if (fancyHatQueryResults.size() == 1) {
+            if (fancyHatQueryResults != null && fancyHatQueryResults.size() == 1) {
                 HashMap<String, Object> fancyHat = fancyHatQueryResults.get(0);
                 if (fancyHat != null) {
                     // Check the contents to see that they are correct; Otherwise, fail.
@@ -538,7 +538,7 @@ public class MatchaDbTableTest {
         MatchaPostQuery postMultipleItems = new MatchaPostQuery(
             new String[] {HATS_TABLE},
             new String[][] {{}},
-            MatchaDbGenerateData.generateFourClothingsItemsToInsert()
+            MatchaDbGenerateData.generateTwoClothingsItemsToInsert()
         );
 
         matchaDbTable = new MatchaDbTable(EMPTY_DROPOFF_PATH);
@@ -579,6 +579,8 @@ public class MatchaDbTableTest {
      */
     @Test
     public void testPostDataIncludeNonObjectItem() {
+        int indexOfPhoneNumber = 0;
+
         MatchaGetQuery getSingleItem = new MatchaGetQuery(
             new String[] {"Phone"},
             new String[][] {{}}
@@ -587,7 +589,7 @@ public class MatchaDbTableTest {
         MatchaPostQuery postSingleItem = new MatchaPostQuery(
             new String[] {"Phone"},
             new String[][] {{}},
-            new String[][] {{"(888)-777-4321"}}
+            "(888)-777-4321"
         );
 
         String filename = TEST_FILE_CLOTHES_WEBSITE_API_JSON_FILE;
@@ -609,9 +611,10 @@ public class MatchaDbTableTest {
             }
 
             // See to it that we have the phone number
-            Object phoneNumber = matchaDbTable.getData(getSingleItem);
+            Object phoneNumber = ((List) matchaDbTable.getData(getSingleItem)).get(indexOfPhoneNumber);
 
             if (phoneNumber != null) {
+                System.out.println(phoneNumber.toString());
                 Assert.assertTrue("(888)-777-4321".equals(phoneNumber.toString()));
             } else {
                 Assert.fail();

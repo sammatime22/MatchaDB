@@ -145,12 +145,14 @@ public class MatchaDbGenerateData {
     /**
      * A generator method that returns a clothes item to insert.
      *
-     * @return a clothes items to insert in the form of a 2D String array for insert to the table.
+     * @return a clothes items to insert in the form of an object for insert to the table.
      */
-    public static String[][] newClothesItemToInsert() {
-        String[][] newClothingItem = new String[][] {{
-            "Item Name=Trendy Hat", "Item Brand=qwertu", 
-            "Item Description=A hat with a feather for a feather.", "Item Price=9000000.95"
+    public static Object newClothesItemToInsert() {
+        HashMap<String, Object> newClothingItem = new HashMap<String, Object>() {{
+            put("Item Name", "Trendy Hat");
+            put("Item Brand", "qwertu");
+            put("Item Description", "A hat with a feather for a feather.");
+            put("Item Price", 9000000.95);
         }};
 
         return newClothingItem;
@@ -171,22 +173,25 @@ public class MatchaDbGenerateData {
 
     
     /**
-     * A generation method for four clothings items for the multi insert.
-     * Two items are for the hats table, and then another two are for a new Earrings table.
+     * A generation method for two items, which will be inserted into the Hats table.
      *
-     * @return four clothings items to be inserted, as described above.
+     * @return two clothings items to be inserted, as described above.
      */
-    public static String[][] generateFourClothingsItemsToInsert() {
-        return new String[][] {
-            {
-                "Item Name=Bear Hat", "Item Brand=Howdy There", 
-                "Item Description=Have you seen this hat?", "Item Price=12.45"
-            },
-            {
-                "Item Name=Elephant Hat", "Item Brand=Howdy There", 
-                "Item Description=Lets go to the beach", "Item Price=12.45"
-            }
-        };
+    public static Object generateTwoClothingsItemsToInsert() {
+        return new ArrayList<Object>() {{
+            add(new HashMap<String, Object>() {{
+                put("Item Name", "Bear Hat");
+                put("Item Brand", "Howdy There");
+                put("Item Description", "Have you seen this hat?");
+                put("Item Price", 12.45);
+            }});
+            add(new HashMap<String, Object>() {{
+                put("Item Name", "Elephant Hat");
+                put("Item Brand", "Howdy There");
+                put("Item Description", "Lets go to the beach");
+                put("Item Price", 12.45);
+            }});
+        }};
     }
 
 

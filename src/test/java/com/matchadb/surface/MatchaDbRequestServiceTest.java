@@ -174,8 +174,6 @@ public class MatchaDbRequestServiceTest {
         // Run captor verifications
         verify(matchaDbTable).postData(matchaPostQueryCaptor.capture());
         MatchaPostQuery capturedMatchaPostQuery = matchaPostQueryCaptor.getValue();
-        System.out.println(capturedMatchaPostQuery.toString());
-        System.out.println(postTwoCupsOfTeaQuery.toString());
         Assert.assertTrue(capturedMatchaPostQuery.toString()
             .equals(postTwoCupsOfTeaQuery.toString()));
     }
