@@ -492,8 +492,13 @@ public class MatchaDbTable {
                     query.getFromQuery()[query.getFromQuery().length - 1], query.getInsertQuery()
                 ); 
             } else if (selectionToInsertUpon instanceof List selectionAsList) {
-                // Might require means to interpolate over a list of objects here ie we need to fix this~!!!!!!
-                selectionAsList.add(query.getInsertQuery());
+                if (query.getInsertQuery() instanceof List insertQueryItemList) {
+                    for (Object insertQueryItem : insertQueryItemList) {
+                        selectionAsList.add(insertQueryItem);
+                    }
+                } else {
+                    selectionAsList.add(query.getInsertQuery());
+                }
             }
 
             logger.info("Selection After Insert: " + selectionToInsertUpon);
