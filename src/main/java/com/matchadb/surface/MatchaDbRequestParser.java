@@ -9,6 +9,7 @@ import com.matchadb.models.response.MatchaDbResponseObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.HashMap;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -85,7 +86,6 @@ public class MatchaDbRequestParser {
         MatchaDbRequestObject requestObject = null;
 
         try {
-            logger.error("My request String: " + rawRequest.getRequestString());
             JSONObject requestContents = (JSONObject) parser.parse(rawRequest.getRequestString());
 
             if (rawRequest.getRequestType() == MatchaDbRequestType.GET) {
@@ -112,7 +112,7 @@ public class MatchaDbRequestParser {
                     MatchaDbRequestType.POST,
                     gather1DArrayPortion((JSONArray) requestContents.get("From")),
                     selectPortionForInsert,
-                    gather2DArrayPortion((JSONArray) requestContents.get("Insert")),
+                    gatherInsertJsonObject(requestContents.get("Insert")),
                     null
                 );                
             } else if (rawRequest.getRequestType() == MatchaDbRequestType.UPDATE) {
@@ -185,5 +185,40 @@ public class MatchaDbRequestParser {
 
         String[][] selectPortionAsArray = new String[selectPortionAsList.size()][];
         return selectPortionAsList.toArray(selectPortionAsArray);
+    }
+
+    /**
+     * Gathers any object type from the "Insert" portion of a POST request and turns it into something
+     * usable by the MatchaDB system.
+     *
+     * @param jsonObjectToInsert A JSON object to insert, in a JSON format, Array, Object, or otherwise.
+     *
+     * @return The MatchaDB interpretable version of the Object provided.
+     */
+    private Object gatherInsertJsonObject(Object jsonObjectToInsert) {
+        boolean complete = false;
+
+        if (jsonObjectToInsert instanceof JSONArray jsonObjectToInsertAsJsonArray) {
+            // Given that we have been given an array, collect the elements into a List.
+            List<Object> jsonObjectCollected = new ArrayList<Object>();
+            for (Iterator jsonArrayIterator = jsonObjectToInsertAsJsonArray.iterator(); jsonArrayIterator.hasNext();) {
+                Object nextObject = jsonArrayIterator.next();
+                jsonObjectCollected.add(gatherInsertJsonObject(nextObject));
+            }
+            return jsonObjectCollected;
+        } else if (jsonObjectToInsert instanceof JSONObject jsonObjectToInsertAsJsonObject) {
+            // Given that we have been given an array, collect the elements into a HashMap.
+            HashMap<String, Object> jsonObjectCollected = new HashMap<String, Object>();
+            for (Iterator keyIterator = jsonObjectToInsertAsJsonObject.keySet().iterator(); 
+                    keyIterator.hasNext();) {
+                String key = (String) keyIterator.next();
+                jsonObjectCollected
+                    .put(key, gatherInsertJsonObject(jsonObjectToInsertAsJsonObject.get(key)));
+            }
+            return jsonObjectCollected;
+        } else {
+            // Given that we have gone all the way down to a value, just return the value.
+            return jsonObjectToInsert;
+        }
     }
 }

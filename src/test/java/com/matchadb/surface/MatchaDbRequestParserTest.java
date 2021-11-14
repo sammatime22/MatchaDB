@@ -114,7 +114,7 @@ public class MatchaDbRequestParserTest {
             matchaDbRequestParser.ingestAndConductRequest(
                 new MatchaDbRawRequestObject(
                     MatchaDbRequestType.POST,
-                    "{\"From\": [\"Cars\"], \"Insert\": [[\"Name\", \"F150\"]]}"
+                    "{\"From\": [\"Cars\"], \"Insert\": {\"Name\": \"F150\"}}"
                 )
             )
         );
@@ -127,7 +127,7 @@ public class MatchaDbRequestParserTest {
             capturedRequestObject.toString().equals(
                 String.format(
                     "{\"From\": [%s], \"Select\": [%s], \"Insert\": [%s], \"Update\": [%s]}",
-                    "['Cars']", "", "[ 'Name'  'F150' ]", ""
+                    "['Cars']", "", "{Name=F150}", ""
                 )
             )
         );

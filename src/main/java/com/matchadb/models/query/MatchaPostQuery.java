@@ -8,9 +8,9 @@ public class MatchaPostQuery extends MatchaQuery {
     /**
      * Describes the new datasets to be inserted.
      */
-    private String[][] insertQuery; 
+    private Object insertQuery; 
 
-    public MatchaPostQuery(String[] fromQuery, String[][] selectQuery, String[][] insertQuery) {
+    public MatchaPostQuery(String[] fromQuery, String[][] selectQuery, Object insertQuery) {
         super(fromQuery, selectQuery);
         this.insertQuery = insertQuery;
     }
@@ -20,7 +20,7 @@ public class MatchaPostQuery extends MatchaQuery {
      *
      * @return the insert query.
      */
-    public String[][] getInsertQuery() {
+    public Object getInsertQuery() {
         return this.insertQuery;
     }
 
@@ -50,17 +50,7 @@ public class MatchaPostQuery extends MatchaQuery {
             }
         }
 
-        String insertQueryAsString = "";
-
-        for (String[] insertQueryAsStringPortion : this.getInsertQuery()) {
-            String insertQueryAsStringPortionToAdd = "";
-
-            for (String insertQueryAsStringPortionSection : insertQueryAsStringPortion) {
-                insertQueryAsStringPortionToAdd += " '" + insertQueryAsStringPortionSection + "' ";
-            }
-
-            insertQueryAsString += "[" + insertQueryAsStringPortionToAdd + "]";
-        }        
+        String insertQueryAsString = getInsertQuery().toString();      
 
         return String.format(
             "{ \"From\": [%s], \"Select\": [%s], \"Insert\": [%s]}", 

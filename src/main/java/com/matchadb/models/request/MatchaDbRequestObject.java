@@ -15,12 +15,12 @@ public class MatchaDbRequestObject {
 
     private String[][] selectQuery;
 
-    private String[][] insertQuery;
+    private Object insertQuery;
 
     private String[][] updateQuery;
 
     public MatchaDbRequestObject(MatchaDbRequestType requestType, String[] fromQuery,
-        String[][] selectQuery, String[][] insertQuery, String[][] updateQuery) {
+        String[][] selectQuery, Object insertQuery, String[][] updateQuery) {
         this.requestType = requestType;
         this.fromQuery = fromQuery;
         this.selectQuery = selectQuery;
@@ -60,7 +60,7 @@ public class MatchaDbRequestObject {
      *
      * @return an insert query that existed on the request.
      */
-    public String[][] getInsertQuery() {
+    public Object getInsertQuery() {
         return this.insertQuery;
     }
 
@@ -101,19 +101,7 @@ public class MatchaDbRequestObject {
             }
         }
 
-        String insertQueryAsString = "";
-
-        if (this.getInsertQuery() != null) {
-            for (String[] insertQueryAsStringPortion : this.getInsertQuery()) {
-                String insertQueryAsStringPortionToAdd = "";
-
-                for (String insertQueryAsStringPortionSection :  insertQueryAsStringPortion) {
-                    insertQueryAsStringPortionToAdd += " '" + insertQueryAsStringPortionSection + "' ";
-                }
-
-                insertQueryAsString += "[" + insertQueryAsStringPortionToAdd + "]";
-            }
-        }
+        String insertQueryAsString = getInsertQuery() != null ? getInsertQuery().toString() : "";
 
         String updateQueryAsString = "";
 
