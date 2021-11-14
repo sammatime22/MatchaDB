@@ -6,11 +6,9 @@
 
 **Summary**: _A simple DB implementation that can take in a json doc and develop an API from said JSON doc._
 
-**Status**: Beta v1.0.2
+**Status**: Beta v1.0.3
 
 **Recent Updates**:
-
-2021/04/11 - At Betav1!
 
 2021/06/12 - Set up new tests for MatchaDbTable class
 
@@ -19,6 +17,8 @@
 2021/07/18 - Added in status badge
 
 2021/08/08 - Ensured all Model "toString" methods use similar formatting
+
+2021/11/13 - Changed Insert portion of POST Request from 2D Array to JSON Object
 
 **System Requirements**
 

@@ -86,7 +86,6 @@ public class MatchaDbRequestParser {
         MatchaDbRequestObject requestObject = null;
 
         try {
-            logger.error("My request String: " + rawRequest.getRequestString());
             JSONObject requestContents = (JSONObject) parser.parse(rawRequest.getRequestString());
 
             if (rawRequest.getRequestType() == MatchaDbRequestType.GET) {
