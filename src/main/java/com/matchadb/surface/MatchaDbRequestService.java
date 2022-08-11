@@ -21,6 +21,8 @@ import com.matchadb.models.query.MatchaPostQuery;
 import com.matchadb.models.query.MatchaUpdateQuery;
 import com.matchadb.models.query.MatchaDeleteQuery;
 
+import com.matchadb.surface.utilities.MatchaDbSurfaceUtilities;
+
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -88,7 +90,8 @@ public class MatchaDbRequestService {
         Object matchaGetQueryResponseObject = matchaDbTable.getData(matchaGetQuery);
 
         if (matchaGetQueryResponseObject != null) {
-            return new MatchaDbResponseObject(SUCCESSFUL_GET_INFO, matchaGetQueryResponseObject);
+            return new MatchaDbResponseObject(SUCCESSFUL_GET_INFO, 
+                MatchaDbSurfaceUtilities.objectToJSONString(matchaGetQueryResponseObject));
         } else {
             return new MatchaDbResponseObject(UNSUCCESSFUL_GET_INFO, "");
         }
