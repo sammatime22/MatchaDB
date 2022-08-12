@@ -40,7 +40,7 @@ public class MatchaDbSurfaceUtilities {
         } else if (object instanceof Double objectAsDouble) {
             jsonString = objectAsDouble.toString();
         } else {
-            jsonString = object.toString();
+            jsonString = "\"" + object.toString() + "\"";
         }
 
         return jsonString;
