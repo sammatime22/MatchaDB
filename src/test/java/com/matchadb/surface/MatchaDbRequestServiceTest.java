@@ -19,6 +19,8 @@ import com.matchadb.models.query.MatchaPostQuery;
 import com.matchadb.models.query.MatchaUpdateQuery;
 import com.matchadb.models.query.MatchaDeleteQuery;
 
+import com.matchadb.surface.utilities.MatchaDbSurfaceUtilities;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -142,7 +144,8 @@ public class MatchaDbRequestServiceTest {
             add(new HashMap<>() {{ put("Name", "Green Egg C"); }});
         }}; 
         MatchaDbResponseObject getSuccessfulResponseObject
-            = new MatchaDbResponseObject("Retrieval Successful", threeGreenEggs);
+            = new MatchaDbResponseObject("Retrieval Successful", 
+                MatchaDbSurfaceUtilities.objectToJSONString(threeGreenEggs));
         when(matchaDbTable.getData(any(MatchaGetQuery.class))).thenReturn(threeGreenEggs);
 
         // See overall results
